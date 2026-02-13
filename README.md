@@ -2,6 +2,42 @@
 
 A Model Context Protocol (MCP) server that provides seamless integration with Spotify's API, enabling AI assistants to control and interact with Spotify playback, manage playlists, search for music, and retrieve user listening data.
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+  - [Current Features](#current-features)
+  - [Planned Features](#planned-features)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Configuration](#configuration)
+  - [Spotify App Setup](#spotify-app-setup)
+  - [Environment Variables](#environment-variables)
+  - [MCP Configuration](#mcp-configuration)
+- [Usage](#usage)
+- [Available Tools (14 total)](#available-tools-14-total)
+  - [Playback](#playback)
+  - [Search & Discovery](#search--discovery)
+  - [Library Management](#library-management)
+  - [User Data](#user-data)
+- [Local Development](#local-development)
+  - [Prerequisites](#prerequisites)
+  - [Initial Setup](#initial-setup)
+  - [Development Workflow](#development-workflow)
+  - [Testing Your MCP Server](#testing-your-mcp-server)
+  - [Development Tips](#development-tips)
+  - [Testing](#testing)
+  - [Linting and Code Quality](#linting-and-code-quality)
+  - [Troubleshooting](#troubleshooting)
+- [Authentication Flow](#authentication-flow)
+- [Security](#security)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+- [Support](#support)
+- [Related Projects](#related-projects)
+- [Resources](#resources)
+
 ## Overview
 
 The Spotify MCP Server bridges the gap between AI assistants and Spotify, allowing natural language interactions with your music library and playback. Whether you want to play specific songs, create playlists, discover new music, or analyze your listening habits, this server provides the tools to make it happen.
