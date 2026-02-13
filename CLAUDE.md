@@ -50,6 +50,35 @@ src/
     └── validation.ts     # Input validation helpers
 ```
 
+## TypeScript Philosophy
+
+**Pragmatic over Purist**: Use `any` when appropriate. TypeScript is a tool to help us, not a burden.
+
+### When to Use `any`
+- **Third-party API responses**: Spotify API types may not match perfectly - use `any` and extract what you need
+- **MCP SDK type mismatches**: If the SDK types don't align cleanly, cast to `any` rather than fight the type system
+- **Quick prototyping**: Get it working first, refine types later if needed
+- **Type gymnastics**: If you're spending >5 minutes on a complex type, just use `any` and move on
+
+### When to Avoid `any`
+- **Public function signatures**: Keep function parameters and return types typed for clarity
+- **Critical business logic**: User-facing types (args, responses) should be explicit
+- **Easy to type**: If TypeScript infers it correctly, don't override with `any`
+
+**Example of pragmatic typing**:
+```typescript
+// Good: Use any for Spotify API responses
+const result: any = await client.getPlaylist(id);
+const name: string = result.body.name; // Extract what we need
+
+// Good: Cast args when routing
+case "spotify_play":
+  return await playbackTools.play(args as any);
+
+// Avoid: Fighting the type system
+// Don't spend 20 minutes trying to perfectly type third-party API responses
+```
+
 ## Development Workflow
 
 ### Build and Run
