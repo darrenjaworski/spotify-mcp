@@ -18,6 +18,26 @@ The Spotify MCP Server bridges the gap between AI assistants and Spotify, allowi
 ### Planned Features
 See [ROADMAP.md](ROADMAP.md) for detailed feature timeline and future enhancements.
 
+## Quick Start
+
+```bash
+# 1. Clone and install
+git clone https://github.com/yourusername/spotify-mcp.git
+cd spotify-mcp
+npm install
+
+# 2. Configure Spotify credentials
+cp .env.example .env
+# Edit .env with your Spotify app credentials
+
+# 3. Build the project
+npm run build
+
+# 4. Test with MCP Inspector
+npx @modelcontextprotocol/inspector node build/index.js
+# Opens browser at http://localhost:6274
+```
+
 ## Installation
 
 ```bash
@@ -107,18 +127,195 @@ Once configured, you can interact with Spotify through natural language:
 - `spotify_get_top_items` - Get user's top artists or tracks
 - `spotify_get_recently_played` - Get recently played tracks
 
-## Development
+## Local Development
+
+### Prerequisites
+
+- Node.js >= 18.0.0
+- npm or yarn
+- Spotify Developer account with app credentials
+
+### Initial Setup
+
+1. **Clone and install dependencies**
+```bash
+git clone https://github.com/yourusername/spotify-mcp.git
+cd spotify-mcp
+npm install
+```
+
+2. **Configure environment variables**
+```bash
+cp .env.example .env
+# Edit .env with your Spotify credentials
+```
+
+3. **Build the project**
+```bash
+npm run build
+```
+
+### Development Workflow
+
+#### Watch Mode (Recommended)
+
+Run TypeScript compiler in watch mode for automatic rebuilds:
 
 ```bash
-# Run in development mode with auto-reload
 npm run dev
-
-# Run tests
-npm test
-
-# Lint code
-npm run lint
 ```
+
+This continuously watches for file changes and rebuilds automatically. Keep this running in one terminal while you develop.
+
+#### Manual Build
+
+```bash
+npm run build       # Compile TypeScript to build/
+npm run clean       # Remove build directory
+```
+
+### Testing Your MCP Server
+
+#### Option 1: MCP Inspector (Recommended)
+
+The [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) is the official interactive testing tool for MCP servers. It provides a browser-based UI to test tools, see protocol messages, and debug your server.
+
+**Start the Inspector:**
+
+```bash
+npx @modelcontextprotocol/inspector node build/index.js
+```
+
+This opens a browser at `http://localhost:6274` with:
+- **Server Connection Pane**: Configure transport and environment variables
+- **Tools Tab**: See all available tools and test them interactively
+- **Resources Tab**: View server resources
+- **Notifications Pane**: See real-time protocol messages
+
+**With Environment Variables:**
+
+```bash
+npx @modelcontextprotocol/inspector node build/index.js -- \
+  SPOTIFY_CLIENT_ID=your_id \
+  SPOTIFY_CLIENT_SECRET=your_secret \
+  SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
+```
+
+**Enable Debug Logging:**
+
+```bash
+DEBUG=true npx @modelcontextprotocol/inspector node build/index.js
+```
+
+**Benefits:**
+- ✅ Interactive UI to test all 15 tools
+- ✅ See JSON-RPC messages in real-time
+- ✅ No need to configure Claude Desktop during development
+- ✅ Quickly iterate on tool implementations
+
+#### Option 2: Test with Claude Desktop
+
+Add to your Claude Desktop config for real-world testing:
+
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "spotify-dev": {
+      "command": "node",
+      "args": ["/absolute/path/to/spotify-mcp/build/index.js"],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id",
+        "SPOTIFY_CLIENT_SECRET": "your_client_secret",
+        "SPOTIFY_REDIRECT_URI": "http://localhost:3000/callback",
+        "LOG_LEVEL": "debug"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop after config changes.
+
+#### Option 3: Manual stdio Testing
+
+For low-level debugging, you can send JSON-RPC messages directly:
+
+```bash
+# Build first
+npm run build
+
+# Test list tools
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node build/index.js
+
+# Test a tool call
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"spotify_get_user_profile","arguments":{}}}' | node build/index.js
+```
+
+### Development Tips
+
+**1. Use Watch Mode + Inspector Together**
+
+Terminal 1:
+```bash
+npm run dev  # Watch mode - rebuilds on changes
+```
+
+Terminal 2:
+```bash
+npx @modelcontextprotocol/inspector node build/index.js
+```
+
+Refresh the Inspector after each rebuild to test changes.
+
+**2. Enable Debug Logging**
+
+Set `LOG_LEVEL=debug` in your `.env` file to see detailed logs:
+
+```bash
+LOG_LEVEL=debug node build/index.js
+```
+
+**3. Test Individual Tools**
+
+Use the Inspector's Tools tab to test each tool with different inputs before integrating with Claude.
+
+**4. Check stderr for Logs**
+
+The server logs to stderr (not stdout) to avoid interfering with stdio transport:
+
+```bash
+node build/index.js 2> server.log  # Capture logs to file
+```
+
+### Linting and Code Quality
+
+```bash
+npm run lint        # Check code style
+npm run lint:fix    # Auto-fix linting issues
+```
+
+### Troubleshooting
+
+**Build Errors:**
+- Ensure TypeScript is installed: `npm install`
+- Check Node version: `node --version` (should be >= 18)
+
+**Inspector Not Loading:**
+- Check if port 6274 is available
+- Try clearing browser cache
+- Restart the inspector
+
+**OAuth Errors:**
+- Verify Spotify credentials in `.env`
+- Check redirect URI matches in Spotify Dashboard
+- Ensure scopes are correct in `src/spotify/auth.ts`
+
+**Server Not Responding:**
+- Check logs: `LOG_LEVEL=debug node build/index.js`
+- Verify build succeeded: `ls -la build/`
+- Test with simple tool like `spotify_get_user_profile`
 
 ## Authentication Flow
 
@@ -164,3 +361,15 @@ MIT License - see LICENSE file for details
 
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [Spotify Web API SDK](https://github.com/spotify/spotify-web-api-node)
+
+## Resources
+
+### MCP Development Tools
+- [MCP Inspector Documentation](https://modelcontextprotocol.io/docs/tools/inspector) - Official testing tool
+- [MCP Inspector GitHub](https://github.com/modelcontextprotocol/inspector) - Source code
+- [Testing MCP Servers Guide](https://www.stainless.com/mcp/how-to-test-mcp-servers) - Comprehensive testing strategies
+- [MCP Inspector Tutorial](https://hackteam.io/blog/build-test-mcp-server-typescript-mcp-inspector/) - Step-by-step guide
+
+### Spotify API
+- [Spotify Web API Documentation](https://developer.spotify.com/documentation/web-api)
+- [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
