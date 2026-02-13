@@ -101,7 +101,7 @@ Once configured, you can interact with Spotify through natural language:
 - "Search for songs by The Beatles"
 - "Add this song to my liked songs"
 
-## Available Tools
+## Available Tools (14 total)
 
 ### Playback
 - `spotify_play` - Start or resume playback
@@ -288,6 +288,23 @@ The server logs to stderr (not stdout) to avoid interfering with stdio transport
 ```bash
 node build/index.js 2> server.log  # Capture logs to file
 ```
+
+### Testing
+
+Run the test suite to verify tool registration and functionality:
+
+```bash
+npm test              # Run all tests
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Generate coverage report
+```
+
+**Test Coverage:**
+- ✅ 30 tests covering tool registration
+- ✅ Validates all 14 tools are registered correctly
+- ✅ Verifies tool naming conventions
+- ✅ Checks input schema validation with Zod
+- ✅ Integration tests for MCP server setup
 
 ### Linting and Code Quality
 
