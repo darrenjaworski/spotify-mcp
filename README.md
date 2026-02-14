@@ -17,7 +17,7 @@ A Model Context Protocol (MCP) server that provides seamless integration with Sp
   - [Environment Variables](#environment-variables)
   - [MCP Configuration](#mcp-configuration)
 - [Usage](#usage)
-- [Available Tools (14 total)](#available-tools-14-total)
+- [Available Tools (16 total)](#available-tools-16-total)
   - [Playback](#playback)
   - [Search & Discovery](#search--discovery)
   - [Library Management](#library-management)
@@ -173,7 +173,7 @@ Add to your Claude Desktop config file:
       "env": {
         "SPOTIFY_CLIENT_ID": "your_client_id_here",
         "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
-        "SPOTIFY_REDIRECT_URI": "http://localhost:3000/callback"
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
       }
     }
   }
@@ -189,7 +189,7 @@ Add to your Claude Desktop config file:
       "env": {
         "SPOTIFY_CLIENT_ID": "your_client_id_here",
         "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
-        "SPOTIFY_REDIRECT_URI": "http://localhost:3000/callback"
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
       }
     }
   }
@@ -202,11 +202,11 @@ Add to your Claude Desktop config file:
   "mcpServers": {
     "spotify": {
       "command": "node",
-      "args": ["/absolute/path/to/spotify-mcp/build/index.js"],
+      "args": ["/absolute/path/to/spotify-mcp/build/bin.js"],
       "env": {
         "SPOTIFY_CLIENT_ID": "your_client_id_here",
         "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
-        "SPOTIFY_REDIRECT_URI": "http://localhost:3000/callback"
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
       }
     }
   }
@@ -313,7 +313,7 @@ Once configured, you can interact with Spotify through natural language:
 - "Search for songs by The Beatles"
 - "Add this song to my liked songs"
 
-## Available Tools (14 total)
+## Available Tools (16 total)
 
 ### Playback
 - `spotify_play` - Start or resume playback
@@ -351,7 +351,7 @@ Once configured, you can interact with Spotify through natural language:
 
 1. **Clone and install dependencies**
 ```bash
-git clone https://github.com/yourusername/spotify-mcp.git
+git clone https://github.com/darrenjaworski/spotify-mcp.git
 cd spotify-mcp
 npm install
 ```
@@ -395,7 +395,7 @@ The [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) is the
 **Start the Inspector:**
 
 ```bash
-npx @modelcontextprotocol/inspector node build/index.js
+npx @modelcontextprotocol/inspector node build/bin.js
 ```
 
 This opens a browser at `http://localhost:6274` with:
@@ -407,7 +407,7 @@ This opens a browser at `http://localhost:6274` with:
 **With Environment Variables:**
 
 ```bash
-npx @modelcontextprotocol/inspector node build/index.js -- \
+npx @modelcontextprotocol/inspector node build/bin.js -- \
   SPOTIFY_CLIENT_ID=your_id \
   SPOTIFY_CLIENT_SECRET=your_secret \
   SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
@@ -416,11 +416,11 @@ npx @modelcontextprotocol/inspector node build/index.js -- \
 **Enable Debug Logging:**
 
 ```bash
-DEBUG=true npx @modelcontextprotocol/inspector node build/index.js
+DEBUG=true npx @modelcontextprotocol/inspector node build/bin.js
 ```
 
 **Benefits:**
-- ✅ Interactive UI to test all 15 tools
+- ✅ Interactive UI to test all 16 tools
 - ✅ See JSON-RPC messages in real-time
 - ✅ No need to configure Claude Desktop during development
 - ✅ Quickly iterate on tool implementations
@@ -436,11 +436,11 @@ Add to your Claude Desktop config for real-world testing:
   "mcpServers": {
     "spotify-dev": {
       "command": "node",
-      "args": ["/absolute/path/to/spotify-mcp/build/index.js"],
+      "args": ["/absolute/path/to/spotify-mcp/build/bin.js"],
       "env": {
         "SPOTIFY_CLIENT_ID": "your_client_id",
         "SPOTIFY_CLIENT_SECRET": "your_client_secret",
-        "SPOTIFY_REDIRECT_URI": "http://localhost:3000/callback",
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback",
         "LOG_LEVEL": "debug"
       }
     }
@@ -459,10 +459,10 @@ For low-level debugging, you can send JSON-RPC messages directly:
 npm run build
 
 # Test list tools
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node build/index.js
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node build/bin.js
 
 # Test a tool call
-echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"spotify_get_user_profile","arguments":{}}}' | node build/index.js
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"spotify_get_user_profile","arguments":{}}}' | node build/bin.js
 ```
 
 ### Development Tips
@@ -476,7 +476,7 @@ npm run dev  # Watch mode - rebuilds on changes
 
 Terminal 2:
 ```bash
-npx @modelcontextprotocol/inspector node build/index.js
+npx @modelcontextprotocol/inspector node build/bin.js
 ```
 
 Refresh the Inspector after each rebuild to test changes.
@@ -486,7 +486,7 @@ Refresh the Inspector after each rebuild to test changes.
 Set `LOG_LEVEL=debug` in your `.env` file to see detailed logs:
 
 ```bash
-LOG_LEVEL=debug node build/index.js
+LOG_LEVEL=debug node build/bin.js
 ```
 
 **3. Test Individual Tools**
@@ -498,7 +498,7 @@ Use the Inspector's Tools tab to test each tool with different inputs before int
 The server logs to stderr (not stdout) to avoid interfering with stdio transport:
 
 ```bash
-node build/index.js 2> server.log  # Capture logs to file
+node build/bin.js 2> server.log  # Capture logs to file
 ```
 
 ### Testing
@@ -542,7 +542,7 @@ npm run lint:fix    # Auto-fix linting issues
 - Ensure scopes are correct in `src/spotify/auth.ts`
 
 **Server Not Responding:**
-- Check logs: `LOG_LEVEL=debug node build/index.js`
+- Check logs: `LOG_LEVEL=debug node build/bin.js`
 - Verify build succeeded: `ls -la build/`
 - Test with simple tool like `spotify_get_user_profile`
 
@@ -583,8 +583,8 @@ MIT License - see LICENSE file for details
 
 ## Support
 
-- Report bugs via [GitHub Issues](https://github.com/yourusername/spotify-mcp/issues)
-- Join discussions in [GitHub Discussions](https://github.com/yourusername/spotify-mcp/discussions)
+- Report bugs via [GitHub Issues](https://github.com/darrenjaworski/spotify-mcp/issues)
+- Join discussions in [GitHub Discussions](https://github.com/darrenjaworski/spotify-mcp/discussions)
 
 ## Related Projects
 

@@ -139,7 +139,7 @@ npm run test:watch
 
 # Test with MCP Inspector
 npm run build
-npx @modelcontextprotocol/inspector node build/index.js
+npx @modelcontextprotocol/inspector node build/bin.js
 ```
 
 ### TypeScript Guidelines
