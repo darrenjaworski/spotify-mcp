@@ -151,7 +151,7 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
           return;
         }
 
-        const url = new URL(req.url, "http://localhost:3000");
+        const url = new URL(req.url, "http://127.0.0.1:3000");
         const code = url.searchParams.get("code");
         const returnedState = url.searchParams.get("state");
         const error = url.searchParams.get("error");
@@ -209,8 +209,8 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
         }
       });
 
-      server.listen(3000, () => {
-        logger.info("OAuth callback server listening on http://localhost:3000");
+      server.listen(3000, "127.0.0.1", () => {
+        logger.info("OAuth callback server listening on http://127.0.0.1:3000");
         logger.info("Opening browser for authorization...");
 
         // Open browser

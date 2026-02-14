@@ -114,7 +114,7 @@ The server requires these environment variables (stored in `.env`):
 ```env
 SPOTIFY_CLIENT_ID=<your_spotify_app_client_id>
 SPOTIFY_CLIENT_SECRET=<your_spotify_app_client_secret>
-SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
 ```
 
 **CRITICAL**: Never commit `.env` files. Always use `.env.example` for templates.
@@ -122,7 +122,7 @@ SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
 ### Spotify App Setup
 Before the server can authenticate:
 1. Create app at https://developer.spotify.com/dashboard
-2. Add redirect URI: `http://localhost:3000/callback`
+2. Add redirect URI: `http://127.0.0.1:3000/callback`
 3. Copy client ID and secret to `.env`
 
 ### Token Storage Location

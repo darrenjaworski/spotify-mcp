@@ -5,7 +5,7 @@ import { z } from 'zod';
 // Mock environment variables
 vi.stubEnv('SPOTIFY_CLIENT_ID', 'test_client_id');
 vi.stubEnv('SPOTIFY_CLIENT_SECRET', 'test_client_secret');
-vi.stubEnv('SPOTIFY_REDIRECT_URI', 'http://localhost:3000/callback');
+vi.stubEnv('SPOTIFY_REDIRECT_URI', 'http://127.0.0.1:3000/callback');
 
 describe('MCP Server Integration Tests', () => {
   it('should successfully create and configure a server with all tools', () => {

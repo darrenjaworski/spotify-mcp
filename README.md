@@ -107,7 +107,7 @@ npm run build
 1. Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Create a new application
 3. Note your **Client ID** and **Client Secret**
-4. Add `http://localhost:3000/callback` to your app's Redirect URIs
+4. Add `http://127.0.0.1:3000/callback` to your app's Redirect URIs (note: use `127.0.0.1`, not `localhost`)
 
 ### Environment Variables
 
@@ -118,7 +118,7 @@ npm run build
 ```env
 SPOTIFY_CLIENT_ID=your_client_id_here
 SPOTIFY_CLIENT_SECRET=your_client_secret_here
-SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
+SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
 ```
 
 ### MCP Configuration
@@ -179,6 +179,92 @@ Add to your Claude Desktop config file:
 ```
 
 **Note**: When using npx or global install, environment variables must be specified in the MCP config (not in a `.env` file).
+
+### Claude Code (Terminal) Configuration
+
+If you're using [Claude Code](https://claude.com/code) (the terminal CLI), you can add this MCP server to your project or global configuration.
+
+#### Option 1: Using Claude Code's MCP Command (Recommended)
+
+```bash
+# Add the server interactively
+claude mcp add
+
+# Follow the prompts:
+# - Server name: spotify
+# - Command: npx
+# - Args: -y @darrenjaws/spotify-mcp
+# - Add environment variables when prompted
+```
+
+#### Option 2: Manual Configuration
+
+**Global config** (`~/.claude/config.json`):
+```json
+{
+  "mcpServers": {
+    "spotify": {
+      "command": "npx",
+      "args": ["-y", "@darrenjaws/spotify-mcp"],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
+      }
+    }
+  }
+}
+```
+
+**Project-specific config** (`.claude/config.json` in your project):
+```json
+{
+  "mcpServers": {
+    "spotify": {
+      "command": "npx",
+      "args": ["-y", "@darrenjaws/spotify-mcp"],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
+      }
+    }
+  }
+}
+```
+
+#### Migrating from Claude Desktop to Claude Code
+
+If you already have this configured in Claude Desktop, you can copy your configuration:
+
+**1. View your Claude Desktop config:**
+```bash
+# macOS
+cat ~/Library/Application\ Support/Claude/claude_desktop_config.json
+
+# Windows (PowerShell)
+Get-Content $env:APPDATA\Claude\claude_desktop_config.json
+```
+
+**2. Copy the `spotify` server config to Claude Code:**
+```bash
+# Create Claude Code config directory if it doesn't exist
+mkdir -p ~/.claude
+
+# Edit your Claude Code config
+nano ~/.claude/config.json
+# or
+code ~/.claude/config.json
+```
+
+**3. Paste the same `mcpServers` configuration** - the format is identical!
+
+**4. Verify it works:**
+```bash
+claude mcp list
+```
+
+You should see `spotify` in the list of available MCP servers.
 
 ## Usage
 
@@ -289,7 +375,7 @@ This opens a browser at `http://localhost:6274` with:
 npx @modelcontextprotocol/inspector node build/index.js -- \
   SPOTIFY_CLIENT_ID=your_id \
   SPOTIFY_CLIENT_SECRET=your_secret \
-  SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
+  SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
 ```
 
 **Enable Debug Logging:**
