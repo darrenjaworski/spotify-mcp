@@ -155,6 +155,34 @@ This server uses the standard OAuth 2.0 Authorization Code flow with `client_sec
 - Never expose refresh logic to tool callers (transparent)
 - Handle refresh failures by re-triggering full OAuth flow
 
+## Playback Implementation
+
+### URI Types and Context Handling
+
+The `spotify_play` tool supports multiple types of Spotify URIs:
+
+- **Tracks** (`spotify:track:xxx`) - Plays a single track using `uris` array parameter
+- **Albums** (`spotify:album:xxx`) - Plays entire album using `context_uri` parameter
+- **Playlists** (`spotify:playlist:xxx`) - Plays entire playlist using `context_uri` parameter
+- **Artists** (`spotify:artist:xxx`) - Plays artist's top tracks using `context_uri` parameter
+
+**Implementation Details:**
+- The play function detects URI type by prefix and routes appropriately
+- Context URIs (album/playlist/artist) use Spotify's `context_uri` parameter
+- Track URIs are wrapped in an array and use the `uris` parameter
+- Multiple tracks can be queued by passing an array to the `uris` parameter
+
+**Example:**
+```typescript
+// Playing an album
+await play({ uri: "spotify:album:6DEjYFkNZh67HP7R9PSZvv" });
+// Uses: { context_uri: "spotify:album:..." }
+
+// Playing a single track
+await play({ uri: "spotify:track:3n3Ppam7vgaVa1iaRUc9Lp" });
+// Uses: { uris: ["spotify:track:..."] }
+```
+
 ## MCP Protocol Implementation
 
 ### Tool Registration Pattern

@@ -306,6 +306,7 @@ You should see `spotify` in the list of available MCP servers.
 Once configured, you can interact with Spotify through natural language:
 
 - "Play my Discover Weekly playlist"
+- "Play the album Thriller by Michael Jackson"
 - "What song is currently playing?"
 - "Create a playlist called 'Workout Mix' with these songs..."
 - "Skip to the next track"
@@ -316,7 +317,7 @@ Once configured, you can interact with Spotify through natural language:
 ## Available Tools (16 total)
 
 ### Playback
-- `spotify_play` - Start or resume playback
+- `spotify_play` - Start or resume playback of tracks, albums, playlists, or artists
 - `spotify_pause` - Pause playback
 - `spotify_next` - Skip to next track
 - `spotify_previous` - Skip to previous track

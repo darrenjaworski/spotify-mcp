@@ -39,7 +39,7 @@ server.registerTool(
   {
     description: "Start or resume playback of a track, album, artist, or playlist",
     inputSchema: {
-      uri: z.string().optional().describe("Spotify URI to play (e.g., spotify:track:xxx, spotify:playlist:xxx)"),
+      uri: z.string().optional().describe("Spotify URI to play (e.g., spotify:track:xxx, spotify:album:xxx, spotify:playlist:xxx, spotify:artist:xxx). Use search tool to get URIs."),
       device_id: z.string().optional().describe("Optional: Device ID to play on"),
     },
   },

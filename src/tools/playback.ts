@@ -9,8 +9,17 @@ export async function play(args: PlaybackArgs): Promise<ToolResponse> {
   const client = await getAuthenticatedClient();
 
   const options: any = {};
+
   if (args.uri) {
-    options.uris = [args.uri];
+    // Determine if URI is a context (album, playlist, artist) or a track
+    if (args.uri.startsWith('spotify:album:') ||
+        args.uri.startsWith('spotify:playlist:') ||
+        args.uri.startsWith('spotify:artist:')) {
+      options.context_uri = args.uri;
+    } else {
+      // Track or other URI - use uris array
+      options.uris = [args.uri];
+    }
   }
   if (args.uris) {
     options.uris = args.uris;
@@ -21,12 +30,29 @@ export async function play(args: PlaybackArgs): Promise<ToolResponse> {
 
   await client.play(options);
 
-  const uriText = args.uri || (args.uris && args.uris.length > 0 ? `${args.uris.length} tracks` : "");
+  // Generate appropriate response message
+  let message = "Resumed playback";
+  if (args.uri) {
+    if (args.uri.startsWith('spotify:album:')) {
+      message = `Started playing album: ${args.uri}`;
+    } else if (args.uri.startsWith('spotify:playlist:')) {
+      message = `Started playing playlist: ${args.uri}`;
+    } else if (args.uri.startsWith('spotify:artist:')) {
+      message = `Started playing artist: ${args.uri}`;
+    } else if (args.uri.startsWith('spotify:track:')) {
+      message = `Started playing track: ${args.uri}`;
+    } else {
+      message = `Started playback: ${args.uri}`;
+    }
+  } else if (args.uris && args.uris.length > 0) {
+    message = `Started playing ${args.uris.length} track${args.uris.length > 1 ? 's' : ''}`;
+  }
+
   return {
     content: [
       {
         type: "text",
-        text: uriText ? `Started playback: ${uriText}` : "Resumed playback",
+        text: message,
       },
     ],
   };
