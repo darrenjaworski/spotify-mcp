@@ -56,29 +56,41 @@ See [ROADMAP.md](ROADMAP.md) for detailed feature timeline and future enhancemen
 
 ## Quick Start
 
+The fastest way to get started is using npx:
+
 ```bash
-# 1. Clone and install
-git clone https://github.com/yourusername/spotify-mcp.git
-cd spotify-mcp
-npm install
+# No installation required - just configure in Claude Desktop
+# See MCP Configuration section below
+```
 
-# 2. Configure Spotify credentials
-cp .env.example .env
-# Edit .env with your Spotify app credentials
+Or install globally:
 
-# 3. Build the project
-npm run build
-
-# 4. Test with MCP Inspector
-npx @modelcontextprotocol/inspector node build/index.js
-# Opens browser at http://localhost:6274
+```bash
+npm install -g @darrenjaws/spotify-mcp
 ```
 
 ## Installation
 
+### Option 1: NPM (Recommended)
+
+**Global Installation:**
+```bash
+npm install -g @darrenjaws/spotify-mcp
+```
+
+**Using npx (no installation required):**
+```bash
+# Use directly via npx - configured in Claude Desktop config
+npx -y @darrenjaws/spotify-mcp
+```
+
+### Option 2: From Source
+
+For development or contributing:
+
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/spotify-mcp.git
+git clone https://github.com/darrenjaworski/spotify-mcp.git
 cd spotify-mcp
 
 # Install dependencies
@@ -99,7 +111,9 @@ npm run build
 
 ### Environment Variables
 
-Create a `.env` file in the project root:
+**For NPM/npx users**: Configure environment variables in your Claude Desktop config (see MCP Configuration above).
+
+**For development from source**: Create a `.env` file in the project root:
 
 ```env
 SPOTIFY_CLIENT_ID=your_client_id_here
@@ -114,16 +128,57 @@ Add to your Claude Desktop config file:
 **MacOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
 
+**Using npx (recommended):**
+```json
+{
+  "mcpServers": {
+    "spotify": {
+      "command": "npx",
+      "args": ["-y", "@darrenjaws/spotify-mcp"],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+        "SPOTIFY_REDIRECT_URI": "http://localhost:3000/callback"
+      }
+    }
+  }
+}
+```
+
+**Using global installation:**
+```json
+{
+  "mcpServers": {
+    "spotify": {
+      "command": "spotify-mcp",
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+        "SPOTIFY_REDIRECT_URI": "http://localhost:3000/callback"
+      }
+    }
+  }
+}
+```
+
+**From source (development):**
 ```json
 {
   "mcpServers": {
     "spotify": {
       "command": "node",
-      "args": ["/path/to/spotify-mcp/build/index.js"]
+      "args": ["/absolute/path/to/spotify-mcp/build/index.js"],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+        "SPOTIFY_REDIRECT_URI": "http://localhost:3000/callback"
+      }
     }
   }
 }
 ```
+
+**Note**: When using npx or global install, environment variables must be specified in the MCP config (not in a `.env` file).
 
 ## Usage
 

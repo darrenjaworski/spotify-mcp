@@ -1,10 +1,10 @@
 {
-  "name": "spotify-mcp",
+  "name": "@darrenjaws/spotify-mcp",
   "version": "0.1.0",
   "description": "Model Context Protocol server for Spotify integration",
   "type": "module",
   "bin": {
-    "spotify-mcp": "./build/index.js"
+    "spotify-mcp": "build/index.js"
   },
   "scripts": {
     "build": "tsc && chmod +x build/index.js",
@@ -25,10 +25,25 @@
     "ai",
     "claude"
   ],
-  "author": "",
+  "author": "Darren Jaworski <darrenjaworski@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darrenjaworski/spotify-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/darrenjaworski/spotify-mcp/issues"
+  },
+  "homepage": "https://github.com/darrenjaworski/spotify-mcp#readme",
   "files": [
-    "build",
+    "build/**/*.js",
+    "build/**/*.d.ts",
+    "build/**/*.js.map",
+    "build/**/*.d.ts.map",
+    "!build/**/*.test.js",
+    "!build/**/*.test.d.ts",
+    "!build/**/*.test.js.map",
+    "!build/**/*.test.d.ts.map",
     "README.md",
     "LICENSE"
   ],
