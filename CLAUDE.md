@@ -15,7 +15,7 @@ The server uses **stdio transport** (standard input/output) for communication wi
 - **Server**: MCP server instance that handles tool registration and request routing
 - **Tools**: Individual Spotify operations exposed as MCP tools (play, pause, search, etc.)
 - **Spotify Client**: Wrapper around Spotify Web API with OAuth management
-- **Auth Manager**: Handles OAuth 2.0 PKCE flow and token persistence
+- **Auth Manager**: Handles OAuth 2.0 Authorization Code flow and token persistence
 
 ### Tool Design Philosophy
 Each tool should:
@@ -41,10 +41,10 @@ src/
 │   ├── client.ts         # Main Spotify API wrapper
 │   ├── types.ts          # TypeScript types for Spotify objects
 │   └── errors.ts         # Spotify-specific error handling
-├── auth/                 # OAuth 2.0 authentication
-│   ├── oauth.ts          # PKCE flow implementation
-│   ├── token-manager.ts  # Token storage and refresh logic
-│   └── storage.ts        # File-based token persistence
+├── spotify/              # Spotify API and authentication
+│   ├── auth.ts           # OAuth 2.0 Authorization Code flow
+│   ├── client.ts         # Authenticated API client wrapper
+│   └── (types defined in ../types.ts)
 └── utils/
     ├── logger.ts         # Logging utilities
     └── validation.ts     # Input validation helpers
@@ -133,20 +133,21 @@ This location:
 - Is in the user's home directory (user-specific)
 - Should be added to `.gitignore`
 
-## OAuth 2.0 PKCE Flow
+## OAuth 2.0 Authorization Code Flow
 
-### Why PKCE?
-Spotify requires PKCE (Proof Key for Code Exchange) for enhanced security. This prevents authorization code interception attacks.
+### Why Authorization Code Flow?
+This server uses the standard OAuth 2.0 Authorization Code flow with `client_secret`, which is the appropriate and secure method for confidential server applications. PKCE is recommended for public clients (mobile apps, SPAs) that cannot securely store secrets.
 
 ### Authentication Flow
 1. **First tool call without tokens** → Start OAuth flow
-2. Generate code verifier and challenge
-3. Open browser to Spotify auth URL with challenge
-4. User authorizes, Spotify redirects with code
-5. Exchange code + verifier for access & refresh tokens
-6. Store tokens in `~/.spotify-mcp/tokens.json`
-7. **Subsequent calls** → Use stored access token
-8. **Token expired** → Automatically refresh using refresh token
+2. Generate cryptographically secure state parameter for CSRF protection
+3. Open browser to Spotify auth URL with state parameter
+4. User authorizes, Spotify redirects with authorization code and state
+5. Verify state parameter matches (CSRF protection)
+6. Exchange authorization code + client_secret for access & refresh tokens
+7. Store tokens in `~/.spotify-mcp/tokens.json` with 0600 file permissions
+8. **Subsequent calls** → Use stored access token
+9. **Token expired** → Automatically refresh using refresh token
 
 ### Token Refresh Strategy
 - Check token expiry before each API call
@@ -292,20 +293,231 @@ Users can install via:
 
 ## Security Considerations
 
+**CRITICAL**: Security is paramount for an MCP server that handles OAuth credentials and user data. Follow these guidelines strictly.
+
+### Authentication & Authorization
+
+#### OAuth 2.0 Best Practices
+- **Use Authorization Code flow** with `client_secret` (appropriate for server apps)
+- **Generate cryptographically secure state parameters** using `crypto.randomBytes()` for CSRF protection
+- **Never use `Math.random()`** for security-sensitive values (predictable and weak)
+- **Validate state parameter** on callback to prevent CSRF attacks
+- **Token storage**: Use file permissions `0600` for token files, `0700` for directories
+- **Automatic token refresh**: Check expiry before each API call, refresh if < 5 minutes remaining
+
+#### Example: Secure State Generation
+```typescript
+// ✅ GOOD - Cryptographically secure
+import crypto from 'crypto';
+const state = crypto.randomBytes(32).toString('hex');
+
+// ❌ BAD - Weak and predictable
+const state = "state-" + Math.random().toString(36);
+```
+
+#### OAuth Callback Server Security
+- **Timeout**: Automatically close server after 5 minutes
+- **Rate limiting**: Maximum 5 requests per OAuth flow
+- **Localhost-only**: Verify requests come from `127.0.0.1`, `::1`, or `::ffff:127.0.0.1`
+- **Close after use**: Server must close immediately after successful/failed callback
+
 ### Token Security
-- Tokens stored in `~/.spotify-mcp/tokens.json` with 0600 permissions
-- Never log tokens or sensitive auth data
-- Clear tokens on logout (future feature)
 
-### Input Validation
-- Validate all user inputs against JSON schemas
-- Sanitize Spotify URIs to prevent injection
-- Limit string lengths to prevent DoS
+#### Storage
+- **File location**: `~/.spotify-mcp/tokens.json` (outside project directory)
+- **File permissions**: `0600` (read/write for owner only)
+- **Directory permissions**: `0700` (access for owner only)
+- **Never commit tokens**: Ensure `.gitignore` includes token files
 
-### Environment Variables
-- Use `dotenv` for local development only
-- In production (MCP client config), pass via `env` field
-- Never bundle `.env` in distribution package
+#### Logging
+- **NEVER log token values**: Tokens, secrets, passwords must never appear in logs
+- **Automatic redaction**: Logger automatically redacts sensitive fields
+- **Sensitive field names**: token, accessToken, refreshToken, secret, clientSecret, password, apiKey, authorization
+- **Debug mode**: Even in debug mode, tokens must be redacted
+
+#### Example: Safe Logging
+```typescript
+// ✅ GOOD - Tokens automatically redacted
+logger.debug("Loaded tokens from file");
+logger.debug("Token info", { expiresAt: tokens.expiresAt }); // Don't include token value
+
+// ❌ BAD - Never do this
+logger.debug("Token:", tokens.accessToken); // NEVER LOG TOKEN VALUES
+```
+
+### Input Validation & Injection Prevention
+
+#### Command Injection Prevention
+- **NEVER use `exec()` with string concatenation**
+- **Always use `spawn()` with `shell: false` and argument arrays**
+- **Validate URLs before opening in browser**
+
+#### Example: Safe Command Execution
+```typescript
+// ✅ GOOD - No shell injection risk
+import { spawn } from 'child_process';
+const child = spawn('open', [url], { shell: false });
+
+// ❌ BAD - Shell injection vulnerability
+import { exec } from 'child_process';
+exec(`open "${url}"`); // url could contain "; rm -rf /"
+```
+
+#### XSS Prevention in HTML Responses
+- **Escape all user-controlled data** in HTML responses
+- **Use Content-Type with charset**: `text/html; charset=utf-8`
+- **Include meta charset tag**: `<meta charset="utf-8">`
+
+#### Example: HTML Escaping
+```typescript
+function escapeHtml(str: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;', '<': '&lt;', '>': '&gt;',
+    '"': '&quot;', "'": '&#39;'
+  };
+  return str.replace(/[&<>"']/g, (char) => map[char] || char);
+}
+
+// ✅ GOOD - Escaped user input
+res.end(`<p>${escapeHtml(error)}</p>`);
+
+// ❌ BAD - XSS vulnerability
+res.end(`<p>${error}</p>`); // error could be "<script>alert('XSS')</script>"
+```
+
+#### Input Validation with Zod
+- **Validate all tool inputs** using Zod schemas
+- **Set appropriate constraints**: min/max for numbers, enum for fixed values
+- **Sanitize Spotify URIs** to ensure they match expected format: `spotify:(track|album|artist|playlist):[\w]+`
+
+#### Example: Input Validation
+```typescript
+// ✅ GOOD - Strict validation
+{
+  volume_percent: z.number().min(0).max(100),
+  type: z.enum(["track", "album", "artist", "playlist"]),
+  uri: z.string().regex(/^spotify:(track|album|artist|playlist):[\w]+$/)
+}
+
+// ❌ BAD - No validation
+{
+  volume_percent: z.number(), // Could be negative or > 100
+  type: z.string(),           // Could be anything
+  uri: z.string()             // Could contain malicious input
+}
+```
+
+### Error Handling
+
+#### Never Expose Sensitive Information
+- **Don't return raw API errors** to users (may contain tokens, internal URLs)
+- **Transform errors** to user-friendly messages
+- **Don't leak internal paths** or stack traces to end users
+- **Log detailed errors** to stderr for debugging, but return generic messages to users
+
+#### Example: Safe Error Handling
+```typescript
+// ✅ GOOD - User-friendly, no sensitive data
+try {
+  await client.play({ uri });
+} catch (error) {
+  logger.error("Playback failed:", error); // Detailed log to stderr
+  throw new Error("Failed to start playback. Please check the track URI and try again.");
+}
+
+// ❌ BAD - Exposes internal details
+catch (error) {
+  throw new Error(JSON.stringify(error)); // May contain tokens, paths, etc.
+}
+```
+
+### Environment Variables & Secrets
+
+#### Development
+- **Use `.env` file** for local development only
+- **Never commit `.env`**: Ensure it's in `.gitignore`
+- **Use `.env.example`** with placeholder values for documentation
+
+#### Production (MCP Client Config)
+- **Pass secrets via `env` field** in MCP config
+- **Never hardcode secrets** in source code
+- **Never bundle `.env`** in npm package (excluded via `files` field in package.json)
+
+#### Example: Safe Environment Variable Usage
+```typescript
+// ✅ GOOD - Read from environment
+const clientId = process.env.SPOTIFY_CLIENT_ID;
+if (!clientId) {
+  throw new Error("Missing SPOTIFY_CLIENT_ID environment variable");
+}
+
+// ❌ BAD - Hardcoded secret
+const clientId = "abc123def456"; // NEVER DO THIS
+```
+
+### Dependency Security
+
+#### Regular Audits
+- **Run `npm audit`** before releases
+- **Fix high/critical vulnerabilities** immediately
+- **Evaluate moderate vulnerabilities** based on actual risk to this project
+- **Document accepted risks** in package.json or security notes
+
+#### Dev vs Production Dependencies
+- **Dev dependency vulnerabilities** are lower risk (don't affect production)
+- **Prioritize production dependencies** for security updates
+- **Review transitive dependencies** for known vulnerabilities
+
+#### Example: Dependency Management
+```bash
+# Before release
+npm audit --audit-level=high
+
+# Fix automatically if possible
+npm audit fix
+
+# For breaking changes, evaluate risk vs. benefit
+npm audit fix --force  # Use with caution
+```
+
+### Rate Limiting & DoS Prevention
+
+#### OAuth Callback Server
+- **Maximum 5 requests** per OAuth flow
+- **5-minute timeout**: Auto-close if no callback received
+- **Localhost-only**: Reject requests from non-localhost addresses
+
+#### API Calls
+- **Respect Spotify rate limits**: Handle 429 responses with exponential backoff
+- **Cache frequently accessed data**: User profile, device list
+- **Batch requests** when possible to reduce API calls
+
+### Code Review Checklist
+
+Before committing code, verify:
+- [ ] No secrets or tokens in source code or logs
+- [ ] All user inputs validated with Zod schemas
+- [ ] No shell command injection risks (use `spawn`, not `exec`)
+- [ ] HTML output properly escaped
+- [ ] Error messages don't expose sensitive data
+- [ ] New dependencies audited for vulnerabilities
+- [ ] OAuth flows use cryptographically secure randomness
+- [ ] Token files created with appropriate permissions
+- [ ] Tests verify security properties (input validation, error handling)
+
+### Security Testing
+
+#### Manual Testing
+- Test with malicious inputs (SQL injection attempts, XSS payloads, shell metacharacters)
+- Verify token files have correct permissions: `ls -la ~/.spotify-mcp/`
+- Check logs don't contain sensitive data when `LOG_LEVEL=debug`
+- Test OAuth flow timeout and rate limiting
+
+#### Automated Testing
+- Unit tests for input validation (reject invalid URIs, volumes, etc.)
+- Tests for HTML escaping in OAuth callbacks
+- Tests that tokens are never logged
+- Integration tests for token refresh logic
 
 ## Token Usage & Model Efficiency
 

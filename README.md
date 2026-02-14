@@ -47,7 +47,7 @@ The Spotify MCP Server bridges the gap between AI assistants and Spotify, allowi
 ## Features
 
 ### Current Features
-- **Authentication & Authorization**: OAuth 2.0 flow with PKCE for secure Spotify API access
+- **Authentication & Authorization**: OAuth 2.0 Authorization Code flow for secure Spotify API access
 - **Playback Control**: Play, pause, skip, adjust volume, and control playback across devices
 - **Search**: Find tracks, albums, artists, and playlists
 - **Library Management**: Access and manage saved tracks, albums, and playlists
@@ -548,19 +548,21 @@ npm run lint:fix    # Auto-fix linting issues
 
 ## Authentication Flow
 
-The server handles Spotify's OAuth 2.0 authentication with PKCE:
+The server uses Spotify's OAuth 2.0 Authorization Code flow:
 
 1. First request triggers the auth flow
-2. User is redirected to Spotify login
-3. After authorization, tokens are stored securely
-4. Tokens are automatically refreshed when expired
+2. User is redirected to Spotify login with secure state parameter for CSRF protection
+3. After authorization, tokens are exchanged using client_secret
+4. Tokens are stored securely in `~/.spotify-mcp/tokens.json` with 0600 permissions
+5. Tokens are automatically refreshed when expired
 
 ## Security
 
-- OAuth tokens are stored securely and never logged
-- PKCE (Proof Key for Code Exchange) is used for enhanced security
-- Client secrets are kept in environment variables
+- OAuth tokens are stored securely with restricted file permissions (0600) and never logged
+- Cryptographically secure state parameter prevents CSRF attacks
+- Client secrets are kept in environment variables, never in source code
 - All API requests use HTTPS
+- Uses Authorization Code flow appropriate for confidential server applications
 
 ## Contributing
 

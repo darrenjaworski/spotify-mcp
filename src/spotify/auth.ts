@@ -1,10 +1,12 @@
 /**
- * Spotify OAuth 2.0 authentication with PKCE
+ * Spotify OAuth 2.0 authentication using Authorization Code flow
+ * Uses client_secret for secure server-to-server authentication
  */
 
 import fs from "fs/promises";
 import path from "path";
 import os from "os";
+import crypto from "crypto";
 import SpotifyWebApi from "spotify-web-api-node";
 import type { SpotifyCredentials, StoredTokens } from "../types.js";
 import { logger } from "../utils/logger.js";
@@ -13,17 +15,26 @@ const TOKEN_DIR = path.join(os.homedir(), ".spotify-mcp");
 const TOKEN_FILE = path.join(TOKEN_DIR, "tokens.json");
 
 /**
- * Generate PKCE code verifier and challenge
- * Note: Currently unused as spotify-web-api-node doesn't support PKCE directly
- * Keeping for future implementation if needed
+ * Escape HTML special characters to prevent XSS attacks
  */
-/*
-function generatePKCE() {
-  const verifier = crypto.randomBytes(32).toString("base64url");
-  const challenge = crypto.createHash("sha256").update(verifier).digest("base64url");
-  return { verifier, challenge };
+function escapeHtml(str: string): string {
+  const htmlEscapeMap: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return str.replace(/[&<>"']/g, (char) => htmlEscapeMap[char] || char);
 }
-*/
+
+/**
+ * Note: This server uses the Authorization Code flow with client_secret,
+ * which is the appropriate flow for confidential server applications.
+ * PKCE is recommended for public clients (SPAs, mobile apps) that cannot
+ * securely store a client_secret. Since this is a server-side application
+ * with secure credential storage, the standard flow is both secure and correct.
+ */
 
 /**
  * Get Spotify credentials from environment
@@ -135,7 +146,8 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
     "user-read-private",
   ];
 
-  const state = "random-state-" + Math.random().toString(36).substring(7);
+  // Generate cryptographically secure state parameter for CSRF protection
+  const state = crypto.randomBytes(32).toString('hex');
   const authorizeURL = client.createAuthorizeURL(scopes, state);
 
   logger.info("Starting OAuth flow...");
@@ -144,10 +156,32 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
   return new Promise((resolve, reject) => {
     // Import http dynamically to avoid issues
     import("http").then(({ default: http }) => {
+      let requestCount = 0;
+      const MAX_REQUESTS = 5;
+      let serverClosed = false;
+
       const server = http.createServer(async (req, res) => {
+        // Rate limiting: reject after max requests
+        requestCount++;
+        if (requestCount > MAX_REQUESTS) {
+          logger.warn("OAuth callback server: too many requests, rejecting");
+          res.writeHead(429, { "Content-Type": "text/html; charset=utf-8" });
+          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>Too Many Requests</h1></body></html>");
+          return;
+        }
+
+        // Security: only accept requests from localhost
+        const remoteAddress = req.socket.remoteAddress;
+        if (remoteAddress && !['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(remoteAddress)) {
+          logger.warn(`OAuth callback server: rejected request from ${remoteAddress}`);
+          res.writeHead(403, { "Content-Type": "text/html; charset=utf-8" });
+          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>Forbidden</h1></body></html>");
+          return;
+        }
+
         if (!req.url?.startsWith("/callback")) {
-          res.writeHead(404);
-          res.end("Not found");
+          res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
+          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>Not Found</h1></body></html>");
           return;
         }
 
@@ -157,24 +191,24 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
         const error = url.searchParams.get("error");
 
         if (error) {
-          res.writeHead(200, { "Content-Type": "text/html" });
-          res.end(`<html><body><h1>Authorization failed</h1><p>${error}</p></body></html>`);
+          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+          res.end(`<html><head><meta charset="utf-8"></head><body><h1>Authorization failed</h1><p>${escapeHtml(error)}</p></body></html>`);
           server.close();
           reject(new Error(`Authorization failed: ${error}`));
           return;
         }
 
         if (returnedState !== state) {
-          res.writeHead(400, { "Content-Type": "text/html" });
-          res.end("<html><body><h1>State mismatch</h1></body></html>");
+          res.writeHead(400, { "Content-Type": "text/html; charset=utf-8" });
+          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>State mismatch</h1><p>Invalid state parameter. Please try again.</p></body></html>");
           server.close();
           reject(new Error("State mismatch in OAuth callback"));
           return;
         }
 
         if (!code) {
-          res.writeHead(400, { "Content-Type": "text/html" });
-          res.end("<html><body><h1>No authorization code received</h1></body></html>");
+          res.writeHead(400, { "Content-Type": "text/html; charset=utf-8" });
+          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>No authorization code received</h1><p>The authorization process was incomplete. Please try again.</p></body></html>");
           server.close();
           reject(new Error("No authorization code received"));
           return;
@@ -202,31 +236,55 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
           resolve(tokens);
         } catch (error) {
           logger.error("Error exchanging code for tokens:", error);
-          res.writeHead(500, { "Content-Type": "text/html" });
-          res.end("<html><body><h1>Error exchanging authorization code</h1></body></html>");
+          res.writeHead(500, { "Content-Type": "text/html; charset=utf-8" });
+          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>Error exchanging authorization code</h1><p>An error occurred during authentication. Please try again.</p></body></html>");
           server.close();
           reject(error);
         }
       });
 
+      // Set timeout to automatically close server after 5 minutes
+      const serverTimeout = setTimeout(() => {
+        if (!serverClosed) {
+          logger.warn("OAuth callback server timeout - closing server");
+          server.close();
+          serverClosed = true;
+          reject(new Error("OAuth flow timeout - no callback received within 5 minutes"));
+        }
+      }, 5 * 60 * 1000); // 5 minutes
+
+      // Clear timeout when server closes
+      server.on('close', () => {
+        clearTimeout(serverTimeout);
+        serverClosed = true;
+      });
+
       server.listen(3000, "127.0.0.1", () => {
         logger.info("OAuth callback server listening on http://127.0.0.1:3000");
+        logger.info("Authorization timeout: 5 minutes");
         logger.info("Opening browser for authorization...");
 
-        // Open browser
-        import("child_process").then(({ exec }) => {
+        // Open browser (safely without shell injection)
+        import("child_process").then(({ spawn }) => {
           const platform = process.platform;
-          const command =
-            platform === "darwin"
-              ? `open "${authorizeURL}"`
-              : platform === "win32"
-              ? `start "${authorizeURL}"`
-              : `xdg-open "${authorizeURL}"`;
+          let command: string;
+          let args: string[];
 
-          exec(command, (error) => {
-            if (error) {
-              logger.warn("Could not open browser automatically. Please visit:", authorizeURL);
-            }
+          if (platform === "darwin") {
+            command = "open";
+            args = [authorizeURL];
+          } else if (platform === "win32") {
+            command = "cmd";
+            args = ["/c", "start", "", authorizeURL];
+          } else {
+            command = "xdg-open";
+            args = [authorizeURL];
+          }
+
+          const child = spawn(command, args, { shell: false });
+
+          child.on("error", () => {
+            logger.warn("Could not open browser automatically. Please visit:", authorizeURL);
           });
         });
       });

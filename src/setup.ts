@@ -7,13 +7,10 @@
 
 import * as readline from 'readline/promises';
 import { stdin as input, stdout as output } from 'process';
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import { spawn } from 'child_process';
 import { writeFile } from 'fs/promises';
 import { homedir } from 'os';
 import { join } from 'path';
-
-const execAsync = promisify(exec);
 
 // ANSI color codes for better terminal output
 const colors = {
@@ -55,21 +52,36 @@ function warning(message: string) {
 async function openBrowser(url: string): Promise<void> {
   const platform = process.platform;
   let command: string;
+  let args: string[];
 
   if (platform === 'darwin') {
-    command = `open "${url}"`;
+    command = 'open';
+    args = [url];
   } else if (platform === 'win32') {
-    command = `start "${url}"`;
+    command = 'cmd';
+    args = ['/c', 'start', '', url];
   } else {
-    command = `xdg-open "${url}"`;
+    command = 'xdg-open';
+    args = [url];
   }
 
-  try {
-    await execAsync(command);
-    success(`Opened browser to: ${url}`);
-  } catch (err) {
-    warning(`Could not open browser automatically. Please visit: ${url}`);
-  }
+  return new Promise((resolve) => {
+    const child = spawn(command, args, { shell: false });
+
+    child.on('error', () => {
+      warning(`Could not open browser automatically. Please visit: ${url}`);
+      resolve();
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        success(`Opened browser to: ${url}`);
+      } else {
+        warning(`Could not open browser automatically. Please visit: ${url}`);
+      }
+      resolve();
+    });
+  });
 }
 
 async function prompt(rl: readline.Interface, question: string): Promise<string> {
