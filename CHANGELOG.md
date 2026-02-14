@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 - Add npm version, downloads, and license badges to README
+- Add changelog maintenance workflow to CLAUDE.md
+  - Guidelines for when to update changelog
+  - Keep a Changelog format instructions
+  - Pre-commit checklist for changelog updates
 
 ## [0.2.0] - 2026-02-14
 

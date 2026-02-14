@@ -101,6 +101,50 @@ npm run lint           # Check code style
 npm run lint:fix       # Auto-fix linting issues
 ```
 
+### Changelog Maintenance
+
+**IMPORTANT**: Always update CHANGELOG.md BEFORE making commits for any user-facing changes.
+
+Follow the [Keep a Changelog](https://keepachangelog.com/) format:
+- Add entries under the `[Unreleased]` section at the top
+- Group changes by type: Features, Bug Fixes, Security, Documentation, etc.
+- Write clear, user-focused descriptions (not just commit messages)
+- Reference issues/PRs where relevant
+
+**When to update the changelog:**
+- ✅ New features or enhancements
+- ✅ Bug fixes
+- ✅ Breaking changes (mark as **BREAKING**)
+- ✅ Security fixes
+- ✅ Deprecations
+- ❌ Internal refactoring (unless it affects users)
+- ❌ Documentation typo fixes
+- ❌ Dependency updates (unless they fix bugs or add features)
+
+**Before committing:**
+1. Update CHANGELOG.md with your changes under `[Unreleased]`
+2. Stage the changelog: `git add CHANGELOG.md`
+3. Make your commit (include all changes + changelog)
+
+**Example changelog entry:**
+```markdown
+## [Unreleased]
+
+### Features
+- **Playback**: Add support for playing albums and playlists
+  - Albums use `context_uri` for full album playback
+  - Improved response messages to indicate content type
+
+### Bug Fixes
+- Fix volume control not working on some devices
+```
+
+**On release** (when publishing to npm):
+1. Move `[Unreleased]` entries to a new version section (e.g., `[0.3.0]`)
+2. Add the release date
+3. Update comparison links at the bottom
+4. Commit the changelog update with the version bump
+
 ### Local Testing with MCP Inspector
 ```bash
 npx @modelcontextprotocol/inspector node build/index.js
