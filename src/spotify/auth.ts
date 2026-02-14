@@ -5,7 +5,6 @@
 import fs from "fs/promises";
 import path from "path";
 import os from "os";
-import crypto from "crypto";
 import SpotifyWebApi from "spotify-web-api-node";
 import type { SpotifyCredentials, StoredTokens } from "../types.js";
 import { logger } from "../utils/logger.js";
@@ -15,12 +14,16 @@ const TOKEN_FILE = path.join(TOKEN_DIR, "tokens.json");
 
 /**
  * Generate PKCE code verifier and challenge
+ * Note: Currently unused as spotify-web-api-node doesn't support PKCE directly
+ * Keeping for future implementation if needed
  */
+/*
 function generatePKCE() {
   const verifier = crypto.randomBytes(32).toString("base64url");
   const challenge = crypto.createHash("sha256").update(verifier).digest("base64url");
   return { verifier, challenge };
 }
+*/
 
 /**
  * Get Spotify credentials from environment
@@ -113,8 +116,7 @@ export async function refreshAccessToken(
 
 /**
  * Start OAuth flow (for initial authentication)
- * This is a placeholder - actual implementation would need to handle browser opening
- * and callback server for the authorization code
+ * Opens browser for user authorization and handles callback
  */
 export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredTokens> {
   const scopes = [
@@ -133,22 +135,113 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
     "user-read-private",
   ];
 
-  // Generate PKCE for future use
-  generatePKCE();
-
-  // Store state for later use (in real implementation)
   const state = "random-state-" + Math.random().toString(36).substring(7);
   const authorizeURL = client.createAuthorizeURL(scopes, state);
 
-  // In a real implementation, this would:
-  // 1. Open the browser to authorizeURL
-  // 2. Start a local server to receive the callback
-  // 3. Exchange the authorization code for tokens using PKCE
-  // 4. Save and return the tokens
+  logger.info("Starting OAuth flow...");
+  logger.info(`Authorization URL: ${authorizeURL}`);
 
-  throw new Error(
-    `OAuth flow not fully implemented yet. Please visit: ${authorizeURL}\n\n` +
-    "After authorization, you'll need to manually exchange the code for tokens.\n" +
-    "This will be automated in a future version."
-  );
+  return new Promise((resolve, reject) => {
+    // Import http dynamically to avoid issues
+    import("http").then(({ default: http }) => {
+      const server = http.createServer(async (req, res) => {
+        if (!req.url?.startsWith("/callback")) {
+          res.writeHead(404);
+          res.end("Not found");
+          return;
+        }
+
+        const url = new URL(req.url, "http://localhost:3000");
+        const code = url.searchParams.get("code");
+        const returnedState = url.searchParams.get("state");
+        const error = url.searchParams.get("error");
+
+        if (error) {
+          res.writeHead(200, { "Content-Type": "text/html" });
+          res.end(`<html><body><h1>Authorization failed</h1><p>${error}</p></body></html>`);
+          server.close();
+          reject(new Error(`Authorization failed: ${error}`));
+          return;
+        }
+
+        if (returnedState !== state) {
+          res.writeHead(400, { "Content-Type": "text/html" });
+          res.end("<html><body><h1>State mismatch</h1></body></html>");
+          server.close();
+          reject(new Error("State mismatch in OAuth callback"));
+          return;
+        }
+
+        if (!code) {
+          res.writeHead(400, { "Content-Type": "text/html" });
+          res.end("<html><body><h1>No authorization code received</h1></body></html>");
+          server.close();
+          reject(new Error("No authorization code received"));
+          return;
+        }
+
+        try {
+          // Exchange code for tokens
+          logger.info("Exchanging authorization code for tokens");
+          const data = await client.authorizationCodeGrant(code);
+
+          const tokens: StoredTokens = {
+            accessToken: data.body.access_token,
+            refreshToken: data.body.refresh_token,
+            expiresAt: Date.now() + data.body.expires_in * 1000,
+          };
+
+          await saveTokens(tokens);
+
+          res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+          res.end(
+            "<html><head><meta charset=\"utf-8\"></head><body><h1>✓ Authorization successful!</h1><p>You can close this window and return to your application.</p></body></html>"
+          );
+
+          server.close();
+          resolve(tokens);
+        } catch (error) {
+          logger.error("Error exchanging code for tokens:", error);
+          res.writeHead(500, { "Content-Type": "text/html" });
+          res.end("<html><body><h1>Error exchanging authorization code</h1></body></html>");
+          server.close();
+          reject(error);
+        }
+      });
+
+      server.listen(3000, () => {
+        logger.info("OAuth callback server listening on http://localhost:3000");
+        logger.info("Opening browser for authorization...");
+
+        // Open browser
+        import("child_process").then(({ exec }) => {
+          const platform = process.platform;
+          const command =
+            platform === "darwin"
+              ? `open "${authorizeURL}"`
+              : platform === "win32"
+              ? `start "${authorizeURL}"`
+              : `xdg-open "${authorizeURL}"`;
+
+          exec(command, (error) => {
+            if (error) {
+              logger.warn("Could not open browser automatically. Please visit:", authorizeURL);
+            }
+          });
+        });
+      });
+
+      server.on("error", (error: any) => {
+        if (error.code === "EADDRINUSE") {
+          reject(
+            new Error(
+              "Port 3000 is already in use. Please close any application using port 3000 and try again."
+            )
+          );
+        } else {
+          reject(error);
+        }
+      });
+    });
+  });
 }

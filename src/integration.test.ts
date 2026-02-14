@@ -47,11 +47,6 @@ describe('MCP Server Integration Tests', () => {
   });
 
   it('should register tools with Zod schemas', () => {
-    const server = new McpServer(
-      { name: 'test', version: '1.0.0' },
-      { capabilities: { tools: {} } }
-    );
-
     // Test that Zod schemas work correctly
     const schema = {
       query: z.string().min(1).describe('Search query'),
@@ -65,11 +60,6 @@ describe('MCP Server Integration Tests', () => {
   });
 
   it('should handle optional and required parameters correctly', () => {
-    const server = new McpServer(
-      { name: 'test', version: '1.0.0' },
-      { capabilities: { tools: {} } }
-    );
-
     // Test optional parameter
     const optionalSchema = z.string().optional();
     expect(optionalSchema.isOptional()).toBe(true);
