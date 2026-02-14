@@ -1,5 +1,9 @@
 # Spotify MCP Server
 
+[![npm version](https://img.shields.io/npm/v/@darrenjaws/spotify-mcp)](https://www.npmjs.com/package/@darrenjaws/spotify-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/@darrenjaws/spotify-mcp)](https://www.npmjs.com/package/@darrenjaws/spotify-mcp)
+[![license](https://img.shields.io/npm/l/@darrenjaws/spotify-mcp)](https://github.com/darrenjaworski/spotify-mcp/blob/main/LICENSE)
+
 A Model Context Protocol (MCP) server that provides seamless integration with Spotify's API, enabling AI assistants to control and interact with Spotify playback, manage playlists, search for music, and retrieve user listening data.
 
 ## Table of Contents
