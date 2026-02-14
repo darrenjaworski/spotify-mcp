@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed non-existent `spotify_get_recommendations` from documentation
   - Removed non-existent `spotify_get_saved_tracks` from documentation
   - Added tool counts per category for clarity
+- **CI/CD**: Fix ESLint configuration for ESLint v9
+  - Add eslint.config.mjs with flat config format
+  - Install typescript-eslint package
+  - Configure rules per project TypeScript philosophy (allow 'any')
+  - Fix failing CI linting step
 
 ## [0.2.0] - 2026-02-14
 
