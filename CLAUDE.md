@@ -100,7 +100,6 @@ npm run lint && npm test
 npm run lint           # Check code style (run this first!)
 npm test               # Run all tests
 npm run test:watch     # Run tests in watch mode
-npm run test:coverage  # Generate coverage report
 
 # Before committing
 npm run lint && npm test  # Ensure both pass

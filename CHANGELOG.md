@@ -12,8 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Runs on push to main and pull requests
   - Tests on Node.js 18.x, 20.x, and 22.x
   - Linting, build verification, and test execution
-  - Test coverage reporting with Codecov integration
   - Detects uncommitted changes after build
+
+### Removed
+- **Coverage reporting**: Removed coverage job from CI and related tooling
+  - Coverage reporting is not meaningful for MCP servers (stdio-based, requires external APIs)
+  - Removed `test:coverage` script from package.json
+  - Removed `@vitest/coverage-v8` dependency
+  - Removed coverage configuration from vitest.config.ts
+  - Removed coverage job from CI workflow
 
 ### Documentation
 - Add npm version, downloads, and license badges to README
