@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Keep a Changelog format instructions
   - Pre-commit checklist for changelog updates
 
+### Fixed
+- **Documentation**: Correct tool count in README (14 tools, not 16)
+  - Removed non-existent `spotify_get_recommendations` from documentation
+  - Removed non-existent `spotify_get_saved_tracks` from documentation
+  - Added tool counts per category for clarity
+
 ## [0.2.0] - 2026-02-14
 
 ### Features

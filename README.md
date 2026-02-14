@@ -318,28 +318,26 @@ Once configured, you can interact with Spotify through natural language:
 - "Search for songs by The Beatles"
 - "Add this song to my liked songs"
 
-## Available Tools (16 total)
+## Available Tools (14 total)
 
-### Playback
+### Playback (6 tools)
 - `spotify_play` - Start or resume playback of tracks, albums, playlists, or artists
 - `spotify_pause` - Pause playback
 - `spotify_next` - Skip to next track
 - `spotify_previous` - Skip to previous track
-- `spotify_set_volume` - Adjust volume level
+- `spotify_set_volume` - Adjust volume level (0-100)
 - `spotify_get_playback_state` - Get current playback information
 
-### Search & Discovery
+### Search (1 tool)
 - `spotify_search` - Search for tracks, albums, artists, or playlists
-- `spotify_get_recommendations` - Get song recommendations based on seeds
 
-### Library Management
+### Playlist Management (4 tools)
 - `spotify_get_playlists` - Get user's playlists
 - `spotify_get_playlist` - Get specific playlist details
 - `spotify_create_playlist` - Create a new playlist
 - `spotify_add_to_playlist` - Add tracks to a playlist
-- `spotify_get_saved_tracks` - Get user's saved tracks
 
-### User Data
+### User Data (3 tools)
 - `spotify_get_user_profile` - Get user profile information
 - `spotify_get_top_items` - Get user's top artists or tracks
 - `spotify_get_recently_played` - Get recently played tracks
