@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **CI/CD**: GitHub Actions workflow for automated testing and code quality checks
+  - Runs on push to main and pull requests
+  - Tests on Node.js 18.x, 20.x, and 22.x
+  - Linting, build verification, and test execution
+  - Test coverage reporting with Codecov integration
+  - Detects uncommitted changes after build
+
 ### Documentation
 - Add npm version, downloads, and license badges to README
 - Add changelog maintenance workflow to CLAUDE.md
