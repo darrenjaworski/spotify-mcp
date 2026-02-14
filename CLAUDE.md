@@ -89,10 +89,21 @@ npm run clean          # Remove build directory
 ```
 
 ### Testing
+
+**IMPORTANT**: Always run linting before tests to catch code quality issues early.
+
 ```bash
+# Recommended: Run lint + tests together
+npm run lint && npm test
+
+# Individual commands
+npm run lint           # Check code style (run this first!)
 npm test               # Run all tests
 npm run test:watch     # Run tests in watch mode
 npm run test:coverage  # Generate coverage report
+
+# Before committing
+npm run lint && npm test  # Ensure both pass
 ```
 
 ### Linting
@@ -100,6 +111,8 @@ npm run test:coverage  # Generate coverage report
 npm run lint           # Check code style
 npm run lint:fix       # Auto-fix linting issues
 ```
+
+**Best Practice**: Run `npm run lint` before running tests to catch style issues first.
 
 ### Changelog Maintenance
 

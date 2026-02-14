@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Guidelines for when to update changelog
   - Keep a Changelog format instructions
   - Pre-commit checklist for changelog updates
+- Update CLAUDE.md testing workflow to emphasize running linter before tests
+  - Added recommended command: `npm run lint && npm test`
+  - Best practice: lint first to catch style issues early
 
 ### Fixed
 - **Documentation**: Correct tool count in README (14 tools, not 16)
