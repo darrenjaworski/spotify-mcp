@@ -11,6 +11,8 @@ A Model Context Protocol (MCP) server that provides seamless integration with Sp
 - [Quick Start](#quick-start)
 - [Installation](#installation)
 - [Configuration](#configuration)
+  - [Automated Setup](#automated-setup-recommended)
+  - [Manual Setup](#manual-setup)
   - [Spotify App Setup](#spotify-app-setup)
   - [Environment Variables](#environment-variables)
   - [MCP Configuration](#mcp-configuration)
@@ -56,31 +58,43 @@ See [ROADMAP.md](ROADMAP.md) for detailed feature timeline and future enhancemen
 
 ## Quick Start
 
-The fastest way to get started is using npx:
+The **fastest and easiest** way to get started is using the interactive setup wizard:
 
 ```bash
-# No installation required - just configure in Claude Desktop
-# See MCP Configuration section below
+# Run the setup wizard (no installation required!)
+npx @darrenjaws/spotify-mcp setup
 ```
 
-Or install globally:
+The wizard will:
+- ✅ Guide you through creating a Spotify Developer app
+- ✅ Open your browser to the right pages automatically
+- ✅ Validate your credentials as you enter them
+- ✅ Generate the correct configuration for your environment
+- ✅ Give you copy-paste ready configs for Claude Desktop or Claude Code
 
-```bash
-npm install -g @darrenjaws/spotify-mcp
-```
+**That's it!** The whole setup takes about 2 minutes.
 
 ## Installation
 
 ### Option 1: NPM (Recommended)
 
-**Global Installation:**
+**Interactive Setup (Easiest):**
 ```bash
-npm install -g @darrenjaws/spotify-mcp
+# No installation required - run the setup wizard
+npx @darrenjaws/spotify-mcp setup
 ```
 
-**Using npx (no installation required):**
+**Or install globally first:**
 ```bash
-# Use directly via npx - configured in Claude Desktop config
+npm install -g @darrenjaws/spotify-mcp
+
+# Then run setup
+spotify-mcp setup
+```
+
+**Using npx without setup wizard:**
+```bash
+# Skip to manual configuration (see Configuration section below)
 npx -y @darrenjaws/spotify-mcp
 ```
 
@@ -98,11 +112,32 @@ npm install
 
 # Build the project
 npm run build
+
+# Run the setup wizard
+npm run build && node build/bin.js setup
 ```
 
 ## Configuration
 
-### Spotify App Setup
+### Automated Setup (Recommended)
+
+Use the interactive setup wizard for the easiest configuration experience:
+
+```bash
+npx @darrenjaws/spotify-mcp setup
+```
+
+The wizard walks you through:
+1. Creating a Spotify Developer app
+2. Getting your Client ID and Secret
+3. Choosing your configuration method (Claude Desktop, Claude Code, or development)
+4. Generating the correct config file
+
+### Manual Setup
+
+If you prefer to configure manually or need to update credentials:
+
+#### Spotify App Setup
 
 1. Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
 2. Create a new application

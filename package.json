@@ -4,10 +4,10 @@
   "description": "Model Context Protocol server for Spotify integration",
   "type": "module",
   "bin": {
-    "spotify-mcp": "build/index.js"
+    "spotify-mcp": "build/bin.js"
   },
   "scripts": {
-    "build": "tsc && chmod +x build/index.js",
+    "build": "tsc && chmod +x build/bin.js",
     "dev": "tsc --watch",
     "clean": "rm -rf build",
     "prepare": "npm run build",
