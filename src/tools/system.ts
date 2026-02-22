@@ -4,6 +4,7 @@
 
 import { spawn } from "child_process";
 import { logger } from "../utils/logger.js";
+import { getAuthenticatedClient } from "../spotify/client.js";
 import type { ToolResponse, OpenSpotifyArgs } from "../types.js";
 
 const SUPPORTED_PLATFORMS = ["darwin", "win32", "linux"] as const;
@@ -114,11 +115,12 @@ export async function openSpotify(args: OpenSpotifyArgs): Promise<ToolResponse> 
   const running = await isSpotifyRunning();
 
   if (running) {
+    const deviceResult = await activateDevice();
     return {
       content: [
         {
           type: "text",
-          text: "Spotify is already running.",
+          text: `Spotify is already running. ${deviceResult}`,
         },
       ],
     };
@@ -145,14 +147,53 @@ export async function openSpotify(args: OpenSpotifyArgs): Promise<ToolResponse> 
     await sleep(args.wait_seconds);
   }
 
+  // Poll for a device and activate it so playback commands work immediately
+  const deviceResult = await activateDevice();
+
+  const waitMsg = args.wait_seconds
+    ? ` Waited ${args.wait_seconds} seconds for it to initialize.`
+    : "";
+
   return {
     content: [
       {
         type: "text",
-        text: args.wait_seconds
-          ? `Spotify opened. Waited ${args.wait_seconds} seconds for it to initialize.`
-          : "Spotify opened.",
+        text: `Spotify opened.${waitMsg} ${deviceResult}`,
       },
     ],
   };
+}
+
+const DEVICE_POLL_INTERVAL_S = 2;
+const DEVICE_POLL_MAX_ATTEMPTS = 5;
+
+async function activateDevice(): Promise<string> {
+  try {
+    const client = await getAuthenticatedClient();
+
+    for (let attempt = 0; attempt < DEVICE_POLL_MAX_ATTEMPTS; attempt++) {
+      const response: any = await client.getMyDevices();
+      const devices: any[] = response.body?.devices ?? [];
+
+      if (devices.length > 0) {
+        const device = devices[0];
+        if (!device.is_active) {
+          await client.transferMyPlayback([device.id]);
+          logger.info(`Activated device: ${device.name}`);
+        }
+        return `Device active: ${device.name}.`;
+      }
+
+      logger.debug(
+        `No devices found (attempt ${attempt + 1}/${DEVICE_POLL_MAX_ATTEMPTS}), retrying...`,
+      );
+      await sleep(DEVICE_POLL_INTERVAL_S);
+    }
+
+    logger.warn("No Spotify devices found after polling");
+    return "Warning: No Spotify device found. You may need to interact with Spotify before playback commands will work.";
+  } catch (error: any) {
+    logger.error("Failed to activate device:", error);
+    return "Warning: Could not auto-activate device. Playback commands may require manual interaction with Spotify.";
+  }
 }

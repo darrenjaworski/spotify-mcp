@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-02-22
+
+### Features
+- **System**: Auto-activate Spotify device in `spotify_open`
+  - Polls for available devices after opening Spotify (up to ~10 seconds)
+  - Transfers playback to the first available device so playback commands work immediately
+  - Also activates device when Spotify is already running but has no active device
+  - Eliminates `NO_ACTIVE_DEVICE` errors after opening Spotify
+
 ## [0.3.0] - 2026-02-22
 
 ### Features
@@ -122,7 +131,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/darrenjaworski/spotify-mcp/compare/d0f4001...v0.1.0
