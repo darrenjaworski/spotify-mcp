@@ -64,3 +64,7 @@ export interface TopItemsArgs {
 export interface RecentlyPlayedArgs {
   limit?: number;
 }
+
+export interface OpenSpotifyArgs {
+  wait_seconds?: number;
+}

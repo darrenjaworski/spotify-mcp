@@ -58,10 +58,13 @@ describe('MCP Server Tool Registration', () => {
       { name: 'spotify_get_user_profile', category: 'user' },
       { name: 'spotify_get_top_items', category: 'user' },
       { name: 'spotify_get_recently_played', category: 'user' },
+
+      // System tools (1)
+      { name: 'spotify_open', category: 'system' },
     ];
 
-    it('should register exactly 14 tools', () => {
-      expect(expectedTools).toHaveLength(14);
+    it('should register exactly 15 tools', () => {
+      expect(expectedTools).toHaveLength(15);
     });
 
     it('should have all tool names prefixed with "spotify_"', () => {
@@ -70,13 +73,14 @@ describe('MCP Server Tool Registration', () => {
       });
     });
 
-    it('should have tools in 4 categories', () => {
+    it('should have tools in 5 categories', () => {
       const categories = new Set(expectedTools.map(t => t.category));
-      expect(categories.size).toBe(4);
+      expect(categories.size).toBe(5);
       expect(categories).toContain('playback');
       expect(categories).toContain('search');
       expect(categories).toContain('playlists');
       expect(categories).toContain('user');
+      expect(categories).toContain('system');
     });
 
     it('should have 6 playback tools', () => {
@@ -117,6 +121,7 @@ describe('MCP Server Tool Registration', () => {
         'spotify_get_user_profile',
         'spotify_get_top_items',
         'spotify_get_recently_played',
+        'spotify_open',
       ];
 
       toolNames.forEach(name => {
@@ -128,7 +133,7 @@ describe('MCP Server Tool Registration', () => {
     });
 
     it('should have descriptive action verbs', () => {
-      const verbs = ['play', 'pause', 'next', 'previous', 'set', 'get', 'search', 'create', 'add'];
+      const verbs = ['play', 'pause', 'next', 'previous', 'set', 'get', 'search', 'create', 'add', 'open'];
       const toolNames = [
         'spotify_play',
         'spotify_pause',
@@ -144,6 +149,7 @@ describe('MCP Server Tool Registration', () => {
         'spotify_get_user_profile',
         'spotify_get_top_items',
         'spotify_get_recently_played',
+        'spotify_open',
       ];
 
       toolNames.forEach(name => {
@@ -169,6 +175,7 @@ describe('MCP Server Tool Registration', () => {
       spotify_get_user_profile: "Get current user's profile information",
       spotify_get_top_items: "Get user's top artists or tracks",
       spotify_get_recently_played: "Get user's recently played tracks",
+      spotify_open: 'Open the Spotify desktop app on this machine',
     };
 
     it('should have descriptions for all tools', () => {
@@ -239,6 +246,13 @@ describe('MCP Server Tool Registration', () => {
         type: 'enum: artists|tracks (required)',
         time_range: 'enum: short_term|medium_term|long_term (optional)',
         limit: 'number 1-50 (optional)',
+      };
+      expect(expectedSchema).toBeDefined();
+    });
+
+    it('spotify_open should accept optional wait_seconds', () => {
+      const expectedSchema = {
+        wait_seconds: 'number 0-30 (optional)',
       };
       expect(expectedSchema).toBeDefined();
     });

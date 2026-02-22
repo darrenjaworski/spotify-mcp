@@ -21,7 +21,7 @@ A Model Context Protocol (MCP) server that provides seamless integration with Sp
   - [Environment Variables](#environment-variables)
   - [MCP Configuration](#mcp-configuration)
 - [Usage](#usage)
-- [Available Tools (16 total)](#available-tools-16-total)
+- [Available Tools (15 total)](#available-tools-15-total)
   - [Playback](#playback)
   - [Search & Discovery](#search--discovery)
   - [Library Management](#library-management)
@@ -318,7 +318,7 @@ Once configured, you can interact with Spotify through natural language:
 - "Search for songs by The Beatles"
 - "Add this song to my liked songs"
 
-## Available Tools (14 total)
+## Available Tools (15 total)
 
 ### Playback (6 tools)
 - `spotify_play` - Start or resume playback of tracks, albums, playlists, or artists
@@ -341,6 +341,9 @@ Once configured, you can interact with Spotify through natural language:
 - `spotify_get_user_profile` - Get user profile information
 - `spotify_get_top_items` - Get user's top artists or tracks
 - `spotify_get_recently_played` - Get recently played tracks
+
+### System (1 tool)
+- `spotify_open` - Open the Spotify desktop app (supports macOS, Windows, Linux)
 
 ## Local Development
 
@@ -423,7 +426,7 @@ DEBUG=true npx @modelcontextprotocol/inspector node build/bin.js
 ```
 
 **Benefits:**
-- ✅ Interactive UI to test all 16 tools
+- ✅ Interactive UI to test all 15 tools
 - ✅ See JSON-RPC messages in real-time
 - ✅ No need to configure Claude Desktop during development
 - ✅ Quickly iterate on tool implementations
@@ -516,7 +519,7 @@ npm run test:coverage # Generate coverage report
 
 **Test Coverage:**
 - ✅ 30 tests covering tool registration
-- ✅ Validates all 14 tools are registered correctly
+- ✅ Validates all 15 tools are registered correctly
 - ✅ Verifies tool naming conventions
 - ✅ Checks input schema validation with Zod
 - ✅ Integration tests for MCP server setup

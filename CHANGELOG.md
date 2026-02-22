@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-22
+
+### Features
+- **System**: Add `spotify_open` tool to launch the Spotify desktop app
+  - Detects if Spotify is already running before launching
+  - Supports macOS, Windows, and Linux
+  - Optional `wait_seconds` parameter (0-30) to wait for Spotify to initialize before issuing playback commands
+
 ### Added
 - **CI/CD**: GitHub Actions workflow for automated testing and code quality checks
   - Runs on push to main and pull requests
@@ -114,7 +122,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/darrenjaworski/spotify-mcp/compare/d0f4001...v0.1.0
 [0.0.0]: https://github.com/darrenjaworski/spotify-mcp/releases/tag/d0f4001

@@ -7,6 +7,7 @@ import * as playbackTools from "./tools/playback.js";
 import * as searchTools from "./tools/search.js";
 import * as playlistTools from "./tools/playlists.js";
 import * as userTools from "./tools/user.js";
+import * as systemTools from "./tools/system.js";
 
 // Load environment variables
 dotenv.config();
@@ -200,6 +201,18 @@ server.registerTool(
     },
   },
   async ({ limit }: any) => userTools.getRecentlyPlayed({ limit } as any) as any
+);
+
+// Register system tools
+server.registerTool(
+  "spotify_open",
+  {
+    description: "Open the Spotify desktop app on this machine",
+    inputSchema: {
+      wait_seconds: z.number().min(0).max(30).optional().describe("Seconds to wait after opening for Spotify to initialize (0-30)"),
+    },
+  },
+  async ({ wait_seconds }: any) => systemTools.openSpotify({ wait_seconds } as any) as any
 );
 
 // Handle shutdown signals
