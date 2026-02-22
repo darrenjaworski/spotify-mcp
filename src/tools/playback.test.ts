@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+vi.mock("child_process", () => ({
+  spawnSync: vi.fn().mockReturnValue({ status: 0, stdout: Buffer.from("50\n") }),
+}));
 vi.mock("../spotify/client.js", () => ({
   getAuthenticatedClient: vi.fn(),
 }));
@@ -10,6 +13,7 @@ vi.mock("../spotify/errors.js", () => ({
   }),
 }));
 
+import { spawnSync } from "child_process";
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
 import { play, pause, next, previous, setVolume, getPlaybackState } from "./playback.js";
@@ -25,6 +29,9 @@ describe("playback tools", () => {
       skipToPrevious: vi.fn(),
       setVolume: vi.fn(),
       getMyCurrentPlaybackState: vi.fn(),
+      getMyDevices: vi.fn().mockResolvedValue({
+        body: { devices: [{ name: "My Speaker", type: "Speaker", is_active: true }] },
+      }),
     };
     vi.mocked(getAuthenticatedClient).mockResolvedValue(mockClient);
     vi.clearAllMocks();
@@ -170,6 +177,82 @@ describe("playback tools", () => {
     });
   });
 
+  describe("device validation", () => {
+    it("returns error listing devices when none are active", async () => {
+      mockClient.getMyDevices.mockResolvedValue({
+        body: {
+          devices: [
+            { name: "Living Room", type: "Speaker", is_active: false },
+            { name: "Phone", type: "Smartphone", is_active: false },
+          ],
+        },
+      });
+      const result = await play({});
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain("No active Spotify device");
+      expect(result.content[0].text).toContain("Living Room (Speaker)");
+      expect(result.content[0].text).toContain("Phone (Smartphone)");
+      expect(mockClient.play).not.toHaveBeenCalled();
+    });
+
+    it("returns error when no devices found at all", async () => {
+      mockClient.getMyDevices.mockResolvedValue({
+        body: { devices: [] },
+      });
+      const result = await play({});
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain("No Spotify devices found");
+      expect(mockClient.play).not.toHaveBeenCalled();
+    });
+
+    it("skips check when device_id is explicitly provided", async () => {
+      mockClient.getMyDevices.mockResolvedValue({
+        body: { devices: [] },
+      });
+      const result = await play({ uri: "spotify:track:abc", device_id: "device1" });
+      expect(mockClient.getMyDevices).not.toHaveBeenCalled();
+      expect(mockClient.play).toHaveBeenCalled();
+      expect(result.isError).toBeUndefined();
+    });
+
+    it("proceeds normally when an active device exists", async () => {
+      const result = await play({ uri: "spotify:track:abc" });
+      expect(mockClient.getMyDevices).toHaveBeenCalled();
+      expect(mockClient.play).toHaveBeenCalled();
+      expect(result.isError).toBeUndefined();
+    });
+
+    it("calls handleToolError if getMyDevices throws", async () => {
+      const error = new Error("Device API fail");
+      mockClient.getMyDevices.mockRejectedValue(error);
+      const result = await play({});
+      expect(handleToolError).toHaveBeenCalledWith(error, "spotify_play");
+      expect(result.isError).toBe(true);
+    });
+
+    it("validates device for pause, next, previous, and setVolume", async () => {
+      mockClient.getMyDevices.mockResolvedValue({
+        body: { devices: [] },
+      });
+
+      const pauseResult = await pause({});
+      expect(pauseResult.isError).toBe(true);
+      expect(mockClient.pause).not.toHaveBeenCalled();
+
+      const nextResult = await next({});
+      expect(nextResult.isError).toBe(true);
+      expect(mockClient.skipToNext).not.toHaveBeenCalled();
+
+      const prevResult = await previous({});
+      expect(prevResult.isError).toBe(true);
+      expect(mockClient.skipToPrevious).not.toHaveBeenCalled();
+
+      const volResult = await setVolume({ volume_percent: 50 });
+      expect(volResult.isError).toBe(true);
+      expect(mockClient.setVolume).not.toHaveBeenCalled();
+    });
+  });
+
   describe("getPlaybackState", () => {
     it("returns 'No active playback' when state is empty", async () => {
       mockClient.getMyCurrentPlaybackState.mockResolvedValue({ body: null });
@@ -245,6 +328,76 @@ describe("playback tools", () => {
       const result = await getPlaybackState();
       expect(result.content[0].text).toContain("Podcast Episode 1");
       expect(result.content[0].text).toContain("episode");
+    });
+
+    it("includes system volume on macOS", async () => {
+      const originalPlatform = process.platform;
+      Object.defineProperty(process, "platform", { value: "darwin" });
+      vi.mocked(spawnSync).mockReturnValue({ status: 0, stdout: Buffer.from("72\n") } as any);
+      mockClient.getMyCurrentPlaybackState.mockResolvedValue({
+        body: {
+          is_playing: true,
+          progress_ms: 0,
+          item: {
+            type: "track",
+            name: "Song",
+            duration_ms: 180000,
+            artists: [{ name: "Artist" }],
+            album: { name: "Album" },
+          },
+          device: { name: "Speaker", type: "Speaker", volume_percent: 100 },
+        },
+      });
+      const result = await getPlaybackState();
+      expect(result.content[0].text).toContain("100% (Spotify) / 72% (System)");
+      Object.defineProperty(process, "platform", { value: originalPlatform });
+    });
+
+    it("omits system volume on non-macOS platforms", async () => {
+      const originalPlatform = process.platform;
+      Object.defineProperty(process, "platform", { value: "linux" });
+      mockClient.getMyCurrentPlaybackState.mockResolvedValue({
+        body: {
+          is_playing: true,
+          progress_ms: 0,
+          item: {
+            type: "track",
+            name: "Song",
+            duration_ms: 180000,
+            artists: [{ name: "Artist" }],
+            album: { name: "Album" },
+          },
+          device: { name: "Speaker", type: "Speaker", volume_percent: 80 },
+        },
+      });
+      const result = await getPlaybackState();
+      expect(result.content[0].text).toContain("Volume: 80%");
+      expect(result.content[0].text).not.toContain("System");
+      Object.defineProperty(process, "platform", { value: originalPlatform });
+    });
+
+    it("omits system volume when osascript fails", async () => {
+      const originalPlatform = process.platform;
+      Object.defineProperty(process, "platform", { value: "darwin" });
+      vi.mocked(spawnSync).mockReturnValue({ status: 1, stdout: Buffer.from("") } as any);
+      mockClient.getMyCurrentPlaybackState.mockResolvedValue({
+        body: {
+          is_playing: true,
+          progress_ms: 0,
+          item: {
+            type: "track",
+            name: "Song",
+            duration_ms: 180000,
+            artists: [{ name: "Artist" }],
+            album: { name: "Album" },
+          },
+          device: { name: "Speaker", type: "Speaker", volume_percent: 80 },
+        },
+      });
+      const result = await getPlaybackState();
+      expect(result.content[0].text).toContain("Volume: 80%");
+      expect(result.content[0].text).not.toContain("System");
+      Object.defineProperty(process, "platform", { value: originalPlatform });
     });
 
     it("calls handleToolError on API failure", async () => {

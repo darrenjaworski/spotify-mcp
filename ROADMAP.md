@@ -109,6 +109,7 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
   - [ ] Clear queue
 
 - [ ] **Advanced Playback**
+  - [ ] Single track play behavior: play album from track position instead of stopping after one song
   - [ ] Shuffle control
   - [ ] Repeat mode control
   - [ ] Seek position

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Features
+- **Playback**: Add device validation to all playback tools (play, pause, next, previous, volume)
+  - Checks for an active Spotify device before making API calls
+  - Lists available inactive devices when no active device is found
+  - Skips validation when an explicit `device_id` is provided
+  - Suggests using `spotify_open` to launch Spotify
+- **Playback**: Show system volume alongside Spotify volume in playback state (macOS)
+  - Uses `osascript` to read macOS system output volume
+  - Displays as `Volume: X% (Spotify) / Y% (System)` when available
+  - Gracefully omitted on non-macOS platforms or if system volume is unavailable
+
 ## [0.4.0] - 2026-02-22
 
 ### Features
