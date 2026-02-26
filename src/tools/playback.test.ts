@@ -16,7 +16,7 @@ vi.mock("../spotify/errors.js", () => ({
 import { spawnSync } from "child_process";
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
-import { play, pause, next, previous, setVolume, getPlaybackState } from "./playback.js";
+import { play, pause, next, previous, setVolume, getPlaybackState, getDevices } from "./playback.js";
 
 describe("playback tools", () => {
   let mockClient: any;
@@ -405,6 +405,78 @@ describe("playback tools", () => {
       mockClient.getMyCurrentPlaybackState.mockRejectedValue(error);
       const result = await getPlaybackState();
       expect(handleToolError).toHaveBeenCalledWith(error, "spotify_get_playback_state");
+      expect(result.isError).toBe(true);
+    });
+  });
+
+  describe("getDevices", () => {
+    it("returns formatted device list with active device", async () => {
+      mockClient.getMyDevices.mockResolvedValue({
+        body: {
+          devices: [
+            { id: "dev-1", name: "Living Room Speaker", type: "Speaker", is_active: true, volume_percent: 80 },
+            { id: "dev-2", name: "Phone", type: "Smartphone", is_active: false, volume_percent: 50 },
+          ],
+        },
+      });
+      const result = await getDevices();
+      const text = result.content[0].text;
+      expect(text).toContain("Available Spotify devices:");
+      expect(text).toContain("1. Living Room Speaker (Speaker) [Active] - Volume: 80%");
+      expect(text).toContain("ID: dev-1");
+      expect(text).toContain("2. Phone (Smartphone) - Volume: 50%");
+      expect(text).toContain("ID: dev-2");
+      expect(result.isError).toBeUndefined();
+    });
+
+    it("returns device list without active markers when no device is active", async () => {
+      mockClient.getMyDevices.mockResolvedValue({
+        body: {
+          devices: [
+            { id: "dev-1", name: "Speaker", type: "Speaker", is_active: false, volume_percent: 60 },
+          ],
+        },
+      });
+      const result = await getDevices();
+      expect(result.content[0].text).not.toContain("[Active]");
+      expect(result.content[0].text).toContain("Speaker");
+    });
+
+    it("returns 'No Spotify devices found' when empty", async () => {
+      mockClient.getMyDevices.mockResolvedValue({
+        body: { devices: [] },
+      });
+      const result = await getDevices();
+      expect(result.content[0].text).toContain("No Spotify devices found");
+      expect(result.isError).toBeUndefined();
+    });
+
+    it("handles null volume_percent gracefully", async () => {
+      mockClient.getMyDevices.mockResolvedValue({
+        body: {
+          devices: [
+            { id: "dev-1", name: "TV", type: "TV", is_active: true, volume_percent: null },
+          ],
+        },
+      });
+      const result = await getDevices();
+      expect(result.content[0].text).toContain("TV (TV) [Active]");
+      expect(result.content[0].text).not.toContain("Volume:");
+    });
+
+    it("handles missing body.devices gracefully", async () => {
+      mockClient.getMyDevices.mockResolvedValue({
+        body: {},
+      });
+      const result = await getDevices();
+      expect(result.content[0].text).toContain("No Spotify devices found");
+    });
+
+    it("calls handleToolError on API failure", async () => {
+      const error = new Error("API fail");
+      mockClient.getMyDevices.mockRejectedValue(error);
+      const result = await getDevices();
+      expect(handleToolError).toHaveBeenCalledWith(error, "spotify_get_devices");
       expect(result.isError).toBe(true);
     });
   });

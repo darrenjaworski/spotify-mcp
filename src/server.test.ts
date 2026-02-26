@@ -37,13 +37,14 @@ describe('MCP Server Tool Registration', () => {
 
   describe('Tool Registration', () => {
     const expectedTools = [
-      // Playback tools (6)
+      // Playback tools (7)
       { name: 'spotify_play', category: 'playback' },
       { name: 'spotify_pause', category: 'playback' },
       { name: 'spotify_next', category: 'playback' },
       { name: 'spotify_previous', category: 'playback' },
       { name: 'spotify_set_volume', category: 'playback' },
       { name: 'spotify_get_playback_state', category: 'playback' },
+      { name: 'spotify_get_devices', category: 'playback' },
 
       // Search tools (1)
       { name: 'spotify_search', category: 'search' },
@@ -63,8 +64,8 @@ describe('MCP Server Tool Registration', () => {
       { name: 'spotify_open', category: 'system' },
     ];
 
-    it('should register exactly 15 tools', () => {
-      expect(expectedTools).toHaveLength(15);
+    it('should register exactly 16 tools', () => {
+      expect(expectedTools).toHaveLength(16);
     });
 
     it('should have all tool names prefixed with "spotify_"', () => {
@@ -83,9 +84,9 @@ describe('MCP Server Tool Registration', () => {
       expect(categories).toContain('system');
     });
 
-    it('should have 6 playback tools', () => {
+    it('should have 7 playback tools', () => {
       const playbackTools = expectedTools.filter(t => t.category === 'playback');
-      expect(playbackTools).toHaveLength(6);
+      expect(playbackTools).toHaveLength(7);
     });
 
     it('should have 1 search tool', () => {
@@ -113,6 +114,7 @@ describe('MCP Server Tool Registration', () => {
         'spotify_previous',
         'spotify_set_volume',
         'spotify_get_playback_state',
+        'spotify_get_devices',
         'spotify_search',
         'spotify_get_playlists',
         'spotify_get_playlist',
@@ -141,6 +143,7 @@ describe('MCP Server Tool Registration', () => {
         'spotify_previous',
         'spotify_set_volume',
         'spotify_get_playback_state',
+        'spotify_get_devices',
         'spotify_search',
         'spotify_get_playlists',
         'spotify_get_playlist',
@@ -167,6 +170,7 @@ describe('MCP Server Tool Registration', () => {
       spotify_previous: 'Skip to previous track',
       spotify_set_volume: 'Set playback volume (0-100)',
       spotify_get_playback_state: 'Get current playback state including track, artist, album, and playback status',
+      spotify_get_devices: 'List available Spotify Connect devices',
       spotify_search: 'Search for tracks, albums, artists, or playlists',
       spotify_get_playlists: "Get current user's playlists",
       spotify_get_playlist: 'Get details of a specific playlist',
@@ -250,6 +254,11 @@ describe('MCP Server Tool Registration', () => {
       expect(expectedSchema).toBeDefined();
     });
 
+    it('spotify_get_devices should have no required parameters', () => {
+      const expectedSchema = {};
+      expect(expectedSchema).toBeDefined();
+    });
+
     it('spotify_open should accept optional wait_seconds', () => {
       const expectedSchema = {
         wait_seconds: 'number 0-30 (optional)',
@@ -267,11 +276,12 @@ describe('MCP Server Tool Registration', () => {
         'spotify_previous',
         'spotify_set_volume',
         'spotify_get_playback_state',
+        'spotify_get_devices',
       ];
 
-      expect(playbackTools).toHaveLength(6);
+      expect(playbackTools).toHaveLength(7);
       playbackTools.forEach(tool => {
-        expect(tool).toMatch(/^spotify_(play|pause|next|previous|set_volume|get_playback_state)$/);
+        expect(tool).toMatch(/^spotify_(play|pause|next|previous|set_volume|get_playback_state|get_devices)$/);
       });
     });
 

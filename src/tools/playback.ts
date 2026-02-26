@@ -269,6 +269,46 @@ ${volumeLine}`;
   }
 }
 
+export async function getDevices(): Promise<ToolResponse> {
+  try {
+    const client = await getAuthenticatedClient();
+
+    const response: any = await client.getMyDevices();
+    const devices: any[] = response.body?.devices ?? [];
+
+    if (devices.length === 0) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "No Spotify devices found. Please open Spotify on a device and try again, or use spotify_open to launch it.",
+          },
+        ],
+      };
+    }
+
+    const formatted = devices.map((d: any, index: number) => {
+      const active = d.is_active ? " [Active]" : "";
+      const volume =
+        d.volume_percent !== null && d.volume_percent !== undefined
+          ? ` - Volume: ${d.volume_percent}%`
+          : "";
+      return `${index + 1}. ${d.name} (${d.type})${active}${volume}\n   ID: ${d.id}`;
+    });
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Available Spotify devices:\n\n${formatted.join("\n")}`,
+        },
+      ],
+    };
+  } catch (error) {
+    return handleToolError(error, "spotify_get_devices");
+  }
+}
+
 function getSystemVolume(): number | null {
   try {
     if (process.platform !== "darwin") return null;

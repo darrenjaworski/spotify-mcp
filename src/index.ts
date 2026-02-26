@@ -101,6 +101,15 @@ server.registerTool(
   async () => playbackTools.getPlaybackState() as any
 );
 
+server.registerTool(
+  "spotify_get_devices",
+  {
+    description: "List available Spotify Connect devices",
+    inputSchema: {},
+  },
+  async () => playbackTools.getDevices() as any
+);
+
 // Register search tool
 server.registerTool(
   "spotify_search",

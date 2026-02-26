@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Features
+- **Playback**: Add `spotify_get_devices` tool to list available Spotify Connect devices
+  - Shows device name, type, active status, volume, and device ID
+  - Device IDs can be used with playback tools (`spotify_play`, `spotify_pause`, etc.)
+
 ### Changed
 - **CI/CD**: Rename CI workflow to "Static Checks"
 - **Workflow**: Rename `validate` script to `static-checks`
