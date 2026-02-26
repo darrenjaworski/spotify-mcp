@@ -103,10 +103,10 @@ npm run lint:fix       # Auto-fix linting issues
 
 ### Full Validation
 ```bash
-npm run validate       # Runs lint, build, and test
+npm run static-checks       # Runs lint, build, and test
 ```
 
-Run `npm run validate` routinely as you develop — after implementing changes, after fixing bugs, and before committing. Do not wait until the end of a task to validate; catch issues early and often.
+Run `npm run static-checks` routinely as you develop — after implementing changes, after fixing bugs, and before committing. Do not wait until the end of a task to validate; catch issues early and often.
 
 ### Changelog Maintenance
 
@@ -173,7 +173,7 @@ Follow these steps to prepare a new release:
 2. **Run all checks** — everything must pass before releasing:
 
    ```bash
-   npm run validate
+   npm run static-checks
    ```
 
 3. **Update ROADMAP.md**:
