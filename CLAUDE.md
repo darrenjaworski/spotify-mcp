@@ -90,19 +90,9 @@ npm run clean          # Remove build directory
 
 ### Testing
 
-**IMPORTANT**: Always run linting before tests to catch code quality issues early.
-
 ```bash
-# Recommended: Run lint + tests together
-npm run lint && npm test
-
-# Individual commands
-npm run lint           # Check code style (run this first!)
 npm test               # Run all tests
 npm run test:watch     # Run tests in watch mode
-
-# Before committing
-npm run lint && npm test  # Ensure both pass
 ```
 
 ### Linting
@@ -111,32 +101,24 @@ npm run lint           # Check code style
 npm run lint:fix       # Auto-fix linting issues
 ```
 
-**Best Practice**: Run `npm run lint` before running tests to catch style issues first.
+### Full Validation
+```bash
+npm run validate       # Runs lint, build, and test
+```
+
+Run `npm run validate` routinely as you develop — after implementing changes, after fixing bugs, and before committing. Do not wait until the end of a task to validate; catch issues early and often.
 
 ### Changelog Maintenance
 
-**IMPORTANT**: Always update CHANGELOG.md BEFORE making commits for any user-facing changes.
+**IMPORTANT**: Before every commit, add a corresponding entry under the `[Unreleased]` section of `CHANGELOG.md` in the same commit. This applies to all commit types — `feat:`, `fix:`, `refactor:`, `test:`, `chore:`, `docs:`, `perf:`, etc.
 
 Follow the [Keep a Changelog](https://keepachangelog.com/) format:
 - Add entries under the `[Unreleased]` section at the top
-- Group changes by type: Features, Bug Fixes, Security, Documentation, etc.
+- Use the appropriate heading: `### Features`, `### Fixed`, `### Changed`, `### Removed`, `### Tests`, `### Documentation`
 - Write clear, user-focused descriptions (not just commit messages)
 - Reference issues/PRs where relevant
 
-**When to update the changelog:**
-- ✅ New features or enhancements
-- ✅ Bug fixes
-- ✅ Breaking changes (mark as **BREAKING**)
-- ✅ Security fixes
-- ✅ Deprecations
-- ❌ Internal refactoring (unless it affects users)
-- ❌ Documentation typo fixes
-- ❌ Dependency updates (unless they fix bugs or add features)
-
-**Before committing:**
-1. Update CHANGELOG.md with your changes under `[Unreleased]`
-2. Stage the changelog: `git add CHANGELOG.md`
-3. Make your commit (include all changes + changelog)
+This ensures the changelog is always up to date, and during a release you only need to move items from `[Unreleased]` into the new version heading.
 
 **Example changelog entry:**
 ```markdown
@@ -147,20 +129,87 @@ Follow the [Keep a Changelog](https://keepachangelog.com/) format:
   - Albums use `context_uri` for full album playback
   - Improved response messages to indicate content type
 
-### Bug Fixes
+### Fixed
 - Fix volume control not working on some devices
-```
 
-**On release** (when publishing to npm):
-1. Move `[Unreleased]` entries to a new version section (e.g., `[0.3.0]`)
-2. Add the release date
-3. Update comparison links at the bottom
-4. Commit the changelog update with the version bump
+### Tests
+- Add unit tests for auth, logger, and system tools
+```
 
 ### Local Testing with MCP Inspector
 ```bash
 npx @modelcontextprotocol/inspector node build/index.js
 ```
+
+## Commit Conventions
+
+Use [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages:
+
+- `feat:` new feature
+- `fix:` bug fix
+- `refactor:` code restructuring (no behavior change)
+- `test:` adding or updating tests
+- `docs:` documentation only
+- `chore:` tooling, dependencies, config
+- `perf:` performance improvement
+
+Use lowercase, imperative mood, no period at the end. Include scope when helpful: `feat(playback): add shuffle control`.
+
+## Releasing
+
+Follow these steps to prepare a new release:
+
+1. **Determine version bump** by reading commits since the last tag:
+
+   ```bash
+   git log $(git describe --tags --abbrev=0)..HEAD --oneline
+   ```
+
+   Apply semver based on conventional commits:
+   - `fix:` → patch (e.g. 0.4.0 → 0.4.1)
+   - `feat:` → minor (e.g. 0.4.0 → 0.5.0)
+   - `BREAKING CHANGE` or `!` after type → major (e.g. 0.4.0 → 1.0.0)
+
+2. **Run all checks** — everything must pass before releasing:
+
+   ```bash
+   npm run validate
+   ```
+
+3. **Update ROADMAP.md**:
+   - Compare commits since the last tag against items in `ROADMAP.md`
+   - Move any completed items from upcoming to shipped (mark with checkmark)
+   - Ensure new features not already listed are added to the shipped section
+
+4. **Update CHANGELOG.md**:
+   - Move items from `[Unreleased]` into a new version heading (e.g. `[0.5.0] - 2026-02-25`)
+   - Group changes under appropriate headings
+   - Update comparison links at the bottom
+
+5. **Bump version and tag**:
+
+   ```bash
+   npm version <patch|minor|major>
+   ```
+
+   This updates `package.json`, creates a commit, and creates a git tag.
+
+6. **Verify the build** compiles cleanly at the new version:
+   ```bash
+   npm run build
+   ```
+
+## Dependencies
+
+Minimize the number of dependencies. Before adding any new package, evaluate:
+
+- **Necessity**: Can this be implemented in a small amount of code? A 20-line utility is better than a 20 KB dependency.
+- **Maintenance**: Is the package actively maintained with a healthy contributor base?
+- **Transitive dependencies**: Fewer is better. Packages that pull in dozens of sub-dependencies add supply-chain risk and bloat.
+- **Security**: Run `npm audit` after adding. Fix high/critical vulnerabilities immediately.
+- **Dev vs production**: Dev dependency vulnerabilities are lower risk — prioritize production dependencies for security updates.
+
+When proposing a new dependency, state the dependency count so we can make an informed decision.
 
 ## Configuration Requirements
 

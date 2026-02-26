@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Workflow**: Add `npm run validate` script (lint + build + test in one command)
+- **Workflow**: Changelog entries now required for all commit types, not just user-facing changes
+
+### Documentation
+- **CLAUDE.md**: Add commit conventions section (conventional commits format)
+- **CLAUDE.md**: Add releasing checklist (semver from commits, validate, update roadmap/changelog, version bump)
+- **CLAUDE.md**: Add dependencies policy (necessity, maintenance, transitive deps, security)
+- **CLAUDE.md**: Add "run checks routinely" guidance — validate after changes, not just before commits
+- **CLAUDE.md**: Streamline testing and changelog sections
+
 ### Features
 - **Playback**: Add device validation to all playback tools (play, pause, next, previous, volume)
   - Checks for an active Spotify device before making API calls
