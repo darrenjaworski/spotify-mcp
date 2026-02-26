@@ -7,16 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- **Workflow**: Add `npm run validate` script (lint + build + test in one command)
-- **Workflow**: Changelog entries now required for all commit types, not just user-facing changes
-
-### Documentation
-- **CLAUDE.md**: Add commit conventions section (conventional commits format)
-- **CLAUDE.md**: Add releasing checklist (semver from commits, validate, update roadmap/changelog, version bump)
-- **CLAUDE.md**: Add dependencies policy (necessity, maintenance, transitive deps, security)
-- **CLAUDE.md**: Add "run checks routinely" guidance — validate after changes, not just before commits
-- **CLAUDE.md**: Streamline testing and changelog sections
+## [0.5.0] - 2026-02-25
 
 ### Features
 - **Playback**: Add device validation to all playback tools (play, pause, next, previous, volume)
@@ -28,6 +19,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Uses `osascript` to read macOS system output volume
   - Displays as `Volume: X% (Spotify) / Y% (System)` when available
   - Gracefully omitted on non-macOS platforms or if system volume is unavailable
+- **Error Handling**: Add centralized error handling to all tool implementations
+
+### Changed
+- **Workflow**: Add `npm run validate` script (lint + build + test in one command)
+- **Workflow**: Changelog entries now required for all commit types, not just user-facing changes
+
+### Tests
+- Add unit tests for auth (credentials, token load/save, file permissions, expiry, refresh)
+- Add unit tests for logger (redaction of tokens/secrets, log levels, output format)
+- Add unit tests for system tools (platform detection, device activation, polling)
+- Add tool-level unit tests for playback, search, playlists, and user
+
+### Documentation
+- **CLAUDE.md**: Add commit conventions section (conventional commits format)
+- **CLAUDE.md**: Add releasing checklist (semver from commits, validate, update roadmap/changelog, version bump)
+- **CLAUDE.md**: Add dependencies policy (necessity, maintenance, transitive deps, security)
+- **CLAUDE.md**: Add "run checks routinely" guidance — validate after changes, not just before commits
+- **CLAUDE.md**: Streamline testing and changelog sections
 
 ## [0.4.0] - 2026-02-22
 
@@ -153,7 +162,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.1.0...v0.2.0

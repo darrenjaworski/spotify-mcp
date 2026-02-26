@@ -9,7 +9,7 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
 ## Current Status
 
 **Phase**: Phase 2 - Core Features Development
-**Version**: 0.1.0 (Pre-release)
+**Version**: 0.5.0
 
 ## Development Phases
 
@@ -27,9 +27,9 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
   - [x] Volume control
   - [x] Get playback state
 - [x] Basic search functionality (tracks, albums, artists, playlists)
-- [x] Error handling framework (basic implementation)
+- [x] Error handling framework (centralized across all tools)
 - [x] Initial documentation (README, CLAUDE.md, ROADMAP)
-- [x] Comprehensive test suite (30+ passing tests)
+- [x] Comprehensive test suite (160+ passing tests across 10 test files)
 
 **Deliverable**: ✅ Working MCP server with basic playback and search
 
@@ -144,7 +144,7 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
   - [ ] Connection pooling
 
 - [ ] **Reliability**
-  - [ ] Comprehensive error handling
+  - [x] Comprehensive error handling (centralized `handleToolError` across all tools)
   - [ ] Automatic retry logic
   - [ ] Graceful degradation
   - [ ] Health monitoring
@@ -217,34 +217,34 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 
 ## Version History
 
-- **v0.1.0** (In Development - Q1 2026): Initial release with basic features
-  - ✅ All Phase 1 foundation features complete
-  - ✅ Partial Phase 2 playlist management
-  - ✅ Partial Phase 3 user analytics
-  - 🎯 Target: Complete remaining Phase 2 features
-- **v0.2.0** (Planned Q2 2026): Core feature completion
-- **v0.3.0** (Planned Q3 2026): Discovery and intelligence features
-- **v0.4.0** (Planned Q4 2026): Advanced features
-- **v1.0.0** (Planned Q1 2027): Production release
+- **v0.1.0** (Released 2026-02-14): Initial release with foundation features and security audit
+- **v0.2.0** (Released 2026-02-14): Album, playlist, and artist playback support
+- **v0.3.0** (Released 2026-02-22): `spotify_open` tool, CI/CD pipeline, ESLint v9
+- **v0.4.0** (Released 2026-02-22): Auto-activate Spotify device in `spotify_open`
+- **v0.5.0** (Released 2026-02-25): Device validation, centralized error handling, expanded test suite
+- **v1.0.0** (Planned): Production release
 
 ---
 
 ## Recent Progress
 
+**February 25, 2026**
+- ✅ Device validation added to all playback tools
+- ✅ Centralized error handling across all tool implementations
+- ✅ System volume display alongside Spotify volume (macOS)
+- ✅ Expanded test suite to 160+ tests (auth, logger, system tools, all tool modules)
+- ✅ Development workflow improvements (validate script, commit conventions, release process)
+
+**February 22, 2026**
+- ✅ `spotify_open` tool with auto device activation
+- ✅ CI/CD pipeline with GitHub Actions
+
 **February 14, 2026**
 - ✅ **Phase 1 COMPLETED**: All foundation features implemented
-  - Migrated to new McpServer API from deprecated Server API
-  - Full OAuth 2.0 authentication and token management
-  - All core playback controls (play, pause, next, previous, volume, state)
-  - Multi-type search (tracks, albums, artists, playlists)
-  - Comprehensive test suite with 30+ passing tests
 - 🔄 **Phase 2 Progress**: Core playlist features implemented
-  - Get playlists, get playlist details, create playlists, add tracks
-  - Multi-type search functionality complete
 - 🔄 **Phase 3 Progress**: User analytics features implemented
-  - User profile, top tracks/artists, recently played tracks
 
 ---
 
-*Last updated: February 14, 2026*
+*Last updated: February 25, 2026*
 *This roadmap is a living document and will evolve based on user feedback and project priorities.*
