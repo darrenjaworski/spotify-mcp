@@ -142,8 +142,6 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
     "user-library-modify",
     "user-top-read",
     "user-read-recently-played",
-    "user-read-email",
-    "user-read-private",
   ];
 
   // Generate cryptographically secure state parameter for CSRF protection

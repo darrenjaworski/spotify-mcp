@@ -15,10 +15,6 @@ export async function getUserProfile(): Promise<ToolResponse> {
 
     const text = `User Profile:
 Name: ${user.display_name || "N/A"}
-Email: ${user.email || "N/A"}
-Country: ${user.country || "N/A"}
-Product: ${user.product || "N/A"}
-Followers: ${user.followers?.total || 0}
 User ID: ${user.id}`;
 
     return {

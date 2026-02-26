@@ -99,7 +99,7 @@ describe("search tool", () => {
             {
               name: "Queen Essentials",
               owner: { display_name: "Spotify" },
-              tracks: { total: 50 },
+              items: { total: 50 },
               uri: "spotify:playlist:pl1",
             },
           ],
@@ -122,13 +122,13 @@ describe("search tool", () => {
     expect(result.content[0].text).toBe('No tracks found for query: "nonexistent"');
   });
 
-  it("uses default limit of 10", async () => {
+  it("uses default limit of 5", async () => {
     mockClient.search.mockResolvedValue({
       body: { tracks: { items: [] } },
     });
 
     await search({ query: "test", type: "track" });
-    expect(mockClient.search).toHaveBeenCalledWith("test", ["track"], { limit: 10 });
+    expect(mockClient.search).toHaveBeenCalledWith("test", ["track"], { limit: 5 });
   });
 
   it("uses custom limit when provided", async () => {
@@ -136,8 +136,17 @@ describe("search tool", () => {
       body: { tracks: { items: [] } },
     });
 
-    await search({ query: "test", type: "track", limit: 5 });
-    expect(mockClient.search).toHaveBeenCalledWith("test", ["track"], { limit: 5 });
+    await search({ query: "test", type: "track", limit: 3 });
+    expect(mockClient.search).toHaveBeenCalledWith("test", ["track"], { limit: 3 });
+  });
+
+  it("caps limit at 10 even if higher value provided", async () => {
+    mockClient.search.mockResolvedValue({
+      body: { tracks: { items: [] } },
+    });
+
+    await search({ query: "test", type: "track", limit: 50 });
+    expect(mockClient.search).toHaveBeenCalledWith("test", ["track"], { limit: 10 });
   });
 
   it("calls handleToolError on API failure", async () => {

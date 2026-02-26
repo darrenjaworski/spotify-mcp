@@ -31,8 +31,10 @@ export async function getPlaylists(args: { limit?: number }): Promise<ToolRespon
     }
 
     const formatted = playlists.map(
-      (playlist, index) =>
-        `${index + 1}. ${playlist.name} (${playlist.tracks.total} tracks) - ${playlist.id}`
+      (playlist: any, index) => {
+        const trackInfo = playlist.items ?? playlist.tracks;
+        return `${index + 1}. ${playlist.name} (${trackInfo.total} tracks) - ${playlist.id}`;
+      }
     );
 
     return {
@@ -53,18 +55,19 @@ export async function getPlaylist(args: GetPlaylistArgs): Promise<ToolResponse> 
     const client = await getAuthenticatedClient();
 
     const result = await client.getPlaylist(args.playlist_id);
-    const playlist = result.body;
+    const playlist: any = result.body;
 
-    const tracks = playlist.tracks.items.slice(0, 10).map((item, index) => {
+    const trackInfo = playlist.items ?? playlist.tracks;
+    const tracks = trackInfo.items.slice(0, 10).map((item: any, index: number) => {
       const track = item.track;
       if (!track) return `${index + 1}. [Unknown track]`;
-      return `${index + 1}. ${track.name} - ${track.artists.map((a) => a.name).join(", ")}`;
+      return `${index + 1}. ${track.name} - ${track.artists.map((a: any) => a.name).join(", ")}`;
     });
 
     const text = `Playlist: ${playlist.name}
 Description: ${playlist.description || "No description"}
 Owner: ${playlist.owner.display_name}
-Tracks: ${playlist.tracks.total}
+Tracks: ${trackInfo.total}
 Public: ${playlist.public ? "Yes" : "No"}
 
 First 10 tracks:

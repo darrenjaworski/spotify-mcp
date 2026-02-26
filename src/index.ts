@@ -118,7 +118,7 @@ server.registerTool(
     inputSchema: {
       query: z.string().describe("Search query"),
       type: z.enum(["track", "album", "artist", "playlist"]).describe("Type of item to search for"),
-      limit: z.number().min(1).max(50).optional().describe("Number of results to return (default: 10, max: 50)"),
+      limit: z.number().min(1).max(10).optional().describe("Number of results to return (default: 5, max: 10)"),
     },
   },
   async ({ query, type, limit }: any) => searchTools.search({ query, type, limit } as any) as any

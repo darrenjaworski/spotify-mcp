@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **User Profile**: Remove `email`, `country`, `product`, and `followers` fields from profile output (removed from Spotify Web API February 2026)
+- **Search**: Reduce default search limit from 10 to 5 and cap maximum at 10 (Spotify API limit reduction)
+- **Auth**: Remove `user-read-email` and `user-read-private` OAuth scopes (fields no longer available)
+- **Playlists**: Handle Spotify API field rename from `tracks` to `items` on playlist objects (backwards-compatible with both field names)
+
 ## [0.6.0] - 2026-02-26
 
 ### Features

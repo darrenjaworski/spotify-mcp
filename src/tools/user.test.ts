@@ -34,10 +34,6 @@ describe("user tools", () => {
       mockClient.getMe.mockResolvedValue({
         body: {
           display_name: "Test User",
-          email: "test@example.com",
-          country: "US",
-          product: "premium",
-          followers: { total: 42 },
           id: "testuser123",
         },
       });
@@ -45,14 +41,14 @@ describe("user tools", () => {
       const result = await getUserProfile();
       const text = result.content[0].text;
       expect(text).toContain("Name: Test User");
-      expect(text).toContain("Email: test@example.com");
-      expect(text).toContain("Country: US");
-      expect(text).toContain("Product: premium");
-      expect(text).toContain("Followers: 42");
       expect(text).toContain("User ID: testuser123");
+      expect(text).not.toContain("Email:");
+      expect(text).not.toContain("Country:");
+      expect(text).not.toContain("Product:");
+      expect(text).not.toContain("Followers:");
     });
 
-    it("handles missing optional fields with N/A defaults", async () => {
+    it("handles missing display_name with N/A default", async () => {
       mockClient.getMe.mockResolvedValue({
         body: {
           id: "user1",
@@ -62,10 +58,7 @@ describe("user tools", () => {
       const result = await getUserProfile();
       const text = result.content[0].text;
       expect(text).toContain("Name: N/A");
-      expect(text).toContain("Email: N/A");
-      expect(text).toContain("Country: N/A");
-      expect(text).toContain("Product: N/A");
-      expect(text).toContain("Followers: 0");
+      expect(text).toContain("User ID: user1");
     });
 
     it("calls handleToolError on API failure", async () => {

@@ -34,8 +34,8 @@ describe("playlist tools", () => {
       mockClient.getUserPlaylists.mockResolvedValue({
         body: {
           items: [
-            { name: "My Playlist", tracks: { total: 25 }, id: "pl1" },
-            { name: "Workout", tracks: { total: 10 }, id: "pl2" },
+            { name: "My Playlist", items: { total: 25 }, id: "pl1" },
+            { name: "Workout", items: { total: 10 }, id: "pl2" },
           ],
         },
       });
@@ -72,7 +72,7 @@ describe("playlist tools", () => {
           name: "My Playlist",
           description: "A great playlist",
           owner: { display_name: "TestUser" },
-          tracks: {
+          items: {
             total: 3,
             items: [
               { track: { name: "Song 1", artists: [{ name: "Artist A" }] } },
@@ -102,7 +102,7 @@ describe("playlist tools", () => {
           name: "Sparse Playlist",
           description: null,
           owner: { display_name: "User" },
-          tracks: {
+          items: {
             total: 2,
             items: [
               { track: null },

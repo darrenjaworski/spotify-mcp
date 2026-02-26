@@ -9,7 +9,7 @@ import type { ToolResponse, SearchArgs } from "../types.js";
 export async function search(args: SearchArgs): Promise<ToolResponse> {
   try {
     const client = await getAuthenticatedClient();
-    const limit = args.limit || 10;
+    const limit = Math.min(args.limit || 5, 10);
 
     const result = await client.search(args.query, [args.type], { limit });
 
@@ -54,8 +54,10 @@ export async function search(args: SearchArgs): Promise<ToolResponse> {
           return `${index + 1}. ${item.name} - ${item.artists.map((a: any) => a.name).join(", ")} (${item.uri})`;
         case "artist":
           return `${index + 1}. ${item.name} (${item.uri})`;
-        case "playlist":
-          return `${index + 1}. ${item.name} - ${item.owner.display_name} (${item.tracks.total} tracks) (${item.uri})`;
+        case "playlist": {
+          const trackInfo = item.items ?? item.tracks;
+          return `${index + 1}. ${item.name} - ${item.owner.display_name} (${trackInfo.total} tracks) (${item.uri})`;
+        }
         default:
           return `${index + 1}. ${item.name}`;
       }
