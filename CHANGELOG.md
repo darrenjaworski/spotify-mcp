@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-02-26
+
 ### Features
 - **Playback**: Add `spotify_get_devices` tool to list available Spotify Connect devices
   - Shows device name, type, active status, volume, and device ID
@@ -19,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Documentation
 - **README**: Simplify MCP configuration section with clear Claude Desktop and Claude Code subsections
 - **README**: Add `claude mcp add` one-liner for Claude Code setup
-- **README**: Update test coverage stats (160 tests across 10 files)
+- **README**: Update test coverage stats (167 tests across 10 files)
 - **README**: Add `npm run static-checks` to linting section
 - **README**: Remove outdated `test:coverage` script reference
 
@@ -195,7 +197,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.3...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.3...v0.6.0
 [0.5.3]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.0...v0.5.1
