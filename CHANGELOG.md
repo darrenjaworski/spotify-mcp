@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **CI/CD**: Rename CI workflow to "Static Checks"
+- **Workflow**: Rename `validate` script to `static-checks`
+
 ## [0.5.3] - 2026-02-25
 
 ### Fixed
