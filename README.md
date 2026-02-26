@@ -1,5 +1,6 @@
 # Spotify MCP Server
 
+[![Static Checks](https://github.com/darrenjaworski/spotify-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/darrenjaworski/spotify-mcp/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/@darrenjaws/spotify-mcp)](https://www.npmjs.com/package/@darrenjaws/spotify-mcp)
 [![npm downloads](https://img.shields.io/npm/dm/@darrenjaws/spotify-mcp)](https://www.npmjs.com/package/@darrenjaws/spotify-mcp)
 [![license](https://img.shields.io/npm/l/@darrenjaws/spotify-mcp)](https://github.com/darrenjaworski/spotify-mcp/blob/main/LICENSE)
