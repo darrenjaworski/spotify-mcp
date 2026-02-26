@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-02-25
+
 ### Changed
 - **CI/CD**: Add npm publish to release workflow on tag push (uses `NPM_TOKEN` secret)
 
@@ -165,7 +167,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.2.0...v0.3.0
