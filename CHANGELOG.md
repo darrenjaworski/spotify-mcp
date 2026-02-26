@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-02-26
+
 ### Changed
 - **User Profile**: Remove `email`, `country`, `product`, and `followers` fields from profile output (removed from Spotify Web API February 2026)
 - **Search**: Reduce default search limit from 10 to 5 and cap maximum at 10 (Spotify API limit reduction)
@@ -203,7 +205,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.3...v0.6.0
 [0.5.3]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.1...v0.5.2

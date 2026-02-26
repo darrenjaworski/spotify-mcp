@@ -9,7 +9,7 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
 ## Current Status
 
 **Phase**: Phase 2 - Core Features Development
-**Version**: 0.5.0
+**Version**: 0.6.1
 
 ## Development Phases
 
@@ -223,6 +223,7 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 - **v0.4.0** (Released 2026-02-22): Auto-activate Spotify device in `spotify_open`
 - **v0.5.0** (Released 2026-02-25): Device validation, centralized error handling, expanded test suite
 - **v0.6.0** (Released 2026-02-26): `spotify_get_devices` tool, CI/workflow improvements
+- **v0.6.1** (Released 2026-02-26): Adapt to Spotify Web API February 2026 breaking changes
 - **v1.0.0** (Planned): Production release
 
 ---
@@ -230,9 +231,10 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 ## Recent Progress
 
 **February 26, 2026**
+- ✅ Adapt to Spotify Web API February 2026 breaking changes (user profile fields, search limits, playlist field renames)
 - ✅ `spotify_get_devices` tool to list available Spotify Connect devices
 - ✅ CI workflow renamed to "Static Checks"
-- ✅ Test suite expanded to 167 tests across 10 files
+- ✅ Test suite expanded to 168 tests across 10 files
 
 **February 25, 2026**
 - ✅ Device validation added to all playback tools
