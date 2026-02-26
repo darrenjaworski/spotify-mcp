@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CI/CD**: Rename CI workflow to "Static Checks"
 - **Workflow**: Rename `validate` script to `static-checks`
 
+### Documentation
+- **README**: Simplify MCP configuration section with clear Claude Desktop and Claude Code subsections
+- **README**: Add `claude mcp add` one-liner for Claude Code setup
+- **README**: Update test coverage stats (160 tests across 10 files)
+- **README**: Add `npm run static-checks` to linting section
+- **README**: Remove outdated `test:coverage` script reference
+
 ## [0.5.3] - 2026-02-25
 
 ### Fixed

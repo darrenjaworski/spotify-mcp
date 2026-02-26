@@ -17,7 +17,6 @@ A Model Context Protocol (MCP) server that provides seamless integration with Sp
 - [Configuration](#configuration)
   - [Automated Setup](#automated-setup-recommended)
   - [Manual Setup](#manual-setup)
-  - [Spotify App Setup](#spotify-app-setup)
   - [Environment Variables](#environment-variables)
   - [MCP Configuration](#mcp-configuration)
 - [Usage](#usage)
@@ -162,12 +161,13 @@ SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
 
 ### MCP Configuration
 
+#### Claude Desktop
+
 Add to your Claude Desktop config file:
 
-**MacOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
 
-**Using npx (recommended):**
 ```json
 {
   "mcpServers": {
@@ -184,12 +184,28 @@ Add to your Claude Desktop config file:
 }
 ```
 
-**Using global installation:**
+Restart Claude Desktop after saving.
+
+#### Claude Code (CLI)
+
+The easiest way is the `claude mcp add` command:
+
+```bash
+claude mcp add spotify \
+  -e SPOTIFY_CLIENT_ID=your_client_id_here \
+  -e SPOTIFY_CLIENT_SECRET=your_client_secret_here \
+  -e SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback \
+  -- npx -y @darrenjaws/spotify-mcp
+```
+
+Or add it manually to `~/.claude.json` (global) or `.claude/settings.json` (project):
+
 ```json
 {
   "mcpServers": {
     "spotify": {
-      "command": "spotify-mcp",
+      "command": "npx",
+      "args": ["-y", "@darrenjaws/spotify-mcp"],
       "env": {
         "SPOTIFY_CLIENT_ID": "your_client_id_here",
         "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
@@ -200,7 +216,10 @@ Add to your Claude Desktop config file:
 }
 ```
 
-**From source (development):**
+Verify with `claude mcp list` — you should see `spotify` in the list.
+
+#### From Source (Development)
+
 ```json
 {
   "mcpServers": {
@@ -218,92 +237,6 @@ Add to your Claude Desktop config file:
 ```
 
 **Note**: When using npx or global install, environment variables must be specified in the MCP config (not in a `.env` file).
-
-### Claude Code (Terminal) Configuration
-
-If you're using [Claude Code](https://claude.com/code) (the terminal CLI), you can add this MCP server to your project or global configuration.
-
-#### Option 1: Using Claude Code's MCP Command (Recommended)
-
-```bash
-# Add the server interactively
-claude mcp add
-
-# Follow the prompts:
-# - Server name: spotify
-# - Command: npx
-# - Args: -y @darrenjaws/spotify-mcp
-# - Add environment variables when prompted
-```
-
-#### Option 2: Manual Configuration
-
-**Global config** (`~/.claude/config.json`):
-```json
-{
-  "mcpServers": {
-    "spotify": {
-      "command": "npx",
-      "args": ["-y", "@darrenjaws/spotify-mcp"],
-      "env": {
-        "SPOTIFY_CLIENT_ID": "your_client_id_here",
-        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
-        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
-      }
-    }
-  }
-}
-```
-
-**Project-specific config** (`.claude/config.json` in your project):
-```json
-{
-  "mcpServers": {
-    "spotify": {
-      "command": "npx",
-      "args": ["-y", "@darrenjaws/spotify-mcp"],
-      "env": {
-        "SPOTIFY_CLIENT_ID": "your_client_id_here",
-        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
-        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
-      }
-    }
-  }
-}
-```
-
-#### Migrating from Claude Desktop to Claude Code
-
-If you already have this configured in Claude Desktop, you can copy your configuration:
-
-**1. View your Claude Desktop config:**
-```bash
-# macOS
-cat ~/Library/Application\ Support/Claude/claude_desktop_config.json
-
-# Windows (PowerShell)
-Get-Content $env:APPDATA\Claude\claude_desktop_config.json
-```
-
-**2. Copy the `spotify` server config to Claude Code:**
-```bash
-# Create Claude Code config directory if it doesn't exist
-mkdir -p ~/.claude
-
-# Edit your Claude Code config
-nano ~/.claude/config.json
-# or
-code ~/.claude/config.json
-```
-
-**3. Paste the same `mcpServers` configuration** - the format is identical!
-
-**4. Verify it works:**
-```bash
-claude mcp list
-```
-
-You should see `spotify` in the list of available MCP servers.
 
 ## Usage
 
@@ -514,21 +447,22 @@ Run the test suite to verify tool registration and functionality:
 ```bash
 npm test              # Run all tests
 npm run test:watch    # Run tests in watch mode
-npm run test:coverage # Generate coverage report
 ```
 
 **Test Coverage:**
-- ✅ 30 tests covering tool registration
-- ✅ Validates all 15 tools are registered correctly
-- ✅ Verifies tool naming conventions
-- ✅ Checks input schema validation with Zod
-- ✅ Integration tests for MCP server setup
+- ✅ 160 tests across 10 test files
+- ✅ Tool-level unit tests for playback, search, playlists, user, and system
+- ✅ Auth tests (credentials, token management, file permissions, refresh)
+- ✅ Logger tests (sensitive data redaction, log levels)
+- ✅ Error handling tests (all HTTP status codes, security)
+- ✅ Server registration and integration tests
 
 ### Linting and Code Quality
 
 ```bash
-npm run lint        # Check code style
-npm run lint:fix    # Auto-fix linting issues
+npm run lint           # Check code style
+npm run lint:fix       # Auto-fix linting issues
+npm run static-checks  # Run lint, build, and test together
 ```
 
 ### Troubleshooting
