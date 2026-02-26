@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-02-25
+
+### Fixed
+- **CI/CD**: Fix npm publish authentication for trusted publishing
+  - Remove `registry-url` from setup-node (was injecting placeholder token)
+  - Upgrade npm to v11.5.1+ at runtime for OIDC trusted publishing support
+
 ## [0.5.2] - 2026-02-25
 
 ### Changed
-- **CI/CD**: Switch npm publish to trusted publisher (OIDC provenance) instead of `NPM_TOKEN` secret
+- **CI/CD**: Switch npm publish to trusted publisher (OIDC) instead of `NPM_TOKEN` secret
 
 ## [0.5.1] - 2026-02-25
 
@@ -172,7 +179,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.3...HEAD
+[0.5.3]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.4.0...v0.5.0
