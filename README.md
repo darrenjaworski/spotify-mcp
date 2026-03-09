@@ -51,6 +51,7 @@ The Spotify MCP Server bridges the gap between AI assistants and Spotify, allowi
 ## Features
 
 ### Current Features
+
 - **Authentication & Authorization**: OAuth 2.0 Authorization Code flow for secure Spotify API access
 - **Playback Control**: Play, pause, skip, adjust volume, and control playback across devices
 - **Search**: Find tracks, albums, artists, and playlists
@@ -58,6 +59,7 @@ The Spotify MCP Server bridges the gap between AI assistants and Spotify, allowi
 - **User Data**: Retrieve user profile information and listening statistics
 
 ### Planned Features
+
 See [ROADMAP.md](ROADMAP.md) for detailed feature timeline and future enhancements.
 
 ## Quick Start
@@ -70,6 +72,7 @@ npx @darrenjaws/spotify-mcp setup
 ```
 
 The wizard will:
+
 - ✅ Guide you through creating a Spotify Developer app
 - ✅ Open your browser to the right pages automatically
 - ✅ Validate your credentials as you enter them
@@ -83,12 +86,14 @@ The wizard will:
 ### Option 1: NPM (Recommended)
 
 **Interactive Setup (Easiest):**
+
 ```bash
 # No installation required - run the setup wizard
 npx @darrenjaws/spotify-mcp setup
 ```
 
 **Or install globally first:**
+
 ```bash
 npm install -g @darrenjaws/spotify-mcp
 
@@ -97,6 +102,7 @@ spotify-mcp setup
 ```
 
 **Using npx without setup wizard:**
+
 ```bash
 # Skip to manual configuration (see Configuration section below)
 npx -y @darrenjaws/spotify-mcp
@@ -132,6 +138,7 @@ npx @darrenjaws/spotify-mcp setup
 ```
 
 The wizard walks you through:
+
 1. Creating a Spotify Developer app
 2. Getting your Client ID and Secret
 3. Choosing your configuration method (Claude Desktop, Claude Code, or development)
@@ -219,6 +226,23 @@ Or add it manually to `~/.claude.json` (global) or `.claude/settings.json` (proj
 
 Verify with `claude mcp list` — you should see `spotify` in the list.
 
+#### OpenCode
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "spotify": {
+    "command": ["npx", "-y", "@darrenjaws/spotify-mcp@latest"],
+    "environment": {
+      "SPOTIFY_CLIENT_ID": "your_client_id_here",
+      "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+      "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
+    },
+    "type": "local"
+  }
+}
+```
+
 #### From Source (Development)
 
 ```json
@@ -255,6 +279,7 @@ Once configured, you can interact with Spotify through natural language:
 ## Available Tools (15 total)
 
 ### Playback (6 tools)
+
 - `spotify_play` - Start or resume playback of tracks, albums, playlists, or artists
 - `spotify_pause` - Pause playback
 - `spotify_next` - Skip to next track
@@ -263,20 +288,24 @@ Once configured, you can interact with Spotify through natural language:
 - `spotify_get_playback_state` - Get current playback information
 
 ### Search (1 tool)
+
 - `spotify_search` - Search for tracks, albums, artists, or playlists
 
 ### Playlist Management (4 tools)
+
 - `spotify_get_playlists` - Get user's playlists
 - `spotify_get_playlist` - Get specific playlist details
 - `spotify_create_playlist` - Create a new playlist
 - `spotify_add_to_playlist` - Add tracks to a playlist
 
 ### User Data (3 tools)
+
 - `spotify_get_user_profile` - Get user profile information
 - `spotify_get_top_items` - Get user's top artists or tracks
 - `spotify_get_recently_played` - Get recently played tracks
 
 ### System (1 tool)
+
 - `spotify_open` - Open the Spotify desktop app (supports macOS, Windows, Linux)
 
 ## Local Development
@@ -290,6 +319,7 @@ Once configured, you can interact with Spotify through natural language:
 ### Initial Setup
 
 1. **Clone and install dependencies**
+
 ```bash
 git clone https://github.com/darrenjaworski/spotify-mcp.git
 cd spotify-mcp
@@ -297,12 +327,14 @@ npm install
 ```
 
 2. **Configure environment variables**
+
 ```bash
 cp .env.example .env
 # Edit .env with your Spotify credentials
 ```
 
 3. **Build the project**
+
 ```bash
 npm run build
 ```
@@ -339,6 +371,7 @@ npx @modelcontextprotocol/inspector node build/bin.js
 ```
 
 This opens a browser at `http://localhost:6274` with:
+
 - **Server Connection Pane**: Configure transport and environment variables
 - **Tools Tab**: See all available tools and test them interactively
 - **Resources Tab**: View server resources
@@ -360,6 +393,7 @@ DEBUG=true npx @modelcontextprotocol/inspector node build/bin.js
 ```
 
 **Benefits:**
+
 - ✅ Interactive UI to test all 15 tools
 - ✅ See JSON-RPC messages in real-time
 - ✅ No need to configure Claude Desktop during development
@@ -410,11 +444,13 @@ echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"spotify_ge
 **1. Use Watch Mode + Inspector Together**
 
 Terminal 1:
+
 ```bash
 npm run dev  # Watch mode - rebuilds on changes
 ```
 
 Terminal 2:
+
 ```bash
 npx @modelcontextprotocol/inspector node build/bin.js
 ```
@@ -451,6 +487,7 @@ npm run test:watch    # Run tests in watch mode
 ```
 
 **Test Coverage:**
+
 - ✅ 160 tests across 10 test files
 - ✅ Tool-level unit tests for playback, search, playlists, user, and system
 - ✅ Auth tests (credentials, token management, file permissions, refresh)
@@ -469,20 +506,24 @@ npm run static-checks  # Run lint, build, and test together
 ### Troubleshooting
 
 **Build Errors:**
+
 - Ensure TypeScript is installed: `npm install`
 - Check Node version: `node --version` (should be >= 18)
 
 **Inspector Not Loading:**
+
 - Check if port 6274 is available
 - Try clearing browser cache
 - Restart the inspector
 
 **OAuth Errors:**
+
 - Verify Spotify credentials in `.env`
 - Check redirect URI matches in Spotify Dashboard
 - Ensure scopes are correct in `src/spotify/auth.ts`
 
 **Server Not Responding:**
+
 - Check logs: `LOG_LEVEL=debug node build/bin.js`
 - Verify build succeeded: `ls -la build/`
 - Test with simple tool like `spotify_get_user_profile`
@@ -537,11 +578,13 @@ MIT License - see LICENSE file for details
 ## Resources
 
 ### MCP Development Tools
+
 - [MCP Inspector Documentation](https://modelcontextprotocol.io/docs/tools/inspector) - Official testing tool
 - [MCP Inspector GitHub](https://github.com/modelcontextprotocol/inspector) - Source code
 - [Testing MCP Servers Guide](https://www.stainless.com/mcp/how-to-test-mcp-servers) - Comprehensive testing strategies
 - [MCP Inspector Tutorial](https://hackteam.io/blog/build-test-mcp-server-typescript-mcp-inspector/) - Step-by-step guide
 
 ### Spotify API
+
 - [Spotify Web API Documentation](https://developer.spotify.com/documentation/web-api)
 - [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
