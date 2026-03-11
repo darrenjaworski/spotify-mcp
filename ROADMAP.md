@@ -264,10 +264,16 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 - **v0.6.0** (Released 2026-02-26): `spotify_get_devices` tool, CI/workflow improvements
 - **v0.6.1** (Released 2026-02-26): Adapt to Spotify Web API February 2026 breaking changes
 - **v1.0.0** (Released 2026-03-10): MVP — Phase 2 complete (playlist CRUD, library management, search filters, device transfer, 30 tools)
+- **v1.0.1** (Released 2026-03-10): Dependency security updates, security audit documentation
 
 ---
 
 ## Recent Progress
+
+**March 10, 2026**
+- ✅ Fix 6 npm audit vulnerabilities (hono, rollup, minimatch, express-rate-limit, ajv)
+- ✅ Update minor/patch dependency versions
+- ✅ Security audit: documented 2 open findings and 10 completed measures in roadmap
 
 **March 10, 2026**
 - ✅ **Phase 2 COMPLETED / 1.0.0 MVP shipped**: All 14 remaining items implemented
@@ -303,5 +309,5 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 
 ---
 
-*Last updated: March 10, 2026*
+*Last updated: March 10, 2026 (v1.0.1)*
 *This roadmap is a living document and will evolve based on user feedback and project priorities.*

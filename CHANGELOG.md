@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-03-10
+
 ### Changed
 - **Dependencies**: Fix 6 npm audit vulnerabilities (hono, rollup, minimatch, express-rate-limit, ajv) and update minor/patch dependency versions
 
@@ -246,7 +248,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.1...v1.0.0
 [0.6.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.3...v0.6.0
