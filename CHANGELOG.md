@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- **Skills**: Add `/triage` skill for issue prioritization and next-work-item recommendations
+- **Skills**: Add `/commit`, `/release`, and `/triage` Claude Code skills for streamlined development workflows
 
 ### Features
 - **Setup Wizard**: Add configuration support for Cursor, Windsurf, VS Code (GitHub Copilot), and OpenCode
@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Each client generates the correct config format and file path instructions
 
 ### Documentation
-- **README**: Add MCP configuration examples for Cursor, Windsurf, and VS Code (GitHub Copilot)
+- **README**: Add MCP configuration examples for Cursor, Windsurf, VS Code (GitHub Copilot), and OpenCode
+- **README/Setup**: Update setup references to list all supported clients
 - **Roadmap**: Define 1.0.0 MVP scope (Phase 2 completion) with trackable checklist
   - Mark Phases 3-5 as post-1.0
   - Add shipped/remaining sections for progress tracking
