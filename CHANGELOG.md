@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-03-10
+
 ### Features
 - **Playlist Management**: Add remove, reorder, delete, and update tools for full playlist CRUD
   - `spotify_remove_from_playlist` — remove tracks from a playlist
@@ -238,7 +240,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.1...v1.0.0
 [0.6.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.3...v0.6.0
 [0.5.3]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.5.2...v0.5.3

@@ -243,11 +243,21 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 - **v0.5.0** (Released 2026-02-25): Device validation, centralized error handling, expanded test suite
 - **v0.6.0** (Released 2026-02-26): `spotify_get_devices` tool, CI/workflow improvements
 - **v0.6.1** (Released 2026-02-26): Adapt to Spotify Web API February 2026 breaking changes
-- **v1.0.0** (Planned): MVP — Complete Phase 2 (playlist CRUD, library features, search refinement, device management)
+- **v1.0.0** (Released 2026-03-10): MVP — Phase 2 complete (playlist CRUD, library management, search filters, device transfer, 30 tools)
 
 ---
 
 ## Recent Progress
+
+**March 10, 2026**
+- ✅ **Phase 2 COMPLETED / 1.0.0 MVP shipped**: All 14 remaining items implemented
+- ✅ Playlist CRUD: remove tracks, reorder, delete, update (collaborative support)
+- ✅ Library management: 9 tools (saved tracks/albums, followed artists, save/unsave, follow/unfollow)
+- ✅ Search filters: artist, album, genre, year, tag field filters
+- ✅ Device transfer: `spotify_transfer_playback` tool
+- ✅ OAuth scopes expanded: `user-follow-read`, `user-follow-modify`
+- ✅ Test suite expanded to 213 tests across 11 files
+- ✅ Total tool count: 30
 
 **February 26, 2026**
 - ✅ Adapt to Spotify Web API February 2026 breaking changes (user profile fields, search limits, playlist field renames)
@@ -268,7 +278,7 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 
 **February 14, 2026**
 - ✅ **Phase 1 COMPLETED**: All foundation features implemented
-- 🔄 **Phase 2 Progress**: Core playlist features implemented
+- 🔄 **Phase 2 Progress**: Core playlist features implemented (completed in v1.0.0)
 - 🔄 **Phase 3 Progress**: User analytics features implemented
 
 ---
