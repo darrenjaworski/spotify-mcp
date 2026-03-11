@@ -77,7 +77,7 @@ The wizard will:
 - ✅ Open your browser to the right pages automatically
 - ✅ Validate your credentials as you enter them
 - ✅ Generate the correct configuration for your environment
-- ✅ Give you copy-paste ready configs for Claude Desktop or Claude Code
+- ✅ Give you copy-paste ready configs for Claude Desktop, Claude Code, Cursor, Windsurf, VS Code, or OpenCode
 
 **That's it!** The whole setup takes about 2 minutes.
 
@@ -141,7 +141,7 @@ The wizard walks you through:
 
 1. Creating a Spotify Developer app
 2. Getting your Client ID and Secret
-3. Choosing your configuration method (Claude Desktop, Claude Code, or development)
+3. Choosing your AI tool (Claude Desktop, Claude Code, Cursor, Windsurf, VS Code, OpenCode)
 4. Generating the correct config file
 
 ### Manual Setup

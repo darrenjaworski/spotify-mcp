@@ -433,9 +433,10 @@ export async function runSetup(): Promise<void> {
     success('Your Spotify MCP server is configured!');
     print('\n');
     info('Next steps:');
-    print('1. Restart Claude Desktop (if using desktop app)');
-    print('2. Try asking Claude: "What\'s currently playing on Spotify?"');
-    print('3. The first request will trigger OAuth authentication in your browser');
+    print('1. Restart your AI tool (Claude Desktop, Cursor, Windsurf, VS Code, etc.)');
+    print('2. Ask your AI assistant: "What\'s currently playing on Spotify?"');
+    print('3. The first request will open your browser for Spotify OAuth authentication');
+    print('4. After authorizing, all future requests will work automatically');
     print('\n');
     success('Happy listening! 🎵');
 
