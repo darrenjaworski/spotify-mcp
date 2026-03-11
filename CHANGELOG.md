@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Dependencies**: Fix 6 npm audit vulnerabilities (hono, rollup, minimatch, express-rate-limit, ajv) and update minor/patch dependency versions
+
+### Documentation
+- **Security**: Add security section to ROADMAP.md with 2 open findings and 10 completed security measures from codebase review
+
 ## [1.0.0] - 2026-03-10
 
 ### Features

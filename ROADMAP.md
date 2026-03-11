@@ -212,6 +212,26 @@ Everything in Phases 3-5 (recommendations, audio features, queue management, pod
   - User switching
   - Profile-specific preferences
 
+## Security
+
+### Open
+
+- [ ] **`.env` file permissions**: `setup.ts` creates `.env` with default permissions (`0644`), making `SPOTIFY_CLIENT_SECRET` readable by any local user. Should use `{ mode: 0o600 }` consistent with token storage in `auth.ts`.
+- [ ] **Logger redaction gap**: String heuristic in `redactSensitiveData()` only matches `[A-Za-z0-9_-]+`, missing tokens containing `.`, `=`, or `/` (JWT/Base64 formats). Broadening the regex or relying solely on field-name redaction would close this defense-in-depth gap.
+
+### Completed
+
+- [x] OAuth state parameter uses `crypto.randomBytes(32)` for CSRF protection
+- [x] Browser launch uses `spawn()` with `shell: false` (no command injection)
+- [x] HTML output in OAuth callback uses `escapeHtml()` (no XSS)
+- [x] Token files stored with `0600` permissions, directory with `0700`
+- [x] OAuth callback server: localhost-only, rate-limited (5 req), 5-minute timeout
+- [x] Error responses never expose raw API errors or internal paths
+- [x] All tool inputs validated with Zod schemas
+- [x] No `exec()` or `eval()` usage in codebase
+- [x] Logger auto-redacts sensitive field names (token, secret, password, etc.)
+- [x] `.env` excluded from git and npm package
+
 ## Community Requests
 
 We welcome feature requests and suggestions from the community. Popular requests will be evaluated for inclusion in future phases.
