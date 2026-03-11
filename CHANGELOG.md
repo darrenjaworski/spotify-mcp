@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Tooling**: Add prettier for code formatting with eslint-config-prettier integration, `format`/`format:check` npm scripts, and CI formatting check
+
 ## [1.0.1] - 2026-03-10
 
 ### Changed

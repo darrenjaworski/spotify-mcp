@@ -78,9 +78,7 @@ describe("search tool", () => {
     mockClient.search.mockResolvedValue({
       body: {
         artists: {
-          items: [
-            { name: "Queen", uri: "spotify:artist:queen1" },
-          ],
+          items: [{ name: "Queen", uri: "spotify:artist:queen1" }],
         },
       },
     });
@@ -178,7 +176,7 @@ describe("search tool", () => {
       expect(mockClient.search).toHaveBeenCalledWith(
         "greatest hits artist:Queen genre:rock year:1975-1980",
         ["album"],
-        { limit: 5 }
+        { limit: 5 },
       );
     });
 
@@ -196,7 +194,7 @@ describe("search tool", () => {
       expect(mockClient.search).toHaveBeenCalledWith(
         "bohemian album:A Night at the Opera",
         ["track"],
-        { limit: 5 }
+        { limit: 5 },
       );
     });
   });

@@ -128,10 +128,10 @@ describe("saveTokens", () => {
     };
 
     await saveTokens(tokens);
-    expect(fs.mkdir).toHaveBeenCalledWith(
-      expect.stringContaining(".spotify-mcp"),
-      { recursive: true, mode: 0o700 },
-    );
+    expect(fs.mkdir).toHaveBeenCalledWith(expect.stringContaining(".spotify-mcp"), {
+      recursive: true,
+      mode: 0o700,
+    });
   });
 
   it("writes token file with 0600 permissions", async () => {
@@ -289,8 +289,6 @@ describe("refreshAccessToken", () => {
       refreshAccessToken: vi.fn().mockRejectedValue(new Error("invalid grant")),
     };
 
-    await expect(refreshAccessToken(mockClient, "bad-token")).rejects.toThrow(
-      "invalid grant",
-    );
+    await expect(refreshAccessToken(mockClient, "bad-token")).rejects.toThrow("invalid grant");
   });
 });

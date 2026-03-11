@@ -12,7 +12,16 @@ vi.mock("../spotify/errors.js", () => ({
 
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
-import { getPlaylists, getPlaylist, createPlaylist, addToPlaylist, removeFromPlaylist, reorderPlaylistTracks, deletePlaylist, updatePlaylist } from "./playlists.js";
+import {
+  getPlaylists,
+  getPlaylist,
+  createPlaylist,
+  addToPlaylist,
+  removeFromPlaylist,
+  reorderPlaylistTracks,
+  deletePlaylist,
+  updatePlaylist,
+} from "./playlists.js";
 
 describe("playlist tools", () => {
   let mockClient: any;
@@ -205,7 +214,7 @@ describe("playlist tools", () => {
       expect(mockClient.removeTracksFromPlaylist).toHaveBeenCalledWith(
         "pl1",
         [{ uri: "spotify:track:a" }, { uri: "spotify:track:b" }],
-        {}
+        {},
       );
     });
 
@@ -220,7 +229,7 @@ describe("playlist tools", () => {
       expect(mockClient.removeTracksFromPlaylist).toHaveBeenCalledWith(
         "pl1",
         [{ uri: "spotify:track:a" }],
-        { snapshot_id: "snap123" }
+        { snapshot_id: "snap123" },
       );
     });
 

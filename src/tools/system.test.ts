@@ -82,9 +82,7 @@ describe("system tools", () => {
         const resultPromise = openSpotify({});
 
         // pgrep close event with code 0 = process found
-        const closeHandler = processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const closeHandler = processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (closeHandler) closeHandler(0);
 
         const result = await resultPromise;
@@ -121,9 +119,7 @@ describe("system tools", () => {
         const resultPromise = openSpotify({});
 
         // First spawn: isSpotifyRunning - pgrep returns code 1 (not running)
-        const pgrepClose = calls[0].processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const pgrepClose = calls[0].processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (pgrepClose) pgrepClose(1);
 
         // Wait for openSpotifyApp to be called
@@ -132,9 +128,7 @@ describe("system tools", () => {
         });
 
         // Second spawn: openSpotifyApp - exits with code 0
-        const openClose = calls[1].processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const openClose = calls[1].processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (openClose) openClose(0);
 
         const result = await resultPromise;
@@ -166,9 +160,7 @@ describe("system tools", () => {
         const resultPromise = openSpotify({});
 
         // pgrep: not running
-        const pgrepClose = calls[0].processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const pgrepClose = calls[0].processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (pgrepClose) pgrepClose(1);
 
         // Wait for openSpotifyApp spawn
@@ -177,9 +169,7 @@ describe("system tools", () => {
         });
 
         // openSpotifyApp: error event
-        const errorHandler = calls[1].processOn.mock.calls.find(
-          (c: any) => c[0] === "error",
-        )?.[1];
+        const errorHandler = calls[1].processOn.mock.calls.find((c: any) => c[0] === "error")?.[1];
         if (errorHandler) errorHandler(new Error("ENOENT"));
 
         const result = await resultPromise;
@@ -214,9 +204,7 @@ describe("system tools", () => {
         const resultPromise = openSpotify({ wait_seconds: 1 });
 
         // pgrep: not running
-        const pgrepClose = calls[0].processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const pgrepClose = calls[0].processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (pgrepClose) pgrepClose(1);
 
         // Wait for openSpotifyApp spawn
@@ -225,9 +213,7 @@ describe("system tools", () => {
         });
 
         // openSpotifyApp: success
-        const openClose = calls[1].processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const openClose = calls[1].processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (openClose) openClose(0);
 
         // Advance timer for sleep(1) and device polling sleep(2)
@@ -261,9 +247,7 @@ describe("system tools", () => {
         } as any);
 
         const resultPromise = openSpotify({});
-        const closeHandler = processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const closeHandler = processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (closeHandler) closeHandler(0);
 
         const result = await resultPromise;
@@ -291,9 +275,7 @@ describe("system tools", () => {
         } as any);
 
         const resultPromise = openSpotify({});
-        const closeHandler = processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const closeHandler = processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (closeHandler) closeHandler(0);
 
         const result = await resultPromise;
@@ -326,9 +308,7 @@ describe("system tools", () => {
         } as any);
 
         const resultPromise = openSpotify({});
-        const closeHandler = processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const closeHandler = processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (closeHandler) closeHandler(0);
 
         // Advance past the 2-second poll interval
@@ -359,9 +339,7 @@ describe("system tools", () => {
         } as any);
 
         const resultPromise = openSpotify({});
-        const closeHandler = processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const closeHandler = processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (closeHandler) closeHandler(0);
 
         // Advance past all 5 poll attempts (5 * 2s = 10s)
@@ -392,9 +370,7 @@ describe("system tools", () => {
         } as any);
 
         const resultPromise = openSpotify({});
-        const closeHandler = processOn.mock.calls.find(
-          (c: any) => c[0] === "close",
-        )?.[1];
+        const closeHandler = processOn.mock.calls.find((c: any) => c[0] === "close")?.[1];
         if (closeHandler) closeHandler(0);
 
         const result = await resultPromise;

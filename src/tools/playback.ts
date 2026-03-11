@@ -21,19 +21,23 @@ async function ensureDevice(client: any, deviceId?: string): Promise<ToolRespons
   if (devices.length > 0) {
     const list = devices.map((d: any) => `  - ${d.name} (${d.type})`).join("\n");
     return {
-      content: [{
-        type: "text",
-        text: `No active Spotify device. Available devices:\n${list}\n\nOpen Spotify on one of these devices or use spotify_open to launch it.`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `No active Spotify device. Available devices:\n${list}\n\nOpen Spotify on one of these devices or use spotify_open to launch it.`,
+        },
+      ],
       isError: true,
     };
   }
 
   return {
-    content: [{
-      type: "text",
-      text: "No Spotify devices found. Please open Spotify on a device and try again, or use spotify_open to launch it.",
-    }],
+    content: [
+      {
+        type: "text",
+        text: "No Spotify devices found. Please open Spotify on a device and try again, or use spotify_open to launch it.",
+      },
+    ],
     isError: true,
   };
 }
@@ -49,9 +53,11 @@ export async function play(args: PlaybackArgs): Promise<ToolResponse> {
 
     if (args.uri) {
       // Determine if URI is a context (album, playlist, artist) or a track
-      if (args.uri.startsWith('spotify:album:') ||
-          args.uri.startsWith('spotify:playlist:') ||
-          args.uri.startsWith('spotify:artist:')) {
+      if (
+        args.uri.startsWith("spotify:album:") ||
+        args.uri.startsWith("spotify:playlist:") ||
+        args.uri.startsWith("spotify:artist:")
+      ) {
         options.context_uri = args.uri;
       } else {
         // Track or other URI - use uris array
@@ -70,19 +76,19 @@ export async function play(args: PlaybackArgs): Promise<ToolResponse> {
     // Generate appropriate response message
     let message = "Resumed playback";
     if (args.uri) {
-      if (args.uri.startsWith('spotify:album:')) {
+      if (args.uri.startsWith("spotify:album:")) {
         message = `Started playing album: ${args.uri}`;
-      } else if (args.uri.startsWith('spotify:playlist:')) {
+      } else if (args.uri.startsWith("spotify:playlist:")) {
         message = `Started playing playlist: ${args.uri}`;
-      } else if (args.uri.startsWith('spotify:artist:')) {
+      } else if (args.uri.startsWith("spotify:artist:")) {
         message = `Started playing artist: ${args.uri}`;
-      } else if (args.uri.startsWith('spotify:track:')) {
+      } else if (args.uri.startsWith("spotify:track:")) {
         message = `Started playing track: ${args.uri}`;
       } else {
         message = `Started playback: ${args.uri}`;
       }
     } else if (args.uris && args.uris.length > 0) {
-      message = `Started playing ${args.uris.length} track${args.uris.length > 1 ? 's' : ''}`;
+      message = `Started playing ${args.uris.length} track${args.uris.length > 1 ? "s" : ""}`;
     }
 
     return {
@@ -245,9 +251,10 @@ export async function getPlaybackState(): Promise<ToolResponse> {
     const duration = Math.floor(track.duration_ms / 1000);
 
     const systemVol = getSystemVolume();
-    const volumeLine = systemVol !== null
-      ? `Volume: ${device.volume_percent}% (Spotify) / ${systemVol}% (System)`
-      : `Volume: ${device.volume_percent}%`;
+    const volumeLine =
+      systemVol !== null
+        ? `Volume: ${device.volume_percent}% (Spotify) / ${systemVol}% (System)`
+        : `Volume: ${device.volume_percent}%`;
 
     const text = `${isPlaying ? "▶️ Playing" : "⏸️ Paused"}: ${track.name}
 Artist: ${artists}
@@ -317,10 +324,12 @@ export async function transferPlayback(args: TransferPlaybackArgs): Promise<Tool
     await client.transferMyPlayback([args.device_id], { play });
 
     return {
-      content: [{
-        type: "text",
-        text: `Transferred playback to device ${args.device_id}${play ? " and started playing" : ""}`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Transferred playback to device ${args.device_id}${play ? " and started playing" : ""}`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_transfer_playback");

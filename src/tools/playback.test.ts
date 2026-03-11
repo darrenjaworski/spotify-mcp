@@ -16,7 +16,16 @@ vi.mock("../spotify/errors.js", () => ({
 import { spawnSync } from "child_process";
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
-import { play, pause, next, previous, setVolume, getPlaybackState, getDevices, transferPlayback } from "./playback.js";
+import {
+  play,
+  pause,
+  next,
+  previous,
+  setVolume,
+  getPlaybackState,
+  getDevices,
+  transferPlayback,
+} from "./playback.js";
 
 describe("playback tools", () => {
   let mockClient: any;
@@ -415,8 +424,20 @@ describe("playback tools", () => {
       mockClient.getMyDevices.mockResolvedValue({
         body: {
           devices: [
-            { id: "dev-1", name: "Living Room Speaker", type: "Speaker", is_active: true, volume_percent: 80 },
-            { id: "dev-2", name: "Phone", type: "Smartphone", is_active: false, volume_percent: 50 },
+            {
+              id: "dev-1",
+              name: "Living Room Speaker",
+              type: "Speaker",
+              is_active: true,
+              volume_percent: 80,
+            },
+            {
+              id: "dev-2",
+              name: "Phone",
+              type: "Smartphone",
+              is_active: false,
+              volume_percent: 50,
+            },
           ],
         },
       });
@@ -455,9 +476,7 @@ describe("playback tools", () => {
     it("handles null volume_percent gracefully", async () => {
       mockClient.getMyDevices.mockResolvedValue({
         body: {
-          devices: [
-            { id: "dev-1", name: "TV", type: "TV", is_active: true, volume_percent: null },
-          ],
+          devices: [{ id: "dev-1", name: "TV", type: "TV", is_active: true, volume_percent: null }],
         },
       });
       const result = await getDevices();
@@ -487,7 +506,9 @@ describe("playback tools", () => {
       mockClient.transferMyPlayback.mockResolvedValue({});
 
       const result = await transferPlayback({ device_id: "dev-1" });
-      expect(result.content[0].text).toBe("Transferred playback to device dev-1 and started playing");
+      expect(result.content[0].text).toBe(
+        "Transferred playback to device dev-1 and started playing",
+      );
       expect(mockClient.transferMyPlayback).toHaveBeenCalledWith(["dev-1"], { play: true });
     });
 

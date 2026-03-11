@@ -5,22 +5,22 @@
  * Guides users through the Spotify Developer app creation process
  */
 
-import * as readline from 'readline/promises';
-import { stdin as input, stdout as output } from 'process';
-import { spawn } from 'child_process';
-import { writeFile } from 'fs/promises';
-import { homedir } from 'os';
-import { join } from 'path';
+import * as readline from "readline/promises";
+import { stdin as input, stdout as output } from "process";
+import { spawn } from "child_process";
+import { writeFile } from "fs/promises";
+import { homedir } from "os";
+import { join } from "path";
 
 // ANSI color codes for better terminal output
 const colors = {
-  reset: '\x1b[0m',
-  bright: '\x1b[1m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  cyan: '\x1b[36m',
-  red: '\x1b[31m',
+  reset: "\x1b[0m",
+  bright: "\x1b[1m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  cyan: "\x1b[36m",
+  red: "\x1b[31m",
 };
 
 function print(message: string, color: string = colors.reset) {
@@ -28,9 +28,9 @@ function print(message: string, color: string = colors.reset) {
 }
 
 function header(message: string) {
-  print(`\n${'='.repeat(60)}`, colors.cyan);
+  print(`\n${"=".repeat(60)}`, colors.cyan);
   print(message, colors.bright + colors.cyan);
-  print('='.repeat(60), colors.cyan);
+  print("=".repeat(60), colors.cyan);
 }
 
 function success(message: string) {
@@ -54,26 +54,26 @@ async function openBrowser(url: string): Promise<void> {
   let command: string;
   let args: string[];
 
-  if (platform === 'darwin') {
-    command = 'open';
+  if (platform === "darwin") {
+    command = "open";
     args = [url];
-  } else if (platform === 'win32') {
-    command = 'cmd';
-    args = ['/c', 'start', '', url];
+  } else if (platform === "win32") {
+    command = "cmd";
+    args = ["/c", "start", "", url];
   } else {
-    command = 'xdg-open';
+    command = "xdg-open";
     args = [url];
   }
 
   return new Promise((resolve) => {
     const child = spawn(command, args, { shell: false });
 
-    child.on('error', () => {
+    child.on("error", () => {
       warning(`Could not open browser automatically. Please visit: ${url}`);
       resolve();
     });
 
-    child.on('close', (code) => {
+    child.on("close", (code) => {
       if (code === 0) {
         success(`Opened browser to: ${url}`);
       } else {
@@ -103,12 +103,22 @@ async function getConfigPath(): Promise<string> {
   const platform = process.platform;
   let configPath: string;
 
-  if (platform === 'darwin') {
-    configPath = join(homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json');
-  } else if (platform === 'win32') {
-    configPath = join(process.env.APPDATA || join(homedir(), 'AppData', 'Roaming'), 'Claude', 'claude_desktop_config.json');
+  if (platform === "darwin") {
+    configPath = join(
+      homedir(),
+      "Library",
+      "Application Support",
+      "Claude",
+      "claude_desktop_config.json",
+    );
+  } else if (platform === "win32") {
+    configPath = join(
+      process.env.APPDATA || join(homedir(), "AppData", "Roaming"),
+      "Claude",
+      "claude_desktop_config.json",
+    );
   } else {
-    configPath = join(homedir(), '.config', 'Claude', 'claude_desktop_config.json');
+    configPath = join(homedir(), ".config", "Claude", "claude_desktop_config.json");
   }
 
   return configPath;
@@ -123,8 +133,8 @@ SPOTIFY_CLIENT_SECRET=${clientSecret}
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
 `;
 
-  await writeFile('.env', envContent);
-  success('Created .env file in current directory');
+  await writeFile(".env", envContent);
+  success("Created .env file in current directory");
 }
 
 function generateMcpConfig(clientId: string, clientSecret: string, useNpx: boolean = true): string {
@@ -133,35 +143,35 @@ function generateMcpConfig(clientId: string, clientSecret: string, useNpx: boole
       {
         mcpServers: {
           spotify: {
-            command: 'npx',
-            args: ['-y', '@darrenjaws/spotify-mcp'],
+            command: "npx",
+            args: ["-y", "@darrenjaws/spotify-mcp"],
             env: {
               SPOTIFY_CLIENT_ID: clientId,
               SPOTIFY_CLIENT_SECRET: clientSecret,
-              SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+              SPOTIFY_REDIRECT_URI: "http://127.0.0.1:3000/callback",
             },
           },
         },
       },
       null,
-      2
+      2,
     );
   } else {
     return JSON.stringify(
       {
         mcpServers: {
           spotify: {
-            command: 'spotify-mcp',
+            command: "spotify-mcp",
             env: {
               SPOTIFY_CLIENT_ID: clientId,
               SPOTIFY_CLIENT_SECRET: clientSecret,
-              SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+              SPOTIFY_REDIRECT_URI: "http://127.0.0.1:3000/callback",
             },
           },
         },
       },
       null,
-      2
+      2,
     );
   }
 }
@@ -171,18 +181,18 @@ function generateCursorConfig(clientId: string, clientSecret: string): string {
     {
       mcpServers: {
         spotify: {
-          command: 'npx',
-          args: ['-y', '@darrenjaws/spotify-mcp'],
+          command: "npx",
+          args: ["-y", "@darrenjaws/spotify-mcp"],
           env: {
             SPOTIFY_CLIENT_ID: clientId,
             SPOTIFY_CLIENT_SECRET: clientSecret,
-            SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+            SPOTIFY_REDIRECT_URI: "http://127.0.0.1:3000/callback",
           },
         },
       },
     },
     null,
-    2
+    2,
   );
 }
 
@@ -191,18 +201,18 @@ function generateWindsurfConfig(clientId: string, clientSecret: string): string 
     {
       mcpServers: {
         spotify: {
-          command: 'npx',
-          args: ['-y', '@darrenjaws/spotify-mcp'],
+          command: "npx",
+          args: ["-y", "@darrenjaws/spotify-mcp"],
           env: {
             SPOTIFY_CLIENT_ID: clientId,
             SPOTIFY_CLIENT_SECRET: clientSecret,
-            SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+            SPOTIFY_REDIRECT_URI: "http://127.0.0.1:3000/callback",
           },
         },
       },
     },
     null,
-    2
+    2,
   );
 }
 
@@ -211,19 +221,19 @@ function generateVSCodeConfig(clientId: string, clientSecret: string): string {
     {
       servers: {
         spotify: {
-          type: 'stdio',
-          command: 'npx',
-          args: ['-y', '@darrenjaws/spotify-mcp'],
+          type: "stdio",
+          command: "npx",
+          args: ["-y", "@darrenjaws/spotify-mcp"],
           env: {
             SPOTIFY_CLIENT_ID: clientId,
             SPOTIFY_CLIENT_SECRET: clientSecret,
-            SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+            SPOTIFY_REDIRECT_URI: "http://127.0.0.1:3000/callback",
           },
         },
       },
     },
     null,
-    2
+    2,
   );
 }
 
@@ -231,17 +241,17 @@ function generateOpenCodeConfig(clientId: string, clientSecret: string): string 
   return JSON.stringify(
     {
       spotify: {
-        command: ['npx', '-y', '@darrenjaws/spotify-mcp@latest'],
+        command: ["npx", "-y", "@darrenjaws/spotify-mcp@latest"],
         environment: {
           SPOTIFY_CLIENT_ID: clientId,
           SPOTIFY_CLIENT_SECRET: clientSecret,
-          SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+          SPOTIFY_REDIRECT_URI: "http://127.0.0.1:3000/callback",
         },
-        type: 'local',
+        type: "local",
       },
     },
     null,
-    2
+    2,
   );
 }
 
@@ -249,197 +259,198 @@ export async function runSetup(): Promise<void> {
   const rl = readline.createInterface({ input, output });
 
   try {
-    header('Spotify MCP Server - Setup Wizard');
-    print('\nThis wizard will help you configure the Spotify MCP Server.\n');
-    info('You\'ll need to create a Spotify Developer app to get started.');
+    header("Spotify MCP Server - Setup Wizard");
+    print("\nThis wizard will help you configure the Spotify MCP Server.\n");
+    info("You'll need to create a Spotify Developer app to get started.");
 
     // Step 1: Open Spotify Developer Dashboard
-    header('Step 1: Create a Spotify Developer App');
-    print('\n1. We\'ll open the Spotify Developer Dashboard');
-    print('2. Log in with your Spotify account');
+    header("Step 1: Create a Spotify Developer App");
+    print("\n1. We'll open the Spotify Developer Dashboard");
+    print("2. Log in with your Spotify account");
     print('3. Click "Create app" button');
-    print('4. Fill in the following:');
+    print("4. Fill in the following:");
     print('   - App name: "My Spotify MCP" (or any name you prefer)');
     print('   - App description: "MCP server for AI assistant"');
-    print('   - Redirect URI: http://127.0.0.1:3000/callback');
+    print("   - Redirect URI: http://127.0.0.1:3000/callback");
     print('   - Which API/SDKs are you planning to use? Check "Web API"');
     print('5. Accept the terms and click "Save"\n');
 
-    const openDashboard = await prompt(rl, 'Ready to open the Spotify Developer Dashboard? (Y/n):');
-    if (openDashboard.toLowerCase() !== 'n') {
-      await openBrowser('https://developer.spotify.com/dashboard');
+    const openDashboard = await prompt(rl, "Ready to open the Spotify Developer Dashboard? (Y/n):");
+    if (openDashboard.toLowerCase() !== "n") {
+      await openBrowser("https://developer.spotify.com/dashboard");
     } else {
-      info('Please visit: https://developer.spotify.com/dashboard');
+      info("Please visit: https://developer.spotify.com/dashboard");
     }
 
-    print('\n');
-    warning('IMPORTANT: Make sure to add this Redirect URI exactly:');
-    print('  → http://127.0.0.1:3000/callback', colors.bright);
-    print('\n');
+    print("\n");
+    warning("IMPORTANT: Make sure to add this Redirect URI exactly:");
+    print("  → http://127.0.0.1:3000/callback", colors.bright);
+    print("\n");
 
-    await prompt(rl, 'Press ENTER once you\'ve created your app and have it open...');
+    await prompt(rl, "Press ENTER once you've created your app and have it open...");
 
     // Step 2: Get Client ID
-    header('Step 2: Get Your Client ID');
-    print('\nIn your Spotify app settings:');
+    header("Step 2: Get Your Client ID");
+    print("\nIn your Spotify app settings:");
     print('1. Look for "Client ID" (it\'s already visible)');
-    print('2. Copy the 32-character code\n');
+    print("2. Copy the 32-character code\n");
 
-    let clientId = '';
+    let clientId = "";
     while (!clientId) {
-      clientId = await prompt(rl, 'Paste your Client ID here:');
+      clientId = await prompt(rl, "Paste your Client ID here:");
       if (!validateClientId(clientId)) {
-        error('Invalid Client ID format. It should be a 32-character hex string.');
-        clientId = '';
+        error("Invalid Client ID format. It should be a 32-character hex string.");
+        clientId = "";
       } else {
-        success('Client ID looks good!');
+        success("Client ID looks good!");
       }
     }
 
     // Step 3: Get Client Secret
-    header('Step 3: Get Your Client Secret');
-    print('\nIn your Spotify app settings:');
+    header("Step 3: Get Your Client Secret");
+    print("\nIn your Spotify app settings:");
     print('1. Click "View client secret" link');
-    print('2. Copy the secret that appears\n');
+    print("2. Copy the secret that appears\n");
 
-    let clientSecret = '';
+    let clientSecret = "";
     while (!clientSecret) {
-      clientSecret = await prompt(rl, 'Paste your Client Secret here:');
+      clientSecret = await prompt(rl, "Paste your Client Secret here:");
       if (!validateClientSecret(clientSecret)) {
-        error('Invalid Client Secret format. It should be a 32-character hex string.');
-        clientSecret = '';
+        error("Invalid Client Secret format. It should be a 32-character hex string.");
+        clientSecret = "";
       } else {
-        success('Client Secret looks good!');
+        success("Client Secret looks good!");
       }
     }
 
     // Step 4: Configuration method
-    header('Step 4: Choose Configuration Method');
-    print('\nHow would you like to use the Spotify MCP server?\n');
-    print('1. Claude Desktop');
-    print('2. Claude Code CLI');
-    print('3. Cursor');
-    print('4. Windsurf');
-    print('5. VS Code (GitHub Copilot)');
-    print('6. OpenCode');
-    print('7. From source (for development)\n');
+    header("Step 4: Choose Configuration Method");
+    print("\nHow would you like to use the Spotify MCP server?\n");
+    print("1. Claude Desktop");
+    print("2. Claude Code CLI");
+    print("3. Cursor");
+    print("4. Windsurf");
+    print("5. VS Code (GitHub Copilot)");
+    print("6. OpenCode");
+    print("7. From source (for development)\n");
 
-    const configMethod = await prompt(rl, 'Enter your choice (1-7):');
+    const configMethod = await prompt(rl, "Enter your choice (1-7):");
 
-    let mcpConfig = '';
+    let mcpConfig = "";
     switch (configMethod) {
-      case '1': {
+      case "1": {
         // Claude Desktop
-        header('Claude Desktop Configuration');
-        print('\nChoose installation method:\n');
-        print('1. Using npx (recommended - no installation needed)');
-        print('2. Global installation (npm install -g @darrenjaws/spotify-mcp)\n');
+        header("Claude Desktop Configuration");
+        print("\nChoose installation method:\n");
+        print("1. Using npx (recommended - no installation needed)");
+        print("2. Global installation (npm install -g @darrenjaws/spotify-mcp)\n");
 
-        const installMethod = await prompt(rl, 'Enter your choice (1-2):');
-        const useNpx = installMethod !== '2';
+        const installMethod = await prompt(rl, "Enter your choice (1-2):");
+        const useNpx = installMethod !== "2";
 
         mcpConfig = generateMcpConfig(clientId, clientSecret, useNpx);
 
         const configPath = await getConfigPath();
-        print('\n');
+        print("\n");
         info(`Your Claude Desktop config file should be at:`);
         print(`  ${configPath}`, colors.bright);
-        print('\n');
-        success('Copy this configuration and add it to your claude_desktop_config.json:');
-        print('\n' + mcpConfig, colors.cyan);
-        print('\n');
-        warning('After updating the config, restart Claude Desktop for changes to take effect.');
+        print("\n");
+        success("Copy this configuration and add it to your claude_desktop_config.json:");
+        print("\n" + mcpConfig, colors.cyan);
+        print("\n");
+        warning("After updating the config, restart Claude Desktop for changes to take effect.");
         break;
       }
-      case '2': {
+      case "2": {
         // Claude Code CLI
-        header('Claude Code CLI Configuration');
+        header("Claude Code CLI Configuration");
         mcpConfig = generateMcpConfig(clientId, clientSecret, true);
 
-        print('\n');
-        info('Add this to your ~/.claude/config.json:');
-        print('\n' + mcpConfig, colors.cyan);
-        print('\n');
-        info('Or run: claude mcp add');
+        print("\n");
+        info("Add this to your ~/.claude/config.json:");
+        print("\n" + mcpConfig, colors.cyan);
+        print("\n");
+        info("Or run: claude mcp add");
         break;
       }
-      case '3': {
+      case "3": {
         // Cursor
-        header('Cursor Configuration');
+        header("Cursor Configuration");
         mcpConfig = generateCursorConfig(clientId, clientSecret);
 
-        print('\n');
-        info('Add this to your project\'s .cursor/mcp.json (or ~/.cursor/mcp.json for global):');
-        print('\n' + mcpConfig, colors.cyan);
-        print('\n');
-        warning('Restart Cursor after saving the config file.');
+        print("\n");
+        info("Add this to your project's .cursor/mcp.json (or ~/.cursor/mcp.json for global):");
+        print("\n" + mcpConfig, colors.cyan);
+        print("\n");
+        warning("Restart Cursor after saving the config file.");
         break;
       }
-      case '4': {
+      case "4": {
         // Windsurf
-        header('Windsurf Configuration');
+        header("Windsurf Configuration");
         mcpConfig = generateWindsurfConfig(clientId, clientSecret);
 
-        print('\n');
-        info('Add this to your ~/.codeium/windsurf/mcp_config.json:');
-        print('\n' + mcpConfig, colors.cyan);
-        print('\n');
-        warning('Restart Windsurf after saving the config file.');
+        print("\n");
+        info("Add this to your ~/.codeium/windsurf/mcp_config.json:");
+        print("\n" + mcpConfig, colors.cyan);
+        print("\n");
+        warning("Restart Windsurf after saving the config file.");
         break;
       }
-      case '5': {
+      case "5": {
         // VS Code
-        header('VS Code (GitHub Copilot) Configuration');
+        header("VS Code (GitHub Copilot) Configuration");
         mcpConfig = generateVSCodeConfig(clientId, clientSecret);
 
-        print('\n');
-        info('Add this to your project\'s .vscode/mcp.json (or User Settings for global):');
-        print('\n' + mcpConfig, colors.cyan);
-        print('\n');
-        warning('Reload VS Code after saving the config file.');
+        print("\n");
+        info("Add this to your project's .vscode/mcp.json (or User Settings for global):");
+        print("\n" + mcpConfig, colors.cyan);
+        print("\n");
+        warning("Reload VS Code after saving the config file.");
         break;
       }
-      case '6': {
+      case "6": {
         // OpenCode
-        header('OpenCode Configuration');
+        header("OpenCode Configuration");
         mcpConfig = generateOpenCodeConfig(clientId, clientSecret);
 
-        print('\n');
+        print("\n");
         info('Add this to the "mcpServers" section of your opencode.json:');
-        print('\n' + mcpConfig, colors.cyan);
+        print("\n" + mcpConfig, colors.cyan);
         break;
       }
-      case '7': {
+      case "7": {
         // Development from source
-        header('Development Configuration');
+        header("Development Configuration");
         await createEnvFile(clientId, clientSecret);
-        print('\n');
-        success('Configuration saved!');
-        print('\nNext steps:');
-        print('1. Run: npm run build');
-        print('2. Test with MCP Inspector: npx @modelcontextprotocol/inspector node build/index.js');
+        print("\n");
+        success("Configuration saved!");
+        print("\nNext steps:");
+        print("1. Run: npm run build");
+        print(
+          "2. Test with MCP Inspector: npx @modelcontextprotocol/inspector node build/index.js",
+        );
         break;
       }
       default: {
-        warning('Invalid choice. Showing Claude Desktop configuration...');
-        print('\n=== Claude Desktop (npx) ===');
+        warning("Invalid choice. Showing Claude Desktop configuration...");
+        print("\n=== Claude Desktop (npx) ===");
         print(generateMcpConfig(clientId, clientSecret, true), colors.cyan);
         break;
       }
     }
 
     // Step 5: Test Connection (Optional)
-    header('Setup Complete!');
-    success('Your Spotify MCP server is configured!');
-    print('\n');
-    info('Next steps:');
-    print('1. Restart your AI tool (Claude Desktop, Cursor, Windsurf, VS Code, etc.)');
+    header("Setup Complete!");
+    success("Your Spotify MCP server is configured!");
+    print("\n");
+    info("Next steps:");
+    print("1. Restart your AI tool (Claude Desktop, Cursor, Windsurf, VS Code, etc.)");
     print('2. Ask your AI assistant: "What\'s currently playing on Spotify?"');
-    print('3. The first request will open your browser for Spotify OAuth authentication');
-    print('4. After authorizing, all future requests will work automatically');
-    print('\n');
-    success('Happy listening! 🎵');
-
+    print("3. The first request will open your browser for Spotify OAuth authentication");
+    print("4. After authorizing, all future requests will work automatically");
+    print("\n");
+    success("Happy listening! 🎵");
   } catch (err: any) {
     error(`Setup failed: ${err.message}`);
     process.exit(1);
@@ -451,7 +462,7 @@ export async function runSetup(): Promise<void> {
 // Run setup if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   runSetup().catch((err) => {
-    console.error('Setup error:', err);
+    console.error("Setup error:", err);
     process.exit(1);
   });
 }

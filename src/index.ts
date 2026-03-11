@@ -32,7 +32,7 @@ const server = new McpServer(
     capabilities: {
       tools: {},
     },
-  }
+  },
 );
 
 // Register playback tools
@@ -41,11 +41,16 @@ server.registerTool(
   {
     description: "Start or resume playback of a track, album, artist, or playlist",
     inputSchema: {
-      uri: z.string().optional().describe("Spotify URI to play (e.g., spotify:track:xxx, spotify:album:xxx, spotify:playlist:xxx, spotify:artist:xxx). Use search tool to get URIs."),
+      uri: z
+        .string()
+        .optional()
+        .describe(
+          "Spotify URI to play (e.g., spotify:track:xxx, spotify:album:xxx, spotify:playlist:xxx, spotify:artist:xxx). Use search tool to get URIs.",
+        ),
       device_id: z.string().optional().describe("Optional: Device ID to play on"),
     },
   },
-  async ({ uri, device_id }: any) => playbackTools.play({ uri, device_id } as any) as any
+  async ({ uri, device_id }: any) => playbackTools.play({ uri, device_id } as any) as any,
 );
 
 server.registerTool(
@@ -56,7 +61,7 @@ server.registerTool(
       device_id: z.string().optional().describe("Optional: Device ID"),
     },
   },
-  async ({ device_id }: any) => playbackTools.pause({ device_id } as any) as any
+  async ({ device_id }: any) => playbackTools.pause({ device_id } as any) as any,
 );
 
 server.registerTool(
@@ -67,7 +72,7 @@ server.registerTool(
       device_id: z.string().optional().describe("Optional: Device ID"),
     },
   },
-  async ({ device_id }: any) => playbackTools.next({ device_id } as any) as any
+  async ({ device_id }: any) => playbackTools.next({ device_id } as any) as any,
 );
 
 server.registerTool(
@@ -78,7 +83,7 @@ server.registerTool(
       device_id: z.string().optional().describe("Optional: Device ID"),
     },
   },
-  async ({ device_id }: any) => playbackTools.previous({ device_id } as any) as any
+  async ({ device_id }: any) => playbackTools.previous({ device_id } as any) as any,
 );
 
 server.registerTool(
@@ -90,7 +95,8 @@ server.registerTool(
       device_id: z.string().optional().describe("Optional: Device ID"),
     },
   },
-  async ({ volume_percent, device_id }: any) => playbackTools.setVolume({ volume_percent, device_id } as any) as any
+  async ({ volume_percent, device_id }: any) =>
+    playbackTools.setVolume({ volume_percent, device_id } as any) as any,
 );
 
 server.registerTool(
@@ -99,7 +105,7 @@ server.registerTool(
     description: "Get current playback state including track, artist, album, and playback status",
     inputSchema: {},
   },
-  async () => playbackTools.getPlaybackState() as any
+  async () => playbackTools.getPlaybackState() as any,
 );
 
 server.registerTool(
@@ -108,7 +114,7 @@ server.registerTool(
     description: "List available Spotify Connect devices",
     inputSchema: {},
   },
-  async () => playbackTools.getDevices() as any
+  async () => playbackTools.getDevices() as any,
 );
 
 // Register search tool
@@ -119,16 +125,27 @@ server.registerTool(
     inputSchema: {
       query: z.string().describe("Search query"),
       type: z.enum(["track", "album", "artist", "playlist"]).describe("Type of item to search for"),
-      limit: z.number().min(1).max(10).optional().describe("Number of results to return (default: 5, max: 10)"),
+      limit: z
+        .number()
+        .min(1)
+        .max(10)
+        .optional()
+        .describe("Number of results to return (default: 5, max: 10)"),
       artist: z.string().optional().describe("Filter by artist name"),
       album: z.string().optional().describe("Filter by album name"),
       genre: z.string().optional().describe("Filter by genre"),
-      year: z.string().optional().describe("Filter by year or year range (e.g., '2024' or '2020-2024')"),
-      tag: z.enum(["new", "hipster"]).optional().describe("Filter by tag: 'new' for recent releases, 'hipster' for low-popularity"),
+      year: z
+        .string()
+        .optional()
+        .describe("Filter by year or year range (e.g., '2024' or '2020-2024')"),
+      tag: z
+        .enum(["new", "hipster"])
+        .optional()
+        .describe("Filter by tag: 'new' for recent releases, 'hipster' for low-popularity"),
     },
   },
   async ({ query, type, limit, artist, album, genre, year, tag }: any) =>
-    searchTools.search({ query, type, limit, artist, album, genre, year, tag } as any) as any
+    searchTools.search({ query, type, limit, artist, album, genre, year, tag } as any) as any,
 );
 
 // Register playlist tools
@@ -137,10 +154,15 @@ server.registerTool(
   {
     description: "Get current user's playlists",
     inputSchema: {
-      limit: z.number().min(1).max(50).optional().describe("Number of playlists to return (default: 20)"),
+      limit: z
+        .number()
+        .min(1)
+        .max(50)
+        .optional()
+        .describe("Number of playlists to return (default: 20)"),
     },
   },
-  async ({ limit }: any) => playlistTools.getPlaylists({ limit } as any) as any
+  async ({ limit }: any) => playlistTools.getPlaylists({ limit } as any) as any,
 );
 
 server.registerTool(
@@ -151,7 +173,7 @@ server.registerTool(
       playlist_id: z.string().describe("Spotify playlist ID"),
     },
   },
-  async ({ playlist_id }: any) => playlistTools.getPlaylist({ playlist_id } as any) as any
+  async ({ playlist_id }: any) => playlistTools.getPlaylist({ playlist_id } as any) as any,
 );
 
 server.registerTool(
@@ -161,11 +183,14 @@ server.registerTool(
     inputSchema: {
       name: z.string().describe("Playlist name"),
       description: z.string().optional().describe("Playlist description"),
-      public: z.boolean().optional().describe("Whether the playlist should be public (default: true)"),
+      public: z
+        .boolean()
+        .optional()
+        .describe("Whether the playlist should be public (default: true)"),
     },
   },
   async ({ name, description, public: isPublic }: any) =>
-    playlistTools.createPlaylist({ name, description, public: isPublic } as any) as any
+    playlistTools.createPlaylist({ name, description, public: isPublic } as any) as any,
 );
 
 server.registerTool(
@@ -175,11 +200,14 @@ server.registerTool(
     inputSchema: {
       playlist_id: z.string().describe("Spotify playlist ID"),
       uris: z.array(z.string()).describe("Array of Spotify track URIs to add"),
-      position: z.number().optional().describe("Position to insert tracks (default: end of playlist)"),
+      position: z
+        .number()
+        .optional()
+        .describe("Position to insert tracks (default: end of playlist)"),
     },
   },
   async ({ playlist_id, uris, position }: any) =>
-    playlistTools.addToPlaylist({ playlist_id, uris, position } as any) as any
+    playlistTools.addToPlaylist({ playlist_id, uris, position } as any) as any,
 );
 
 server.registerTool(
@@ -189,11 +217,14 @@ server.registerTool(
     inputSchema: {
       playlist_id: z.string().describe("Spotify playlist ID"),
       uris: z.array(z.string()).min(1).describe("Array of Spotify track URIs to remove"),
-      snapshot_id: z.string().optional().describe("Playlist snapshot ID for concurrent modification safety"),
+      snapshot_id: z
+        .string()
+        .optional()
+        .describe("Playlist snapshot ID for concurrent modification safety"),
     },
   },
   async ({ playlist_id, uris, snapshot_id }: any) =>
-    playlistTools.removeFromPlaylist({ playlist_id, uris, snapshot_id } as any) as any
+    playlistTools.removeFromPlaylist({ playlist_id, uris, snapshot_id } as any) as any,
 );
 
 server.registerTool(
@@ -205,11 +236,20 @@ server.registerTool(
       range_start: z.number().min(0).describe("Position of the first track to move"),
       insert_before: z.number().min(0).describe("Position where tracks should be inserted"),
       range_length: z.number().min(1).optional().describe("Number of tracks to move (default: 1)"),
-      snapshot_id: z.string().optional().describe("Playlist snapshot ID for concurrent modification safety"),
+      snapshot_id: z
+        .string()
+        .optional()
+        .describe("Playlist snapshot ID for concurrent modification safety"),
     },
   },
   async ({ playlist_id, range_start, insert_before, range_length, snapshot_id }: any) =>
-    playlistTools.reorderPlaylistTracks({ playlist_id, range_start, insert_before, range_length, snapshot_id } as any) as any
+    playlistTools.reorderPlaylistTracks({
+      playlist_id,
+      range_start,
+      insert_before,
+      range_length,
+      snapshot_id,
+    } as any) as any,
 );
 
 server.registerTool(
@@ -220,7 +260,7 @@ server.registerTool(
       playlist_id: z.string().describe("Spotify playlist ID to delete"),
     },
   },
-  async ({ playlist_id }: any) => playlistTools.deletePlaylist({ playlist_id } as any) as any
+  async ({ playlist_id }: any) => playlistTools.deletePlaylist({ playlist_id } as any) as any,
 );
 
 server.registerTool(
@@ -232,11 +272,20 @@ server.registerTool(
       name: z.string().optional().describe("New playlist name"),
       description: z.string().optional().describe("New playlist description"),
       public: z.boolean().optional().describe("Whether the playlist should be public"),
-      collaborative: z.boolean().optional().describe("Whether the playlist should be collaborative (must be non-public)"),
+      collaborative: z
+        .boolean()
+        .optional()
+        .describe("Whether the playlist should be collaborative (must be non-public)"),
     },
   },
   async ({ playlist_id, name, description, public: isPublic, collaborative }: any) =>
-    playlistTools.updatePlaylist({ playlist_id, name, description, public: isPublic, collaborative } as any) as any
+    playlistTools.updatePlaylist({
+      playlist_id,
+      name,
+      description,
+      public: isPublic,
+      collaborative,
+    } as any) as any,
 );
 
 // Register user data tools
@@ -246,7 +295,7 @@ server.registerTool(
     description: "Get current user's profile information",
     inputSchema: {},
   },
-  async () => userTools.getUserProfile() as any
+  async () => userTools.getUserProfile() as any,
 );
 
 server.registerTool(
@@ -259,10 +308,16 @@ server.registerTool(
         .enum(["short_term", "medium_term", "long_term"])
         .optional()
         .describe("Time range: short_term (4 weeks), medium_term (6 months), long_term (all time)"),
-      limit: z.number().min(1).max(50).optional().describe("Number of items to return (default: 20)"),
+      limit: z
+        .number()
+        .min(1)
+        .max(50)
+        .optional()
+        .describe("Number of items to return (default: 20)"),
     },
   },
-  async ({ type, time_range, limit }: any) => userTools.getTopItems({ type, time_range, limit } as any) as any
+  async ({ type, time_range, limit }: any) =>
+    userTools.getTopItems({ type, time_range, limit } as any) as any,
 );
 
 server.registerTool(
@@ -270,10 +325,15 @@ server.registerTool(
   {
     description: "Get user's recently played tracks",
     inputSchema: {
-      limit: z.number().min(1).max(50).optional().describe("Number of tracks to return (default: 20)"),
+      limit: z
+        .number()
+        .min(1)
+        .max(50)
+        .optional()
+        .describe("Number of tracks to return (default: 20)"),
     },
   },
-  async ({ limit }: any) => userTools.getRecentlyPlayed({ limit } as any) as any
+  async ({ limit }: any) => userTools.getRecentlyPlayed({ limit } as any) as any,
 );
 
 // Register library tools
@@ -282,11 +342,16 @@ server.registerTool(
   {
     description: "Get tracks saved in the current user's library",
     inputSchema: {
-      limit: z.number().min(1).max(50).optional().describe("Number of tracks to return (default: 20)"),
+      limit: z
+        .number()
+        .min(1)
+        .max(50)
+        .optional()
+        .describe("Number of tracks to return (default: 20)"),
       offset: z.number().min(0).optional().describe("Index of first track to return (default: 0)"),
     },
   },
-  async ({ limit, offset }: any) => libraryTools.getSavedTracks({ limit, offset } as any) as any
+  async ({ limit, offset }: any) => libraryTools.getSavedTracks({ limit, offset } as any) as any,
 );
 
 server.registerTool(
@@ -294,11 +359,16 @@ server.registerTool(
   {
     description: "Get albums saved in the current user's library",
     inputSchema: {
-      limit: z.number().min(1).max(50).optional().describe("Number of albums to return (default: 20)"),
+      limit: z
+        .number()
+        .min(1)
+        .max(50)
+        .optional()
+        .describe("Number of albums to return (default: 20)"),
       offset: z.number().min(0).optional().describe("Index of first album to return (default: 0)"),
     },
   },
-  async ({ limit, offset }: any) => libraryTools.getSavedAlbums({ limit, offset } as any) as any
+  async ({ limit, offset }: any) => libraryTools.getSavedAlbums({ limit, offset } as any) as any,
 );
 
 server.registerTool(
@@ -306,11 +376,19 @@ server.registerTool(
   {
     description: "Get artists followed by the current user",
     inputSchema: {
-      limit: z.number().min(1).max(50).optional().describe("Number of artists to return (default: 20)"),
-      after: z.string().optional().describe("Last artist ID from previous page for cursor pagination"),
+      limit: z
+        .number()
+        .min(1)
+        .max(50)
+        .optional()
+        .describe("Number of artists to return (default: 20)"),
+      after: z
+        .string()
+        .optional()
+        .describe("Last artist ID from previous page for cursor pagination"),
     },
   },
-  async ({ limit, after }: any) => libraryTools.getFollowedArtists({ limit, after } as any) as any
+  async ({ limit, after }: any) => libraryTools.getFollowedArtists({ limit, after } as any) as any,
 );
 
 server.registerTool(
@@ -321,7 +399,7 @@ server.registerTool(
       track_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify track IDs to save"),
     },
   },
-  async ({ track_ids }: any) => libraryTools.saveTracks({ track_ids } as any) as any
+  async ({ track_ids }: any) => libraryTools.saveTracks({ track_ids } as any) as any,
 );
 
 server.registerTool(
@@ -329,10 +407,14 @@ server.registerTool(
   {
     description: "Remove tracks from the current user's library",
     inputSchema: {
-      track_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify track IDs to remove"),
+      track_ids: z
+        .array(z.string())
+        .min(1)
+        .max(50)
+        .describe("Array of Spotify track IDs to remove"),
     },
   },
-  async ({ track_ids }: any) => libraryTools.removeSavedTracks({ track_ids } as any) as any
+  async ({ track_ids }: any) => libraryTools.removeSavedTracks({ track_ids } as any) as any,
 );
 
 server.registerTool(
@@ -343,7 +425,7 @@ server.registerTool(
       album_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify album IDs to save"),
     },
   },
-  async ({ album_ids }: any) => libraryTools.saveAlbums({ album_ids } as any) as any
+  async ({ album_ids }: any) => libraryTools.saveAlbums({ album_ids } as any) as any,
 );
 
 server.registerTool(
@@ -351,10 +433,14 @@ server.registerTool(
   {
     description: "Remove albums from the current user's library",
     inputSchema: {
-      album_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify album IDs to remove"),
+      album_ids: z
+        .array(z.string())
+        .min(1)
+        .max(50)
+        .describe("Array of Spotify album IDs to remove"),
     },
   },
-  async ({ album_ids }: any) => libraryTools.removeSavedAlbums({ album_ids } as any) as any
+  async ({ album_ids }: any) => libraryTools.removeSavedAlbums({ album_ids } as any) as any,
 );
 
 server.registerTool(
@@ -362,10 +448,14 @@ server.registerTool(
   {
     description: "Follow one or more artists",
     inputSchema: {
-      artist_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify artist IDs to follow"),
+      artist_ids: z
+        .array(z.string())
+        .min(1)
+        .max(50)
+        .describe("Array of Spotify artist IDs to follow"),
     },
   },
-  async ({ artist_ids }: any) => libraryTools.followArtists({ artist_ids } as any) as any
+  async ({ artist_ids }: any) => libraryTools.followArtists({ artist_ids } as any) as any,
 );
 
 server.registerTool(
@@ -373,23 +463,32 @@ server.registerTool(
   {
     description: "Unfollow one or more artists",
     inputSchema: {
-      artist_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify artist IDs to unfollow"),
+      artist_ids: z
+        .array(z.string())
+        .min(1)
+        .max(50)
+        .describe("Array of Spotify artist IDs to unfollow"),
     },
   },
-  async ({ artist_ids }: any) => libraryTools.unfollowArtists({ artist_ids } as any) as any
+  async ({ artist_ids }: any) => libraryTools.unfollowArtists({ artist_ids } as any) as any,
 );
 
 // Register device management tools
 server.registerTool(
   "spotify_transfer_playback",
   {
-    description: "Transfer playback to a different device (use spotify_get_devices to find device IDs)",
+    description:
+      "Transfer playback to a different device (use spotify_get_devices to find device IDs)",
     inputSchema: {
       device_id: z.string().describe("Device ID to transfer playback to"),
-      play: z.boolean().optional().describe("Whether to start playback on the new device (default: true)"),
+      play: z
+        .boolean()
+        .optional()
+        .describe("Whether to start playback on the new device (default: true)"),
     },
   },
-  async ({ device_id, play }: any) => playbackTools.transferPlayback({ device_id, play } as any) as any
+  async ({ device_id, play }: any) =>
+    playbackTools.transferPlayback({ device_id, play } as any) as any,
 );
 
 // Register system tools
@@ -398,10 +497,15 @@ server.registerTool(
   {
     description: "Open the Spotify desktop app on this machine",
     inputSchema: {
-      wait_seconds: z.number().min(0).max(30).optional().describe("Seconds to wait after opening for Spotify to initialize (0-30)"),
+      wait_seconds: z
+        .number()
+        .min(0)
+        .max(30)
+        .optional()
+        .describe("Seconds to wait after opening for Spotify to initialize (0-30)"),
     },
   },
-  async ({ wait_seconds }: any) => systemTools.openSpotify({ wait_seconds } as any) as any
+  async ({ wait_seconds }: any) => systemTools.openSpotify({ wait_seconds } as any) as any,
 );
 
 // Handle shutdown signals

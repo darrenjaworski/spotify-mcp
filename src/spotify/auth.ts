@@ -19,11 +19,11 @@ const TOKEN_FILE = path.join(TOKEN_DIR, "tokens.json");
  */
 function escapeHtml(str: string): string {
   const htmlEscapeMap: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
   };
   return str.replace(/[&<>"']/g, (char) => htmlEscapeMap[char] || char);
 }
@@ -108,7 +108,7 @@ export function createSpotifyClient(credentials: SpotifyCredentials): SpotifyWeb
  */
 export async function refreshAccessToken(
   client: SpotifyWebApi,
-  refreshToken: string
+  refreshToken: string,
 ): Promise<StoredTokens> {
   logger.info("Refreshing access token");
 
@@ -147,7 +147,7 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
   ];
 
   // Generate cryptographically secure state parameter for CSRF protection
-  const state = crypto.randomBytes(32).toString('hex');
+  const state = crypto.randomBytes(32).toString("hex");
   const authorizeURL = client.createAuthorizeURL(scopes, state);
 
   logger.info("Starting OAuth flow...");
@@ -166,22 +166,28 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
         if (requestCount > MAX_REQUESTS) {
           logger.warn("OAuth callback server: too many requests, rejecting");
           res.writeHead(429, { "Content-Type": "text/html; charset=utf-8" });
-          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>Too Many Requests</h1></body></html>");
+          res.end(
+            '<html><head><meta charset="utf-8"></head><body><h1>Too Many Requests</h1></body></html>',
+          );
           return;
         }
 
         // Security: only accept requests from localhost
         const remoteAddress = req.socket.remoteAddress;
-        if (remoteAddress && !['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(remoteAddress)) {
+        if (remoteAddress && !["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(remoteAddress)) {
           logger.warn(`OAuth callback server: rejected request from ${remoteAddress}`);
           res.writeHead(403, { "Content-Type": "text/html; charset=utf-8" });
-          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>Forbidden</h1></body></html>");
+          res.end(
+            '<html><head><meta charset="utf-8"></head><body><h1>Forbidden</h1></body></html>',
+          );
           return;
         }
 
         if (!req.url?.startsWith("/callback")) {
           res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
-          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>Not Found</h1></body></html>");
+          res.end(
+            '<html><head><meta charset="utf-8"></head><body><h1>Not Found</h1></body></html>',
+          );
           return;
         }
 
@@ -192,7 +198,9 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
 
         if (error) {
           res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-          res.end(`<html><head><meta charset="utf-8"></head><body><h1>Authorization failed</h1><p>${escapeHtml(error)}</p></body></html>`);
+          res.end(
+            `<html><head><meta charset="utf-8"></head><body><h1>Authorization failed</h1><p>${escapeHtml(error)}</p></body></html>`,
+          );
           server.close();
           reject(new Error(`Authorization failed: ${error}`));
           return;
@@ -200,7 +208,9 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
 
         if (returnedState !== state) {
           res.writeHead(400, { "Content-Type": "text/html; charset=utf-8" });
-          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>State mismatch</h1><p>Invalid state parameter. Please try again.</p></body></html>");
+          res.end(
+            '<html><head><meta charset="utf-8"></head><body><h1>State mismatch</h1><p>Invalid state parameter. Please try again.</p></body></html>',
+          );
           server.close();
           reject(new Error("State mismatch in OAuth callback"));
           return;
@@ -208,7 +218,9 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
 
         if (!code) {
           res.writeHead(400, { "Content-Type": "text/html; charset=utf-8" });
-          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>No authorization code received</h1><p>The authorization process was incomplete. Please try again.</p></body></html>");
+          res.end(
+            '<html><head><meta charset="utf-8"></head><body><h1>No authorization code received</h1><p>The authorization process was incomplete. Please try again.</p></body></html>',
+          );
           server.close();
           reject(new Error("No authorization code received"));
           return;
@@ -229,7 +241,7 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
 
           res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
           res.end(
-            "<html><head><meta charset=\"utf-8\"></head><body><h1>✓ Authorization successful!</h1><p>You can close this window and return to your application.</p></body></html>"
+            '<html><head><meta charset="utf-8"></head><body><h1>✓ Authorization successful!</h1><p>You can close this window and return to your application.</p></body></html>',
           );
 
           server.close();
@@ -237,24 +249,29 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
         } catch (error) {
           logger.error("Error exchanging code for tokens:", error);
           res.writeHead(500, { "Content-Type": "text/html; charset=utf-8" });
-          res.end("<html><head><meta charset=\"utf-8\"></head><body><h1>Error exchanging authorization code</h1><p>An error occurred during authentication. Please try again.</p></body></html>");
+          res.end(
+            '<html><head><meta charset="utf-8"></head><body><h1>Error exchanging authorization code</h1><p>An error occurred during authentication. Please try again.</p></body></html>',
+          );
           server.close();
           reject(error);
         }
       });
 
       // Set timeout to automatically close server after 5 minutes
-      const serverTimeout = setTimeout(() => {
-        if (!serverClosed) {
-          logger.warn("OAuth callback server timeout - closing server");
-          server.close();
-          serverClosed = true;
-          reject(new Error("OAuth flow timeout - no callback received within 5 minutes"));
-        }
-      }, 5 * 60 * 1000); // 5 minutes
+      const serverTimeout = setTimeout(
+        () => {
+          if (!serverClosed) {
+            logger.warn("OAuth callback server timeout - closing server");
+            server.close();
+            serverClosed = true;
+            reject(new Error("OAuth flow timeout - no callback received within 5 minutes"));
+          }
+        },
+        5 * 60 * 1000,
+      ); // 5 minutes
 
       // Clear timeout when server closes
-      server.on('close', () => {
+      server.on("close", () => {
         clearTimeout(serverTimeout);
         serverClosed = true;
       });
@@ -293,8 +310,8 @@ export async function startOAuthFlow(client: SpotifyWebApi): Promise<StoredToken
         if (error.code === "EADDRINUSE") {
           reject(
             new Error(
-              "Port 3000 is already in use. Please close any application using port 3000 and try again."
-            )
+              "Port 3000 is already in use. Please close any application using port 3000 and try again.",
+            ),
           );
         } else {
           reject(error);

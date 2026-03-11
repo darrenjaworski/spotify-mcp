@@ -17,9 +17,20 @@ const levels: Record<LogLevel, number> = {
 
 // Sensitive field names that should be redacted
 const SENSITIVE_FIELDS = [
-  'token', 'accessToken', 'refreshToken', 'access_token', 'refresh_token',
-  'secret', 'clientSecret', 'client_secret', 'password', 'apiKey', 'api_key',
-  'authorization', 'auth', 'bearer'
+  "token",
+  "accessToken",
+  "refreshToken",
+  "access_token",
+  "refresh_token",
+  "secret",
+  "clientSecret",
+  "client_secret",
+  "password",
+  "apiKey",
+  "api_key",
+  "authorization",
+  "auth",
+  "bearer",
 ];
 
 /**
@@ -30,23 +41,23 @@ function redactSensitiveData(obj: any): any {
     return obj;
   }
 
-  if (typeof obj === 'string') {
+  if (typeof obj === "string") {
     // Redact if string looks like a token (long alphanumeric strings)
     if (obj.length > 20 && /^[A-Za-z0-9_-]+$/.test(obj)) {
-      return '[REDACTED]';
+      return "[REDACTED]";
     }
     return obj;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => redactSensitiveData(item));
+    return obj.map((item) => redactSensitiveData(item));
   }
 
-  if (typeof obj === 'object') {
+  if (typeof obj === "object") {
     const redacted: any = {};
     for (const [key, value] of Object.entries(obj)) {
-      if (SENSITIVE_FIELDS.some(field => key.toLowerCase().includes(field.toLowerCase()))) {
-        redacted[key] = '[REDACTED]';
+      if (SENSITIVE_FIELDS.some((field) => key.toLowerCase().includes(field.toLowerCase()))) {
+        redacted[key] = "[REDACTED]";
       } else {
         redacted[key] = redactSensitiveData(value);
       }
@@ -63,13 +74,19 @@ function shouldLog(level: LogLevel): boolean {
 
 function formatMessage(level: LogLevel, message: string, ...args: any[]): string {
   const timestamp = new Date().toISOString();
-  const formattedArgs = args.length > 0 ? " " + args.map(arg => {
-    if (typeof arg === "object") {
-      const redacted = redactSensitiveData(arg);
-      return JSON.stringify(redacted);
-    }
-    return String(arg);
-  }).join(" ") : "";
+  const formattedArgs =
+    args.length > 0
+      ? " " +
+        args
+          .map((arg) => {
+            if (typeof arg === "object") {
+              const redacted = redactSensitiveData(arg);
+              return JSON.stringify(redacted);
+            }
+            return String(arg);
+          })
+          .join(" ")
+      : "";
   return `[${timestamp}] [${level.toUpperCase()}] ${message}${formattedArgs}`;
 }
 

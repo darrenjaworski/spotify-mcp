@@ -39,16 +39,14 @@ describe("handleToolError", () => {
   it("should handle 400 status code", () => {
     const err = { statusCode: 400, message: "Bad Request" };
     const result = handleToolError(err, "spotify_play");
-    expect(result.content[0].text).toBe(
-      "Bad request. Please check your input and try again."
-    );
+    expect(result.content[0].text).toBe("Bad request. Please check your input and try again.");
   });
 
   it("should handle 401 status code", () => {
     const err = { statusCode: 401, message: "Unauthorized" };
     const result = handleToolError(err, "spotify_play");
     expect(result.content[0].text).toBe(
-      "Authentication expired. Please restart the server to re-authenticate."
+      "Authentication expired. Please restart the server to re-authenticate.",
     );
   });
 
@@ -56,7 +54,7 @@ describe("handleToolError", () => {
     const err = { statusCode: 403, message: "Forbidden" };
     const result = handleToolError(err, "spotify_play");
     expect(result.content[0].text).toBe(
-      "Insufficient permissions. Your Spotify account may not have access to this feature."
+      "Insufficient permissions. Your Spotify account may not have access to this feature.",
     );
   });
 
@@ -64,7 +62,7 @@ describe("handleToolError", () => {
     const err = { statusCode: 404, message: "Not Found" };
     const result = handleToolError(err, "spotify_get_playlist");
     expect(result.content[0].text).toBe(
-      "Resource not found. Please check the ID or URI and try again."
+      "Resource not found. Please check the ID or URI and try again.",
     );
   });
 
@@ -72,7 +70,7 @@ describe("handleToolError", () => {
     const err = { statusCode: 429, message: "Too Many Requests" };
     const result = handleToolError(err, "spotify_search");
     expect(result.content[0].text).toBe(
-      "Rate limited by Spotify. Please wait a moment and try again."
+      "Rate limited by Spotify. Please wait a moment and try again.",
     );
   });
 
@@ -80,13 +78,13 @@ describe("handleToolError", () => {
     const err = { statusCode: 500, message: "Internal Server Error" };
     const result = handleToolError(err, "spotify_play");
     expect(result.content[0].text).toBe(
-      "Spotify is experiencing issues. Please try again in a moment."
+      "Spotify is experiencing issues. Please try again in a moment.",
     );
 
     const err503 = { statusCode: 503, message: "Service Unavailable" };
     const result503 = handleToolError(err503, "spotify_play");
     expect(result503.content[0].text).toBe(
-      "Spotify is experiencing issues. Please try again in a moment."
+      "Spotify is experiencing issues. Please try again in a moment.",
     );
   });
 
@@ -94,7 +92,7 @@ describe("handleToolError", () => {
     const err = { body: { error: { status: 404, message: "Not found" } } };
     const result = handleToolError(err, "spotify_get_playlist");
     expect(result.content[0].text).toBe(
-      "Resource not found. Please check the ID or URI and try again."
+      "Resource not found. Please check the ID or URI and try again.",
     );
   });
 
@@ -102,7 +100,7 @@ describe("handleToolError", () => {
     const err = new Error("something unexpected");
     const result = handleToolError(err, "spotify_play");
     expect(result.content[0].text).toBe(
-      "An unexpected error occurred while executing spotify_play."
+      "An unexpected error occurred while executing spotify_play.",
     );
   });
 

@@ -36,10 +36,12 @@ export async function getSavedTracks(args: GetSavedTracksArgs): Promise<ToolResp
     });
 
     return {
-      content: [{
-        type: "text",
-        text: `Saved tracks (${result.body.total} total):\n\n${formatted.join("\n")}`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Saved tracks (${result.body.total} total):\n\n${formatted.join("\n")}`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_get_saved_tracks");
@@ -68,10 +70,12 @@ export async function getSavedAlbums(args: GetSavedAlbumsArgs): Promise<ToolResp
     });
 
     return {
-      content: [{
-        type: "text",
-        text: `Saved albums (${result.body.total} total):\n\n${formatted.join("\n")}`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Saved albums (${result.body.total} total):\n\n${formatted.join("\n")}`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_get_saved_albums");
@@ -99,9 +103,7 @@ export async function getFollowedArtists(args: GetFollowedArtistsArgs): Promise<
     }
 
     const formatted = items.map((artist: any, index: number) => {
-      const genres = artist.genres.length > 0
-        ? ` (${artist.genres.slice(0, 2).join(", ")})`
-        : "";
+      const genres = artist.genres.length > 0 ? ` (${artist.genres.slice(0, 2).join(", ")})` : "";
       return `${index + 1}. ${artist.name}${genres} (${artist.uri})`;
     });
 
@@ -111,10 +113,12 @@ export async function getFollowedArtists(args: GetFollowedArtistsArgs): Promise<
       : "";
 
     return {
-      content: [{
-        type: "text",
-        text: `Followed artists:\n\n${formatted.join("\n")}${cursorNote}`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Followed artists:\n\n${formatted.join("\n")}${cursorNote}`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_get_followed_artists");
@@ -127,10 +131,12 @@ export async function saveTracks(args: SaveTracksArgs): Promise<ToolResponse> {
     await client.addToMySavedTracks(args.track_ids);
 
     return {
-      content: [{
-        type: "text",
-        text: `Saved ${args.track_ids.length} track(s) to your library`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Saved ${args.track_ids.length} track(s) to your library`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_save_tracks");
@@ -143,10 +149,12 @@ export async function removeSavedTracks(args: SaveTracksArgs): Promise<ToolRespo
     await client.removeFromMySavedTracks(args.track_ids);
 
     return {
-      content: [{
-        type: "text",
-        text: `Removed ${args.track_ids.length} track(s) from your library`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Removed ${args.track_ids.length} track(s) from your library`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_remove_saved_tracks");
@@ -159,10 +167,12 @@ export async function saveAlbums(args: SaveAlbumsArgs): Promise<ToolResponse> {
     await client.addToMySavedAlbums(args.album_ids);
 
     return {
-      content: [{
-        type: "text",
-        text: `Saved ${args.album_ids.length} album(s) to your library`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Saved ${args.album_ids.length} album(s) to your library`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_save_albums");
@@ -175,10 +185,12 @@ export async function removeSavedAlbums(args: SaveAlbumsArgs): Promise<ToolRespo
     await client.removeFromMySavedAlbums(args.album_ids);
 
     return {
-      content: [{
-        type: "text",
-        text: `Removed ${args.album_ids.length} album(s) from your library`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Removed ${args.album_ids.length} album(s) from your library`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_remove_saved_albums");
@@ -191,10 +203,12 @@ export async function followArtists(args: FollowArtistsArgs): Promise<ToolRespon
     await client.followArtists(args.artist_ids);
 
     return {
-      content: [{
-        type: "text",
-        text: `Now following ${args.artist_ids.length} artist(s)`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Now following ${args.artist_ids.length} artist(s)`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_follow_artists");
@@ -207,10 +221,12 @@ export async function unfollowArtists(args: FollowArtistsArgs): Promise<ToolResp
     await client.unfollowArtists(args.artist_ids);
 
     return {
-      content: [{
-        type: "text",
-        text: `Unfollowed ${args.artist_ids.length} artist(s)`,
-      }],
+      content: [
+        {
+          type: "text",
+          text: `Unfollowed ${args.artist_ids.length} artist(s)`,
+        },
+      ],
     };
   } catch (error) {
     return handleToolError(error, "spotify_unfollow_artists");
