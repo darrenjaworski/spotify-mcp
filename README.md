@@ -226,6 +226,67 @@ Or add it manually to `~/.claude.json` (global) or `.claude/settings.json` (proj
 
 Verify with `claude mcp list` — you should see `spotify` in the list.
 
+#### Cursor
+
+Add to `.cursor/mcp.json` in your project (or `~/.cursor/mcp.json` for global):
+
+```json
+{
+  "mcpServers": {
+    "spotify": {
+      "command": "npx",
+      "args": ["-y", "@darrenjaws/spotify-mcp"],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
+      }
+    }
+  }
+}
+```
+
+#### Windsurf
+
+Add to `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "spotify": {
+      "command": "npx",
+      "args": ["-y", "@darrenjaws/spotify-mcp"],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
+      }
+    }
+  }
+}
+```
+
+#### VS Code (GitHub Copilot)
+
+Add to `.vscode/mcp.json` in your project (or VS Code User Settings for global):
+
+```json
+{
+  "servers": {
+    "spotify": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@darrenjaws/spotify-mcp"],
+      "env": {
+        "SPOTIFY_CLIENT_ID": "your_client_id_here",
+        "SPOTIFY_CLIENT_SECRET": "your_client_secret_here",
+        "SPOTIFY_REDIRECT_URI": "http://127.0.0.1:3000/callback"
+      }
+    }
+  }
+}
+```
+
 #### OpenCode
 
 ```json

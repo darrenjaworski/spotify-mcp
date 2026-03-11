@@ -10,6 +10,40 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
 
 **Phase**: Phase 2 - Core Features Development
 **Version**: 0.6.1
+**Target**: 1.0.0 MVP
+
+## 1.0.0 MVP
+
+The 1.0.0 release completes Phase 2 — delivering solid playback, playlist management, library features, search, and device control. This is a minimal but complete MCP server for everyday Spotify use.
+
+### Shipped
+
+- [x] **Client Integrations**: Setup wizard and README configs for Cursor, Windsurf, VS Code (GitHub Copilot), OpenCode
+
+### Remaining
+
+- [ ] **Playlist Management**
+  - [ ] Remove tracks from playlists
+  - [ ] Reorder playlist tracks
+  - [ ] Delete playlists
+  - [ ] Collaborative playlist support
+- [ ] **Library Features**
+  - [ ] Save/unsave tracks
+  - [ ] Save/unsave albums
+  - [ ] Follow/unfollow artists
+  - [ ] Get saved tracks
+  - [ ] Get saved albums
+  - [ ] Get followed artists
+- [ ] **Enhanced Search**
+  - [ ] Search filters and refinement
+  - [ ] Search suggestions
+- [ ] **Device Management**
+  - [ ] Transfer playback between devices
+  - [ ] Device-specific playback control
+
+**Total**: 14 items remaining
+
+Everything in Phases 3-5 (recommendations, audio features, queue management, podcasts, etc.) is post-1.0 and will ship in minor releases after the stable foundation is established.
 
 ## Development Phases
 
@@ -33,7 +67,7 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
 
 **Deliverable**: ✅ Working MCP server with basic playback and search
 
-### Phase 2: Core Features (Q2 2026) 🔄 In Progress
+### Phase 2: Core Features (Q2 2026) 🔄 In Progress — 1.0.0 MVP
 
 **Goal**: Comprehensive music library and playlist management
 
@@ -65,9 +99,9 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
   - [ ] Transfer playback between devices
   - [ ] Device-specific playback control
 
-**Deliverable**: Full-featured music management capabilities
+**Deliverable**: 1.0.0 — Full-featured music management capabilities
 
-### Phase 3: Discovery & Intelligence (Q3 2026) 🔄 Partially Started
+### Phase 3: Discovery & Intelligence (Q3 2026) — Post-1.0
 
 **Goal**: Smart music discovery and personalized recommendations
 
@@ -98,7 +132,7 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
 
 **Deliverable**: Intelligent music discovery and analytics
 
-### Phase 4: Advanced Features (Q4 2026)
+### Phase 4: Advanced Features (Q4 2026) — Post-1.0
 
 **Goal**: Power user features and enhanced experiences
 
@@ -133,7 +167,7 @@ Create the most comprehensive and user-friendly MCP server for Spotify integrati
 
 **Deliverable**: Professional-grade Spotify integration
 
-### Phase 5: Polish & Optimization (Q1 2027)
+### Phase 5: Polish & Optimization (Q1 2027) — Post-1.0
 
 **Goal**: Performance, reliability, and user experience refinement
 
@@ -224,7 +258,7 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 - **v0.5.0** (Released 2026-02-25): Device validation, centralized error handling, expanded test suite
 - **v0.6.0** (Released 2026-02-26): `spotify_get_devices` tool, CI/workflow improvements
 - **v0.6.1** (Released 2026-02-26): Adapt to Spotify Web API February 2026 breaking changes
-- **v1.0.0** (Planned): Production release
+- **v1.0.0** (Planned): MVP — Complete Phase 2 (playlist CRUD, library features, search refinement, device management)
 
 ---
 
@@ -254,5 +288,5 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 
 ---
 
-*Last updated: February 26, 2026*
+*Last updated: March 10, 2026*
 *This roadmap is a living document and will evolve based on user feedback and project priorities.*

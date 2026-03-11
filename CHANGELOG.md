@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Features
+- **Setup Wizard**: Add configuration support for Cursor, Windsurf, VS Code (GitHub Copilot), and OpenCode
+  - Setup wizard now offers 7 client options (up from 3)
+  - Each client generates the correct config format and file path instructions
+
+### Documentation
+- **README**: Add MCP configuration examples for Cursor, Windsurf, and VS Code (GitHub Copilot)
+- **Roadmap**: Define 1.0.0 MVP scope (Phase 2 completion) with trackable checklist
+  - Mark Phases 3-5 as post-1.0
+  - Add shipped/remaining sections for progress tracking
+
 ## [0.6.1] - 2026-02-26
 
 ### Changed

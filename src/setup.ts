@@ -166,6 +166,85 @@ function generateMcpConfig(clientId: string, clientSecret: string, useNpx: boole
   }
 }
 
+function generateCursorConfig(clientId: string, clientSecret: string): string {
+  return JSON.stringify(
+    {
+      mcpServers: {
+        spotify: {
+          command: 'npx',
+          args: ['-y', '@darrenjaws/spotify-mcp'],
+          env: {
+            SPOTIFY_CLIENT_ID: clientId,
+            SPOTIFY_CLIENT_SECRET: clientSecret,
+            SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+          },
+        },
+      },
+    },
+    null,
+    2
+  );
+}
+
+function generateWindsurfConfig(clientId: string, clientSecret: string): string {
+  return JSON.stringify(
+    {
+      mcpServers: {
+        spotify: {
+          command: 'npx',
+          args: ['-y', '@darrenjaws/spotify-mcp'],
+          env: {
+            SPOTIFY_CLIENT_ID: clientId,
+            SPOTIFY_CLIENT_SECRET: clientSecret,
+            SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+          },
+        },
+      },
+    },
+    null,
+    2
+  );
+}
+
+function generateVSCodeConfig(clientId: string, clientSecret: string): string {
+  return JSON.stringify(
+    {
+      servers: {
+        spotify: {
+          type: 'stdio',
+          command: 'npx',
+          args: ['-y', '@darrenjaws/spotify-mcp'],
+          env: {
+            SPOTIFY_CLIENT_ID: clientId,
+            SPOTIFY_CLIENT_SECRET: clientSecret,
+            SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+          },
+        },
+      },
+    },
+    null,
+    2
+  );
+}
+
+function generateOpenCodeConfig(clientId: string, clientSecret: string): string {
+  return JSON.stringify(
+    {
+      spotify: {
+        command: ['npx', '-y', '@darrenjaws/spotify-mcp@latest'],
+        environment: {
+          SPOTIFY_CLIENT_ID: clientId,
+          SPOTIFY_CLIENT_SECRET: clientSecret,
+          SPOTIFY_REDIRECT_URI: 'http://127.0.0.1:3000/callback',
+        },
+        type: 'local',
+      },
+    },
+    null,
+    2
+  );
+}
+
 export async function runSetup(): Promise<void> {
   const rl = readline.createInterface({ input, output });
 
@@ -237,11 +316,15 @@ export async function runSetup(): Promise<void> {
     // Step 4: Configuration method
     header('Step 4: Choose Configuration Method');
     print('\nHow would you like to use the Spotify MCP server?\n');
-    print('1. Claude Desktop (recommended for most users)');
+    print('1. Claude Desktop');
     print('2. Claude Code CLI');
-    print('3. From source (for development)\n');
+    print('3. Cursor');
+    print('4. Windsurf');
+    print('5. VS Code (GitHub Copilot)');
+    print('6. OpenCode');
+    print('7. From source (for development)\n');
 
-    const configMethod = await prompt(rl, 'Enter your choice (1-3):');
+    const configMethod = await prompt(rl, 'Enter your choice (1-7):');
 
     let mcpConfig = '';
     switch (configMethod) {
@@ -281,6 +364,52 @@ export async function runSetup(): Promise<void> {
         break;
       }
       case '3': {
+        // Cursor
+        header('Cursor Configuration');
+        mcpConfig = generateCursorConfig(clientId, clientSecret);
+
+        print('\n');
+        info('Add this to your project\'s .cursor/mcp.json (or ~/.cursor/mcp.json for global):');
+        print('\n' + mcpConfig, colors.cyan);
+        print('\n');
+        warning('Restart Cursor after saving the config file.');
+        break;
+      }
+      case '4': {
+        // Windsurf
+        header('Windsurf Configuration');
+        mcpConfig = generateWindsurfConfig(clientId, clientSecret);
+
+        print('\n');
+        info('Add this to your ~/.codeium/windsurf/mcp_config.json:');
+        print('\n' + mcpConfig, colors.cyan);
+        print('\n');
+        warning('Restart Windsurf after saving the config file.');
+        break;
+      }
+      case '5': {
+        // VS Code
+        header('VS Code (GitHub Copilot) Configuration');
+        mcpConfig = generateVSCodeConfig(clientId, clientSecret);
+
+        print('\n');
+        info('Add this to your project\'s .vscode/mcp.json (or User Settings for global):');
+        print('\n' + mcpConfig, colors.cyan);
+        print('\n');
+        warning('Reload VS Code after saving the config file.');
+        break;
+      }
+      case '6': {
+        // OpenCode
+        header('OpenCode Configuration');
+        mcpConfig = generateOpenCodeConfig(clientId, clientSecret);
+
+        print('\n');
+        info('Add this to the "mcpServers" section of your opencode.json:');
+        print('\n' + mcpConfig, colors.cyan);
+        break;
+      }
+      case '7': {
         // Development from source
         header('Development Configuration');
         await createEnvFile(clientId, clientSecret);
@@ -292,11 +421,9 @@ export async function runSetup(): Promise<void> {
         break;
       }
       default: {
-        warning('Invalid choice. Showing all configuration options...');
+        warning('Invalid choice. Showing Claude Desktop configuration...');
         print('\n=== Claude Desktop (npx) ===');
         print(generateMcpConfig(clientId, clientSecret, true), colors.cyan);
-        print('\n=== Development (.env) ===');
-        await createEnvFile(clientId, clientSecret);
         break;
       }
     }
