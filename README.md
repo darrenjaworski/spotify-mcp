@@ -21,9 +21,10 @@ A Model Context Protocol (MCP) server that provides seamless integration with Sp
   - [Environment Variables](#environment-variables)
   - [MCP Configuration](#mcp-configuration)
 - [Usage](#usage)
-- [Available Tools (15 total)](#available-tools-15-total)
-  - [Playback](#playback)
+- [Available Tools (30 total)](#available-tools-30-total)
+  - [Playback & Device Control](#playback--device-control)
   - [Search & Discovery](#search--discovery)
+  - [Playlist Management](#playlist-management)
   - [Library Management](#library-management)
   - [User Data](#user-data)
 - [Local Development](#local-development)
@@ -337,9 +338,9 @@ Once configured, you can interact with Spotify through natural language:
 - "Search for songs by The Beatles"
 - "Add this song to my liked songs"
 
-## Available Tools (15 total)
+## Available Tools (30 total)
 
-### Playback (6 tools)
+### Playback & Device Control (8 tools)
 
 - `spotify_play` - Start or resume playback of tracks, albums, playlists, or artists
 - `spotify_pause` - Pause playback
@@ -347,17 +348,35 @@ Once configured, you can interact with Spotify through natural language:
 - `spotify_previous` - Skip to previous track
 - `spotify_set_volume` - Adjust volume level (0-100)
 - `spotify_get_playback_state` - Get current playback information
+- `spotify_get_devices` - List available Spotify Connect devices
+- `spotify_transfer_playback` - Transfer playback to a different device
 
-### Search (1 tool)
+### Search & Discovery (1 tool)
 
-- `spotify_search` - Search for tracks, albums, artists, or playlists
+- `spotify_search` - Search for tracks, albums, artists, or playlists with optional field filters (artist, album, genre, year, tag)
 
-### Playlist Management (4 tools)
+### Playlist Management (8 tools)
 
 - `spotify_get_playlists` - Get user's playlists
 - `spotify_get_playlist` - Get specific playlist details
 - `spotify_create_playlist` - Create a new playlist
 - `spotify_add_to_playlist` - Add tracks to a playlist
+- `spotify_remove_from_playlist` - Remove tracks from a playlist
+- `spotify_reorder_playlist_tracks` - Reorder tracks in a playlist
+- `spotify_delete_playlist` - Delete (unfollow) a playlist
+- `spotify_update_playlist` - Update playlist details (name, description, public/private, collaborative)
+
+### Library Management (9 tools)
+
+- `spotify_get_saved_tracks` - Get tracks saved in your library
+- `spotify_get_saved_albums` - Get albums saved in your library
+- `spotify_get_followed_artists` - Get artists you follow
+- `spotify_save_tracks` - Save tracks to your library
+- `spotify_remove_saved_tracks` - Remove tracks from your library
+- `spotify_save_albums` - Save albums to your library
+- `spotify_remove_saved_albums` - Remove albums from your library
+- `spotify_follow_artists` - Follow artists
+- `spotify_unfollow_artists` - Unfollow artists
 
 ### User Data (3 tools)
 
@@ -455,7 +474,7 @@ DEBUG=true npx @modelcontextprotocol/inspector node build/bin.js
 
 **Benefits:**
 
-- ✅ Interactive UI to test all 15 tools
+- ✅ Interactive UI to test all 30 tools
 - ✅ See JSON-RPC messages in real-time
 - ✅ No need to configure Claude Desktop during development
 - ✅ Quickly iterate on tool implementations
@@ -549,8 +568,8 @@ npm run test:watch    # Run tests in watch mode
 
 **Test Coverage:**
 
-- ✅ 160 tests across 10 test files
-- ✅ Tool-level unit tests for playback, search, playlists, user, and system
+- ✅ 213 tests across 11 test files
+- ✅ Tool-level unit tests for playback, search, playlists, library, user, and system
 - ✅ Auth tests (credentials, token management, file permissions, refresh)
 - ✅ Logger tests (sensitive data redaction, log levels)
 - ✅ Error handling tests (all HTTP status codes, security)

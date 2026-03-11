@@ -7,20 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- **Skills**: Add `/commit`, `/release`, and `/triage` Claude Code skills for streamlined development workflows
-
 ### Features
+- **Playlist Management**: Add remove, reorder, delete, and update tools for full playlist CRUD
+  - `spotify_remove_from_playlist` — remove tracks from a playlist
+  - `spotify_reorder_playlist_tracks` — reorder tracks by position
+  - `spotify_delete_playlist` — delete (unfollow) a playlist
+  - `spotify_update_playlist` — update name, description, public/private, and collaborative mode
+- **Library Management**: Add 9 tools for managing saved tracks, albums, and followed artists
+  - `spotify_get_saved_tracks`, `spotify_save_tracks`, `spotify_remove_saved_tracks`
+  - `spotify_get_saved_albums`, `spotify_save_albums`, `spotify_remove_saved_albums`
+  - `spotify_get_followed_artists`, `spotify_follow_artists`, `spotify_unfollow_artists`
+- **Search**: Add field filters to `spotify_search` (artist, album, genre, year, tag)
+- **Device Management**: Add `spotify_transfer_playback` to move playback between devices
 - **Setup Wizard**: Add configuration support for Cursor, Windsurf, VS Code (GitHub Copilot), and OpenCode
   - Setup wizard now offers 7 client options (up from 3)
   - Each client generates the correct config format and file path instructions
 
+### Changed
+- **Auth**: Add `user-follow-read` and `user-follow-modify` OAuth scopes (existing users must re-authenticate)
+- **Skills**: Add `/commit`, `/release`, and `/triage` Claude Code skills for streamlined development workflows
+
+### Tests
+- Add unit tests for library tools (24 tests covering saved tracks, albums, followed artists, save/unsave, follow/unfollow)
+- Add unit tests for new playlist tools (12 tests covering remove, reorder, delete, update)
+- Add unit tests for transfer playback (3 tests)
+- Add unit tests for search filters (4 tests)
+- Test suite expanded to 213 tests across 11 files (up from 168 across 10 files)
+
 ### Documentation
+- **README**: Update available tools section (30 tools, up from 15)
 - **README**: Add MCP configuration examples for Cursor, Windsurf, VS Code (GitHub Copilot), and OpenCode
 - **README/Setup**: Update setup references to list all supported clients
-- **Roadmap**: Define 1.0.0 MVP scope (Phase 2 completion) with trackable checklist
-  - Mark Phases 3-5 as post-1.0
-  - Add shipped/remaining sections for progress tracking
+- **Roadmap**: Mark Phase 2 (1.0.0 MVP) as complete — all 14 items shipped
 
 ## [0.6.1] - 2026-02-26
 

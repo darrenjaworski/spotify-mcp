@@ -37,7 +37,7 @@ describe('MCP Server Tool Registration', () => {
 
   describe('Tool Registration', () => {
     const expectedTools = [
-      // Playback tools (7)
+      // Playback tools (8)
       { name: 'spotify_play', category: 'playback' },
       { name: 'spotify_pause', category: 'playback' },
       { name: 'spotify_next', category: 'playback' },
@@ -45,15 +45,31 @@ describe('MCP Server Tool Registration', () => {
       { name: 'spotify_set_volume', category: 'playback' },
       { name: 'spotify_get_playback_state', category: 'playback' },
       { name: 'spotify_get_devices', category: 'playback' },
+      { name: 'spotify_transfer_playback', category: 'playback' },
 
       // Search tools (1)
       { name: 'spotify_search', category: 'search' },
 
-      // Playlist tools (4)
+      // Playlist tools (8)
       { name: 'spotify_get_playlists', category: 'playlists' },
       { name: 'spotify_get_playlist', category: 'playlists' },
       { name: 'spotify_create_playlist', category: 'playlists' },
       { name: 'spotify_add_to_playlist', category: 'playlists' },
+      { name: 'spotify_remove_from_playlist', category: 'playlists' },
+      { name: 'spotify_reorder_playlist_tracks', category: 'playlists' },
+      { name: 'spotify_delete_playlist', category: 'playlists' },
+      { name: 'spotify_update_playlist', category: 'playlists' },
+
+      // Library tools (9)
+      { name: 'spotify_get_saved_tracks', category: 'library' },
+      { name: 'spotify_get_saved_albums', category: 'library' },
+      { name: 'spotify_get_followed_artists', category: 'library' },
+      { name: 'spotify_save_tracks', category: 'library' },
+      { name: 'spotify_remove_saved_tracks', category: 'library' },
+      { name: 'spotify_save_albums', category: 'library' },
+      { name: 'spotify_remove_saved_albums', category: 'library' },
+      { name: 'spotify_follow_artists', category: 'library' },
+      { name: 'spotify_unfollow_artists', category: 'library' },
 
       // User data tools (3)
       { name: 'spotify_get_user_profile', category: 'user' },
@@ -64,8 +80,8 @@ describe('MCP Server Tool Registration', () => {
       { name: 'spotify_open', category: 'system' },
     ];
 
-    it('should register exactly 16 tools', () => {
-      expect(expectedTools).toHaveLength(16);
+    it('should register exactly 30 tools', () => {
+      expect(expectedTools).toHaveLength(30);
     });
 
     it('should have all tool names prefixed with "spotify_"', () => {
@@ -74,19 +90,20 @@ describe('MCP Server Tool Registration', () => {
       });
     });
 
-    it('should have tools in 5 categories', () => {
+    it('should have tools in 6 categories', () => {
       const categories = new Set(expectedTools.map(t => t.category));
-      expect(categories.size).toBe(5);
+      expect(categories.size).toBe(6);
       expect(categories).toContain('playback');
       expect(categories).toContain('search');
       expect(categories).toContain('playlists');
+      expect(categories).toContain('library');
       expect(categories).toContain('user');
       expect(categories).toContain('system');
     });
 
-    it('should have 7 playback tools', () => {
+    it('should have 8 playback tools', () => {
       const playbackTools = expectedTools.filter(t => t.category === 'playback');
-      expect(playbackTools).toHaveLength(7);
+      expect(playbackTools).toHaveLength(8);
     });
 
     it('should have 1 search tool', () => {
@@ -94,9 +111,14 @@ describe('MCP Server Tool Registration', () => {
       expect(searchTools).toHaveLength(1);
     });
 
-    it('should have 4 playlist tools', () => {
+    it('should have 8 playlist tools', () => {
       const playlistTools = expectedTools.filter(t => t.category === 'playlists');
-      expect(playlistTools).toHaveLength(4);
+      expect(playlistTools).toHaveLength(8);
+    });
+
+    it('should have 9 library tools', () => {
+      const libraryToolsList = expectedTools.filter(t => t.category === 'library');
+      expect(libraryToolsList).toHaveLength(9);
     });
 
     it('should have 3 user data tools', () => {
@@ -106,27 +128,23 @@ describe('MCP Server Tool Registration', () => {
   });
 
   describe('Tool Naming Conventions', () => {
-    it('should use snake_case for all tool names', () => {
-      const toolNames = [
-        'spotify_play',
-        'spotify_pause',
-        'spotify_next',
-        'spotify_previous',
-        'spotify_set_volume',
-        'spotify_get_playback_state',
-        'spotify_get_devices',
-        'spotify_search',
-        'spotify_get_playlists',
-        'spotify_get_playlist',
-        'spotify_create_playlist',
-        'spotify_add_to_playlist',
-        'spotify_get_user_profile',
-        'spotify_get_top_items',
-        'spotify_get_recently_played',
-        'spotify_open',
-      ];
+    const allToolNames = [
+      'spotify_play', 'spotify_pause', 'spotify_next', 'spotify_previous',
+      'spotify_set_volume', 'spotify_get_playback_state', 'spotify_get_devices',
+      'spotify_transfer_playback', 'spotify_search',
+      'spotify_get_playlists', 'spotify_get_playlist', 'spotify_create_playlist',
+      'spotify_add_to_playlist', 'spotify_remove_from_playlist',
+      'spotify_reorder_playlist_tracks', 'spotify_delete_playlist', 'spotify_update_playlist',
+      'spotify_get_saved_tracks', 'spotify_get_saved_albums', 'spotify_get_followed_artists',
+      'spotify_save_tracks', 'spotify_remove_saved_tracks',
+      'spotify_save_albums', 'spotify_remove_saved_albums',
+      'spotify_follow_artists', 'spotify_unfollow_artists',
+      'spotify_get_user_profile', 'spotify_get_top_items', 'spotify_get_recently_played',
+      'spotify_open',
+    ];
 
-      toolNames.forEach(name => {
+    it('should use snake_case for all tool names', () => {
+      allToolNames.forEach(name => {
         // Should not contain camelCase
         expect(name).not.toMatch(/[a-z][A-Z]/);
         // Should only contain lowercase, numbers, and underscores
@@ -135,27 +153,9 @@ describe('MCP Server Tool Registration', () => {
     });
 
     it('should have descriptive action verbs', () => {
-      const verbs = ['play', 'pause', 'next', 'previous', 'set', 'get', 'search', 'create', 'add', 'open'];
-      const toolNames = [
-        'spotify_play',
-        'spotify_pause',
-        'spotify_next',
-        'spotify_previous',
-        'spotify_set_volume',
-        'spotify_get_playback_state',
-        'spotify_get_devices',
-        'spotify_search',
-        'spotify_get_playlists',
-        'spotify_get_playlist',
-        'spotify_create_playlist',
-        'spotify_add_to_playlist',
-        'spotify_get_user_profile',
-        'spotify_get_top_items',
-        'spotify_get_recently_played',
-        'spotify_open',
-      ];
+      const verbs = ['play', 'pause', 'next', 'previous', 'set', 'get', 'search', 'create', 'add', 'open', 'remove', 'reorder', 'delete', 'update', 'save', 'follow', 'unfollow', 'transfer'];
 
-      toolNames.forEach(name => {
+      allToolNames.forEach(name => {
         const hasVerb = verbs.some(verb => name.includes(verb));
         expect(hasVerb).toBe(true);
       });
@@ -171,11 +171,25 @@ describe('MCP Server Tool Registration', () => {
       spotify_set_volume: 'Set playback volume (0-100)',
       spotify_get_playback_state: 'Get current playback state including track, artist, album, and playback status',
       spotify_get_devices: 'List available Spotify Connect devices',
-      spotify_search: 'Search for tracks, albums, artists, or playlists',
+      spotify_transfer_playback: 'Transfer playback to a different device',
+      spotify_search: 'Search for tracks, albums, artists, or playlists with optional field filters',
       spotify_get_playlists: "Get current user's playlists",
       spotify_get_playlist: 'Get details of a specific playlist',
       spotify_create_playlist: 'Create a new playlist',
       spotify_add_to_playlist: 'Add tracks to a playlist',
+      spotify_remove_from_playlist: 'Remove tracks from a playlist',
+      spotify_reorder_playlist_tracks: 'Reorder tracks in a playlist',
+      spotify_delete_playlist: 'Delete (unfollow) a playlist',
+      spotify_update_playlist: 'Update playlist details',
+      spotify_get_saved_tracks: "Get tracks saved in the current user's library",
+      spotify_get_saved_albums: "Get albums saved in the current user's library",
+      spotify_get_followed_artists: 'Get artists followed by the current user',
+      spotify_save_tracks: "Save tracks to the current user's library",
+      spotify_remove_saved_tracks: "Remove tracks from the current user's library",
+      spotify_save_albums: "Save albums to the current user's library",
+      spotify_remove_saved_albums: "Remove albums from the current user's library",
+      spotify_follow_artists: 'Follow one or more artists',
+      spotify_unfollow_artists: 'Unfollow one or more artists',
       spotify_get_user_profile: "Get current user's profile information",
       spotify_get_top_items: "Get user's top artists or tracks",
       spotify_get_recently_played: "Get user's recently played tracks",
@@ -270,33 +284,47 @@ describe('MCP Server Tool Registration', () => {
   describe('Tool Categories and Organization', () => {
     it('should group playback controls together', () => {
       const playbackTools = [
-        'spotify_play',
-        'spotify_pause',
-        'spotify_next',
-        'spotify_previous',
-        'spotify_set_volume',
-        'spotify_get_playback_state',
-        'spotify_get_devices',
+        'spotify_play', 'spotify_pause', 'spotify_next', 'spotify_previous',
+        'spotify_set_volume', 'spotify_get_playback_state', 'spotify_get_devices',
+        'spotify_transfer_playback',
       ];
 
-      expect(playbackTools).toHaveLength(7);
+      expect(playbackTools).toHaveLength(8);
       playbackTools.forEach(tool => {
-        expect(tool).toMatch(/^spotify_(play|pause|next|previous|set_volume|get_playback_state|get_devices)$/);
+        expect(tool).toMatch(/^spotify_(play|pause|next|previous|set_volume|get_playback_state|get_devices|transfer_playback)$/);
       });
     });
 
-    it('should have CRUD operations for playlists', () => {
+    it('should have full CRUD operations for playlists', () => {
       const playlistOperations = {
         get_multiple: 'spotify_get_playlists',
         get_single: 'spotify_get_playlist',
         create: 'spotify_create_playlist',
-        update: 'spotify_add_to_playlist',
+        add: 'spotify_add_to_playlist',
+        remove: 'spotify_remove_from_playlist',
+        reorder: 'spotify_reorder_playlist_tracks',
+        delete: 'spotify_delete_playlist',
+        update: 'spotify_update_playlist',
       };
 
-      expect(playlistOperations.get_multiple).toBeDefined();
-      expect(playlistOperations.get_single).toBeDefined();
-      expect(playlistOperations.create).toBeDefined();
-      expect(playlistOperations.update).toBeDefined();
+      Object.values(playlistOperations).forEach(name => {
+        expect(name).toBeDefined();
+        expect(name).toMatch(/^spotify_/);
+      });
+    });
+
+    it('should have library management tools', () => {
+      const libraryTools = [
+        'spotify_get_saved_tracks', 'spotify_get_saved_albums', 'spotify_get_followed_artists',
+        'spotify_save_tracks', 'spotify_remove_saved_tracks',
+        'spotify_save_albums', 'spotify_remove_saved_albums',
+        'spotify_follow_artists', 'spotify_unfollow_artists',
+      ];
+
+      expect(libraryTools).toHaveLength(9);
+      libraryTools.forEach(tool => {
+        expect(tool).toMatch(/^spotify_/);
+      });
     });
 
     it('should have user data retrieval tools', () => {

@@ -9,6 +9,10 @@ import type {
   CreatePlaylistArgs,
   AddToPlaylistArgs,
   GetPlaylistArgs,
+  RemoveFromPlaylistArgs,
+  ReorderPlaylistTracksArgs,
+  DeletePlaylistArgs,
+  UpdatePlaylistArgs,
 } from "../types.js";
 
 export async function getPlaylists(args: { limit?: number }): Promise<ToolResponse> {
@@ -136,5 +140,114 @@ export async function addToPlaylist(args: AddToPlaylistArgs): Promise<ToolRespon
     };
   } catch (error) {
     return handleToolError(error, "spotify_add_to_playlist");
+  }
+}
+
+export async function removeFromPlaylist(args: RemoveFromPlaylistArgs): Promise<ToolResponse> {
+  try {
+    const client = await getAuthenticatedClient();
+
+    const tracks = args.uris.map((uri) => ({ uri }));
+    const options: any = {};
+    if (args.snapshot_id) {
+      options.snapshot_id = args.snapshot_id;
+    }
+
+    await client.removeTracksFromPlaylist(args.playlist_id, tracks, options);
+
+    return {
+      content: [{
+        type: "text",
+        text: `Removed ${args.uris.length} track(s) from playlist`,
+      }],
+    };
+  } catch (error) {
+    return handleToolError(error, "spotify_remove_from_playlist");
+  }
+}
+
+export async function reorderPlaylistTracks(args: ReorderPlaylistTracksArgs): Promise<ToolResponse> {
+  try {
+    const client = await getAuthenticatedClient();
+
+    const options: any = {};
+    if (args.range_length !== undefined) {
+      options.range_length = args.range_length;
+    }
+    if (args.snapshot_id) {
+      options.snapshot_id = args.snapshot_id;
+    }
+
+    await client.reorderTracksInPlaylist(
+      args.playlist_id,
+      args.range_start,
+      args.insert_before,
+      options
+    );
+
+    const count = args.range_length || 1;
+    return {
+      content: [{
+        type: "text",
+        text: `Moved ${count} track(s) from position ${args.range_start} to position ${args.insert_before}`,
+      }],
+    };
+  } catch (error) {
+    return handleToolError(error, "spotify_reorder_playlist_tracks");
+  }
+}
+
+export async function deletePlaylist(args: DeletePlaylistArgs): Promise<ToolResponse> {
+  try {
+    const client = await getAuthenticatedClient();
+    await client.unfollowPlaylist(args.playlist_id);
+
+    return {
+      content: [{
+        type: "text",
+        text: `Deleted (unfollowed) playlist ${args.playlist_id}`,
+      }],
+    };
+  } catch (error) {
+    return handleToolError(error, "spotify_delete_playlist");
+  }
+}
+
+export async function updatePlaylist(args: UpdatePlaylistArgs): Promise<ToolResponse> {
+  try {
+    const client = await getAuthenticatedClient();
+
+    if (args.collaborative && args.public) {
+      return {
+        content: [{
+          type: "text",
+          text: "Collaborative playlists must be non-public. Set public to false when enabling collaborative mode.",
+        }],
+        isError: true,
+      };
+    }
+
+    const options: any = {};
+    if (args.name !== undefined) options.name = args.name;
+    if (args.description !== undefined) options.description = args.description;
+    if (args.public !== undefined) options.public = args.public;
+    if (args.collaborative !== undefined) options.collaborative = args.collaborative;
+
+    await client.changePlaylistDetails(args.playlist_id, options);
+
+    const changes: string[] = [];
+    if (args.name !== undefined) changes.push(`name: "${args.name}"`);
+    if (args.description !== undefined) changes.push(`description updated`);
+    if (args.public !== undefined) changes.push(`public: ${args.public}`);
+    if (args.collaborative !== undefined) changes.push(`collaborative: ${args.collaborative}`);
+
+    return {
+      content: [{
+        type: "text",
+        text: `Updated playlist: ${changes.join(", ")}`,
+      }],
+    };
+  } catch (error) {
+    return handleToolError(error, "spotify_update_playlist");
   }
 }

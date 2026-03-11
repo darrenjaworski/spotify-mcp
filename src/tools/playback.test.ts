@@ -16,7 +16,7 @@ vi.mock("../spotify/errors.js", () => ({
 import { spawnSync } from "child_process";
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
-import { play, pause, next, previous, setVolume, getPlaybackState, getDevices } from "./playback.js";
+import { play, pause, next, previous, setVolume, getPlaybackState, getDevices, transferPlayback } from "./playback.js";
 
 describe("playback tools", () => {
   let mockClient: any;
@@ -32,6 +32,7 @@ describe("playback tools", () => {
       getMyDevices: vi.fn().mockResolvedValue({
         body: { devices: [{ name: "My Speaker", type: "Speaker", is_active: true }] },
       }),
+      transferMyPlayback: vi.fn(),
     };
     vi.mocked(getAuthenticatedClient).mockResolvedValue(mockClient);
     vi.clearAllMocks();
@@ -477,6 +478,32 @@ describe("playback tools", () => {
       mockClient.getMyDevices.mockRejectedValue(error);
       const result = await getDevices();
       expect(handleToolError).toHaveBeenCalledWith(error, "spotify_get_devices");
+      expect(result.isError).toBe(true);
+    });
+  });
+
+  describe("transferPlayback", () => {
+    it("transfers playback and starts playing by default", async () => {
+      mockClient.transferMyPlayback.mockResolvedValue({});
+
+      const result = await transferPlayback({ device_id: "dev-1" });
+      expect(result.content[0].text).toBe("Transferred playback to device dev-1 and started playing");
+      expect(mockClient.transferMyPlayback).toHaveBeenCalledWith(["dev-1"], { play: true });
+    });
+
+    it("transfers without playing when play is false", async () => {
+      mockClient.transferMyPlayback.mockResolvedValue({});
+
+      const result = await transferPlayback({ device_id: "dev-1", play: false });
+      expect(result.content[0].text).toBe("Transferred playback to device dev-1");
+      expect(mockClient.transferMyPlayback).toHaveBeenCalledWith(["dev-1"], { play: false });
+    });
+
+    it("calls handleToolError on API failure", async () => {
+      const error = new Error("API fail");
+      mockClient.transferMyPlayback.mockRejectedValue(error);
+      const result = await transferPlayback({ device_id: "dev-1" });
+      expect(handleToolError).toHaveBeenCalledWith(error, "spotify_transfer_playback");
       expect(result.isError).toBe(true);
     });
   });

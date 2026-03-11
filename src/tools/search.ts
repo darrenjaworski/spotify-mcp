@@ -11,7 +11,15 @@ export async function search(args: SearchArgs): Promise<ToolResponse> {
     const client = await getAuthenticatedClient();
     const limit = Math.min(args.limit || 5, 10);
 
-    const result = await client.search(args.query, [args.type], { limit });
+    // Build query with field filters
+    let query = args.query;
+    if (args.artist) query += ` artist:${args.artist}`;
+    if (args.album) query += ` album:${args.album}`;
+    if (args.genre) query += ` genre:${args.genre}`;
+    if (args.year) query += ` year:${args.year}`;
+    if (args.tag) query += ` tag:${args.tag}`;
+
+    const result = await client.search(query, [args.type], { limit });
 
     let items: any[] = [];
     let itemType = "";

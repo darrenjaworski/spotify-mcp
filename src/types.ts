@@ -32,6 +32,11 @@ export interface SearchArgs {
   query: string;
   type: "track" | "album" | "artist" | "playlist";
   limit?: number;
+  artist?: string;
+  album?: string;
+  genre?: string;
+  year?: string;
+  tag?: "new" | "hipster";
 }
 
 export interface CreatePlaylistArgs {
@@ -67,4 +72,62 @@ export interface RecentlyPlayedArgs {
 
 export interface OpenSpotifyArgs {
   wait_seconds?: number;
+}
+
+export interface GetSavedTracksArgs {
+  limit?: number;
+  offset?: number;
+}
+
+export interface GetSavedAlbumsArgs {
+  limit?: number;
+  offset?: number;
+}
+
+export interface GetFollowedArtistsArgs {
+  limit?: number;
+  after?: string;
+}
+
+export interface SaveTracksArgs {
+  track_ids: string[];
+}
+
+export interface SaveAlbumsArgs {
+  album_ids: string[];
+}
+
+export interface FollowArtistsArgs {
+  artist_ids: string[];
+}
+
+export interface RemoveFromPlaylistArgs {
+  playlist_id: string;
+  uris: string[];
+  snapshot_id?: string;
+}
+
+export interface ReorderPlaylistTracksArgs {
+  playlist_id: string;
+  range_start: number;
+  insert_before: number;
+  range_length?: number;
+  snapshot_id?: string;
+}
+
+export interface DeletePlaylistArgs {
+  playlist_id: string;
+}
+
+export interface UpdatePlaylistArgs {
+  playlist_id: string;
+  name?: string;
+  description?: string;
+  public?: boolean;
+  collaborative?: boolean;
+}
+
+export interface TransferPlaybackArgs {
+  device_id: string;
+  play?: boolean;
 }

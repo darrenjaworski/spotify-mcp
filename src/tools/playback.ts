@@ -5,7 +5,7 @@
 import { spawnSync } from "child_process";
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
-import type { ToolResponse, PlaybackArgs, VolumeArgs } from "../types.js";
+import type { ToolResponse, PlaybackArgs, VolumeArgs, TransferPlaybackArgs } from "../types.js";
 
 async function ensureDevice(client: any, deviceId?: string): Promise<ToolResponse | null> {
   // If caller specified a device_id, trust it
@@ -306,6 +306,24 @@ export async function getDevices(): Promise<ToolResponse> {
     };
   } catch (error) {
     return handleToolError(error, "spotify_get_devices");
+  }
+}
+
+export async function transferPlayback(args: TransferPlaybackArgs): Promise<ToolResponse> {
+  try {
+    const client = await getAuthenticatedClient();
+    const play = args.play !== false; // Default to true
+
+    await client.transferMyPlayback([args.device_id], { play });
+
+    return {
+      content: [{
+        type: "text",
+        text: `Transferred playback to device ${args.device_id}${play ? " and started playing" : ""}`,
+      }],
+    };
+  } catch (error) {
+    return handleToolError(error, "spotify_transfer_playback");
   }
 }
 

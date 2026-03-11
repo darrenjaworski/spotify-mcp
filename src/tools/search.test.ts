@@ -156,4 +156,48 @@ describe("search tool", () => {
     expect(handleToolError).toHaveBeenCalledWith(error, "spotify_search");
     expect(result.isError).toBe(true);
   });
+
+  describe("search filters", () => {
+    it("appends artist filter to query", async () => {
+      mockClient.search.mockResolvedValue({ body: { tracks: { items: [] } } });
+
+      await search({ query: "love", type: "track", artist: "Queen" });
+      expect(mockClient.search).toHaveBeenCalledWith("love artist:Queen", ["track"], { limit: 5 });
+    });
+
+    it("appends multiple filters to query", async () => {
+      mockClient.search.mockResolvedValue({ body: { albums: { items: [] } } });
+
+      await search({
+        query: "greatest hits",
+        type: "album",
+        artist: "Queen",
+        year: "1975-1980",
+        genre: "rock",
+      });
+      expect(mockClient.search).toHaveBeenCalledWith(
+        "greatest hits artist:Queen genre:rock year:1975-1980",
+        ["album"],
+        { limit: 5 }
+      );
+    });
+
+    it("appends tag filter to query", async () => {
+      mockClient.search.mockResolvedValue({ body: { albums: { items: [] } } });
+
+      await search({ query: "indie", type: "album", tag: "hipster" });
+      expect(mockClient.search).toHaveBeenCalledWith("indie tag:hipster", ["album"], { limit: 5 });
+    });
+
+    it("appends album filter to query", async () => {
+      mockClient.search.mockResolvedValue({ body: { tracks: { items: [] } } });
+
+      await search({ query: "bohemian", type: "track", album: "A Night at the Opera" });
+      expect(mockClient.search).toHaveBeenCalledWith(
+        "bohemian album:A Night at the Opera",
+        ["track"],
+        { limit: 5 }
+      );
+    });
+  });
 });

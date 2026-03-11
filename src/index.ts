@@ -7,6 +7,7 @@ import * as playbackTools from "./tools/playback.js";
 import * as searchTools from "./tools/search.js";
 import * as playlistTools from "./tools/playlists.js";
 import * as userTools from "./tools/user.js";
+import * as libraryTools from "./tools/library.js";
 import * as systemTools from "./tools/system.js";
 
 // Load environment variables
@@ -114,14 +115,20 @@ server.registerTool(
 server.registerTool(
   "spotify_search",
   {
-    description: "Search for tracks, albums, artists, or playlists",
+    description: "Search for tracks, albums, artists, or playlists with optional field filters",
     inputSchema: {
       query: z.string().describe("Search query"),
       type: z.enum(["track", "album", "artist", "playlist"]).describe("Type of item to search for"),
       limit: z.number().min(1).max(10).optional().describe("Number of results to return (default: 5, max: 10)"),
+      artist: z.string().optional().describe("Filter by artist name"),
+      album: z.string().optional().describe("Filter by album name"),
+      genre: z.string().optional().describe("Filter by genre"),
+      year: z.string().optional().describe("Filter by year or year range (e.g., '2024' or '2020-2024')"),
+      tag: z.enum(["new", "hipster"]).optional().describe("Filter by tag: 'new' for recent releases, 'hipster' for low-popularity"),
     },
   },
-  async ({ query, type, limit }: any) => searchTools.search({ query, type, limit } as any) as any
+  async ({ query, type, limit, artist, album, genre, year, tag }: any) =>
+    searchTools.search({ query, type, limit, artist, album, genre, year, tag } as any) as any
 );
 
 // Register playlist tools
@@ -175,6 +182,63 @@ server.registerTool(
     playlistTools.addToPlaylist({ playlist_id, uris, position } as any) as any
 );
 
+server.registerTool(
+  "spotify_remove_from_playlist",
+  {
+    description: "Remove tracks from a playlist",
+    inputSchema: {
+      playlist_id: z.string().describe("Spotify playlist ID"),
+      uris: z.array(z.string()).min(1).describe("Array of Spotify track URIs to remove"),
+      snapshot_id: z.string().optional().describe("Playlist snapshot ID for concurrent modification safety"),
+    },
+  },
+  async ({ playlist_id, uris, snapshot_id }: any) =>
+    playlistTools.removeFromPlaylist({ playlist_id, uris, snapshot_id } as any) as any
+);
+
+server.registerTool(
+  "spotify_reorder_playlist_tracks",
+  {
+    description: "Reorder tracks in a playlist",
+    inputSchema: {
+      playlist_id: z.string().describe("Spotify playlist ID"),
+      range_start: z.number().min(0).describe("Position of the first track to move"),
+      insert_before: z.number().min(0).describe("Position where tracks should be inserted"),
+      range_length: z.number().min(1).optional().describe("Number of tracks to move (default: 1)"),
+      snapshot_id: z.string().optional().describe("Playlist snapshot ID for concurrent modification safety"),
+    },
+  },
+  async ({ playlist_id, range_start, insert_before, range_length, snapshot_id }: any) =>
+    playlistTools.reorderPlaylistTracks({ playlist_id, range_start, insert_before, range_length, snapshot_id } as any) as any
+);
+
+server.registerTool(
+  "spotify_delete_playlist",
+  {
+    description: "Delete (unfollow) a playlist. You can only delete playlists you own.",
+    inputSchema: {
+      playlist_id: z.string().describe("Spotify playlist ID to delete"),
+    },
+  },
+  async ({ playlist_id }: any) => playlistTools.deletePlaylist({ playlist_id } as any) as any
+);
+
+server.registerTool(
+  "spotify_update_playlist",
+  {
+    description: "Update playlist details (name, description, public/private, collaborative)",
+    inputSchema: {
+      playlist_id: z.string().describe("Spotify playlist ID"),
+      name: z.string().optional().describe("New playlist name"),
+      description: z.string().optional().describe("New playlist description"),
+      public: z.boolean().optional().describe("Whether the playlist should be public"),
+      collaborative: z.boolean().optional().describe("Whether the playlist should be collaborative (must be non-public)"),
+    },
+  },
+  async ({ playlist_id, name, description, public: isPublic, collaborative }: any) =>
+    playlistTools.updatePlaylist({ playlist_id, name, description, public: isPublic, collaborative } as any) as any
+);
+
 // Register user data tools
 server.registerTool(
   "spotify_get_user_profile",
@@ -210,6 +274,122 @@ server.registerTool(
     },
   },
   async ({ limit }: any) => userTools.getRecentlyPlayed({ limit } as any) as any
+);
+
+// Register library tools
+server.registerTool(
+  "spotify_get_saved_tracks",
+  {
+    description: "Get tracks saved in the current user's library",
+    inputSchema: {
+      limit: z.number().min(1).max(50).optional().describe("Number of tracks to return (default: 20)"),
+      offset: z.number().min(0).optional().describe("Index of first track to return (default: 0)"),
+    },
+  },
+  async ({ limit, offset }: any) => libraryTools.getSavedTracks({ limit, offset } as any) as any
+);
+
+server.registerTool(
+  "spotify_get_saved_albums",
+  {
+    description: "Get albums saved in the current user's library",
+    inputSchema: {
+      limit: z.number().min(1).max(50).optional().describe("Number of albums to return (default: 20)"),
+      offset: z.number().min(0).optional().describe("Index of first album to return (default: 0)"),
+    },
+  },
+  async ({ limit, offset }: any) => libraryTools.getSavedAlbums({ limit, offset } as any) as any
+);
+
+server.registerTool(
+  "spotify_get_followed_artists",
+  {
+    description: "Get artists followed by the current user",
+    inputSchema: {
+      limit: z.number().min(1).max(50).optional().describe("Number of artists to return (default: 20)"),
+      after: z.string().optional().describe("Last artist ID from previous page for cursor pagination"),
+    },
+  },
+  async ({ limit, after }: any) => libraryTools.getFollowedArtists({ limit, after } as any) as any
+);
+
+server.registerTool(
+  "spotify_save_tracks",
+  {
+    description: "Save tracks to the current user's library",
+    inputSchema: {
+      track_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify track IDs to save"),
+    },
+  },
+  async ({ track_ids }: any) => libraryTools.saveTracks({ track_ids } as any) as any
+);
+
+server.registerTool(
+  "spotify_remove_saved_tracks",
+  {
+    description: "Remove tracks from the current user's library",
+    inputSchema: {
+      track_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify track IDs to remove"),
+    },
+  },
+  async ({ track_ids }: any) => libraryTools.removeSavedTracks({ track_ids } as any) as any
+);
+
+server.registerTool(
+  "spotify_save_albums",
+  {
+    description: "Save albums to the current user's library",
+    inputSchema: {
+      album_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify album IDs to save"),
+    },
+  },
+  async ({ album_ids }: any) => libraryTools.saveAlbums({ album_ids } as any) as any
+);
+
+server.registerTool(
+  "spotify_remove_saved_albums",
+  {
+    description: "Remove albums from the current user's library",
+    inputSchema: {
+      album_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify album IDs to remove"),
+    },
+  },
+  async ({ album_ids }: any) => libraryTools.removeSavedAlbums({ album_ids } as any) as any
+);
+
+server.registerTool(
+  "spotify_follow_artists",
+  {
+    description: "Follow one or more artists",
+    inputSchema: {
+      artist_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify artist IDs to follow"),
+    },
+  },
+  async ({ artist_ids }: any) => libraryTools.followArtists({ artist_ids } as any) as any
+);
+
+server.registerTool(
+  "spotify_unfollow_artists",
+  {
+    description: "Unfollow one or more artists",
+    inputSchema: {
+      artist_ids: z.array(z.string()).min(1).max(50).describe("Array of Spotify artist IDs to unfollow"),
+    },
+  },
+  async ({ artist_ids }: any) => libraryTools.unfollowArtists({ artist_ids } as any) as any
+);
+
+// Register device management tools
+server.registerTool(
+  "spotify_transfer_playback",
+  {
+    description: "Transfer playback to a different device (use spotify_get_devices to find device IDs)",
+    inputSchema: {
+      device_id: z.string().describe("Device ID to transfer playback to"),
+      play: z.boolean().optional().describe("Whether to start playback on the new device (default: true)"),
+    },
+  },
+  async ({ device_id, play }: any) => playbackTools.transferPlayback({ device_id, play } as any) as any
 );
 
 // Register system tools

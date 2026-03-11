@@ -12,7 +12,7 @@ vi.mock("../spotify/errors.js", () => ({
 
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
-import { getPlaylists, getPlaylist, createPlaylist, addToPlaylist } from "./playlists.js";
+import { getPlaylists, getPlaylist, createPlaylist, addToPlaylist, removeFromPlaylist, reorderPlaylistTracks, deletePlaylist, updatePlaylist } from "./playlists.js";
 
 describe("playlist tools", () => {
   let mockClient: any;
@@ -23,6 +23,10 @@ describe("playlist tools", () => {
       getPlaylist: vi.fn(),
       createPlaylist: vi.fn(),
       addTracksToPlaylist: vi.fn(),
+      removeTracksFromPlaylist: vi.fn(),
+      reorderTracksInPlaylist: vi.fn(),
+      unfollowPlaylist: vi.fn(),
+      changePlaylistDetails: vi.fn(),
     };
     vi.mocked(getAuthenticatedClient).mockResolvedValue(mockClient);
     vi.clearAllMocks();
@@ -187,6 +191,148 @@ describe("playlist tools", () => {
         uris: ["spotify:track:a"],
       });
       expect(handleToolError).toHaveBeenCalledWith(error, "spotify_add_to_playlist");
+      expect(result.isError).toBe(true);
+    });
+  });
+
+  describe("removeFromPlaylist", () => {
+    it("removes tracks and returns confirmation", async () => {
+      mockClient.removeTracksFromPlaylist.mockResolvedValue({});
+
+      const uris = ["spotify:track:a", "spotify:track:b"];
+      const result = await removeFromPlaylist({ playlist_id: "pl1", uris });
+      expect(result.content[0].text).toBe("Removed 2 track(s) from playlist");
+      expect(mockClient.removeTracksFromPlaylist).toHaveBeenCalledWith(
+        "pl1",
+        [{ uri: "spotify:track:a" }, { uri: "spotify:track:b" }],
+        {}
+      );
+    });
+
+    it("passes snapshot_id when provided", async () => {
+      mockClient.removeTracksFromPlaylist.mockResolvedValue({});
+
+      await removeFromPlaylist({
+        playlist_id: "pl1",
+        uris: ["spotify:track:a"],
+        snapshot_id: "snap123",
+      });
+      expect(mockClient.removeTracksFromPlaylist).toHaveBeenCalledWith(
+        "pl1",
+        [{ uri: "spotify:track:a" }],
+        { snapshot_id: "snap123" }
+      );
+    });
+
+    it("calls handleToolError on API failure", async () => {
+      const error = new Error("API fail");
+      mockClient.removeTracksFromPlaylist.mockRejectedValue(error);
+      const result = await removeFromPlaylist({ playlist_id: "pl1", uris: ["spotify:track:a"] });
+      expect(handleToolError).toHaveBeenCalledWith(error, "spotify_remove_from_playlist");
+      expect(result.isError).toBe(true);
+    });
+  });
+
+  describe("reorderPlaylistTracks", () => {
+    it("reorders tracks and returns confirmation", async () => {
+      mockClient.reorderTracksInPlaylist.mockResolvedValue({});
+
+      const result = await reorderPlaylistTracks({
+        playlist_id: "pl1",
+        range_start: 0,
+        insert_before: 5,
+      });
+      expect(result.content[0].text).toBe("Moved 1 track(s) from position 0 to position 5");
+      expect(mockClient.reorderTracksInPlaylist).toHaveBeenCalledWith("pl1", 0, 5, {});
+    });
+
+    it("passes range_length and snapshot_id when provided", async () => {
+      mockClient.reorderTracksInPlaylist.mockResolvedValue({});
+
+      const result = await reorderPlaylistTracks({
+        playlist_id: "pl1",
+        range_start: 2,
+        insert_before: 0,
+        range_length: 3,
+        snapshot_id: "snap123",
+      });
+      expect(result.content[0].text).toBe("Moved 3 track(s) from position 2 to position 0");
+      expect(mockClient.reorderTracksInPlaylist).toHaveBeenCalledWith("pl1", 2, 0, {
+        range_length: 3,
+        snapshot_id: "snap123",
+      });
+    });
+
+    it("calls handleToolError on API failure", async () => {
+      const error = new Error("API fail");
+      mockClient.reorderTracksInPlaylist.mockRejectedValue(error);
+      const result = await reorderPlaylistTracks({
+        playlist_id: "pl1",
+        range_start: 0,
+        insert_before: 5,
+      });
+      expect(handleToolError).toHaveBeenCalledWith(error, "spotify_reorder_playlist_tracks");
+      expect(result.isError).toBe(true);
+    });
+  });
+
+  describe("deletePlaylist", () => {
+    it("unfollows playlist and returns confirmation", async () => {
+      mockClient.unfollowPlaylist.mockResolvedValue({});
+
+      const result = await deletePlaylist({ playlist_id: "pl1" });
+      expect(result.content[0].text).toBe("Deleted (unfollowed) playlist pl1");
+      expect(mockClient.unfollowPlaylist).toHaveBeenCalledWith("pl1");
+    });
+
+    it("calls handleToolError on API failure", async () => {
+      const error = new Error("API fail");
+      mockClient.unfollowPlaylist.mockRejectedValue(error);
+      const result = await deletePlaylist({ playlist_id: "pl1" });
+      expect(handleToolError).toHaveBeenCalledWith(error, "spotify_delete_playlist");
+      expect(result.isError).toBe(true);
+    });
+  });
+
+  describe("updatePlaylist", () => {
+    it("updates playlist name and returns confirmation", async () => {
+      mockClient.changePlaylistDetails.mockResolvedValue({});
+
+      const result = await updatePlaylist({ playlist_id: "pl1", name: "New Name" });
+      expect(result.content[0].text).toBe('Updated playlist: name: "New Name"');
+      expect(mockClient.changePlaylistDetails).toHaveBeenCalledWith("pl1", { name: "New Name" });
+    });
+
+    it("updates multiple fields", async () => {
+      mockClient.changePlaylistDetails.mockResolvedValue({});
+
+      const result = await updatePlaylist({
+        playlist_id: "pl1",
+        name: "Collab Playlist",
+        public: false,
+        collaborative: true,
+      });
+      expect(result.content[0].text).toContain('name: "Collab Playlist"');
+      expect(result.content[0].text).toContain("public: false");
+      expect(result.content[0].text).toContain("collaborative: true");
+    });
+
+    it("returns error when collaborative and public are both true", async () => {
+      const result = await updatePlaylist({
+        playlist_id: "pl1",
+        public: true,
+        collaborative: true,
+      });
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain("Collaborative playlists must be non-public");
+      expect(mockClient.changePlaylistDetails).not.toHaveBeenCalled();
+    });
+
+    it("calls handleToolError on API failure", async () => {
+      const error = new Error("API fail");
+      mockClient.changePlaylistDetails.mockRejectedValue(error);
+      const result = await updatePlaylist({ playlist_id: "pl1", name: "Fail" });
+      expect(handleToolError).toHaveBeenCalledWith(error, "spotify_update_playlist");
       expect(result.isError).toBe(true);
     });
   });
