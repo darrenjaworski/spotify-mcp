@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Skills**: Add `/triage` skill for issue prioritization and next-work-item recommendations
+
 ### Features
 - **Setup Wizard**: Add configuration support for Cursor, Windsurf, VS Code (GitHub Copilot), and OpenCode
   - Setup wizard now offers 7 client options (up from 3)
