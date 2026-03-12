@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-11
+
 ### Features
 - **Validation**: Add `src/utils/validation.ts` with URI format, array size, and numeric range validators
   - Validate Spotify URIs (`spotify:(track|album|artist|playlist):<id>`) before API calls in playback, playlist, and library tools
@@ -272,7 +274,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.1...v1.0.0
 [0.6.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v0.6.0...v0.6.1

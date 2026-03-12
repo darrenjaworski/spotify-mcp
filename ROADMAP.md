@@ -156,27 +156,27 @@ Everything in Phases 3-5 (recommendations, audio features, queue management, pod
 
 **Goal**: Enforce runtime safety, improve resilience, and close test coverage gaps
 
-- [ ] **Runtime Input Validation**
-  - [ ] Verify Zod schemas are enforced at runtime by the MCP SDK (or add explicit `.parse()` calls)
-  - [ ] Add `src/utils/validation.ts` with shared URI validation, array size checks, and numeric range helpers
-  - [ ] Validate Spotify URI format (`spotify:(track|album|artist|playlist):[\w]+`) before API calls
-  - [ ] Enforce array size limits (Spotify's 50-item cap) at the tool layer
+- [x] **Runtime Input Validation**
+  - [x] Verify Zod schemas are enforced at runtime by the MCP SDK (confirmed: `McpServer.validateToolInput()` calls `safeParseAsync()`)
+  - [x] Add `src/utils/validation.ts` with shared URI validation, array size checks, and numeric range helpers
+  - [x] Validate Spotify URI format (`spotify:(track|album|artist|playlist):[\w]+`) before API calls
+  - [x] Enforce array size limits (Spotify's 50-item cap) at the tool layer
 
-- [ ] **Process Resilience**
-  - [ ] Add `process.on('unhandledRejection')` and `process.on('uncaughtException')` handlers
-  - [ ] Implement exponential backoff with `Retry-After` header support for 429 responses
-  - [ ] Graceful recovery from corrupted `tokens.json` (fallback to re-auth instead of crash)
-  - [ ] Add try-catch around token refresh in `client.ts` with retry before re-triggering OAuth
+- [x] **Process Resilience**
+  - [x] Add `process.on('unhandledRejection')` and `process.on('uncaughtException')` handlers
+  - [x] Implement exponential backoff with `Retry-After` header support for 429 responses
+  - [x] Graceful recovery from corrupted `tokens.json` (fallback to re-auth instead of crash)
+  - [x] Add try-catch around token refresh in `client.ts` with retry before re-triggering OAuth
 
-- [ ] **Test Coverage Gaps**
-  - [ ] Add unit tests for `src/spotify/client.ts` (token orchestration, refresh flow, error recovery)
-  - [ ] Add tests for `src/setup.ts` (setup wizard with mocked readline/file I/O)
-  - [ ] Add direct tests for OAuth callback server (timeout, rate limiting, CSRF state validation)
-  - [ ] Add tests for `src/bin.ts` (CLI argument parsing and dispatch)
+- [x] **Test Coverage Gaps**
+  - [x] Add unit tests for `src/spotify/client.ts` (token orchestration, refresh flow, error recovery)
+  - [x] Add tests for `src/setup.ts` (setup wizard with mocked readline/file I/O)
+  - [x] Add direct tests for OAuth callback server (timeout, rate limiting, CSRF state validation)
+  - [x] Add tests for `src/bin.ts` (CLI argument parsing and dispatch)
 
-- [ ] **Type Safety**
-  - [ ] Add type guards for Spotify API responses in tool handlers (replace bare `any` casts)
-  - [ ] Type the return value of `getAuthenticatedClient()` instead of relying on `any`
+- [x] **Type Safety**
+  - [x] Add type guards for Spotify API responses in tool handlers (replace bare `any` casts)
+  - [x] Type the return value of `getAuthenticatedClient()` instead of relying on `any`
 
 ### Phase 5: Polish & Optimization (Q1 2027) — Post-1.0
 
@@ -185,12 +185,12 @@ Everything in Phases 3-5 (recommendations, audio features, queue management, pod
 - [ ] **Performance**
   - [ ] Response time optimization
   - [ ] Caching strategy implementation
-  - [ ] Rate limit handling
+  - [x] Rate limit handling (429 exponential backoff with Retry-After support)
   - [ ] Connection pooling
 
 - [ ] **Reliability**
   - [x] Comprehensive error handling (centralized `handleToolError` across all tools)
-  - [ ] Automatic retry logic
+  - [x] Automatic retry logic (withRetry proxy for 429 responses)
   - [ ] Graceful degradation
   - [ ] Health monitoring
 
@@ -290,11 +290,21 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 - **v0.6.0** (Released 2026-02-26): `spotify_get_devices` tool, CI/workflow improvements
 - **v0.6.1** (Released 2026-02-26): Adapt to Spotify Web API February 2026 breaking changes
 - **v1.0.0** (Released 2026-03-10): MVP — Phase 2 complete (playlist CRUD, library management, search filters, device transfer, 30 tools)
+- **v1.1.0** (Released 2026-03-11): Post-1.0 hardening — runtime validation, process resilience, type safety, 86 new tests
 - **v1.0.1** (Released 2026-03-10): Dependency security updates, security audit documentation
 
 ---
 
 ## Recent Progress
+
+**March 11, 2026**
+- ✅ **Post-1.0 Hardening COMPLETED / v1.1.0 shipped**: All 14 hardening items implemented
+- ✅ Runtime input validation: URI format, array size (50-item cap), numeric range validators
+- ✅ Process resilience: 429 retry with exponential backoff, unhandled rejection handlers, corrupted token recovery
+- ✅ Type safety: SpotifyClient interface, typed getAuthenticatedClient(), null guards across all tools
+- ✅ Test coverage: 86 new tests (client.ts, setup.ts, bin.ts, OAuth callback, validation)
+- ✅ Test suite expanded to 299 tests across 16 files
+- ✅ Prettier code formatting integration
 
 **March 10, 2026**
 - ✅ Fix 6 npm audit vulnerabilities (hono, rollup, minimatch, express-rate-limit, ajv)
@@ -335,5 +345,5 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 
 ---
 
-*Last updated: March 10, 2026 (v1.0.1)*
+*Last updated: March 11, 2026 (v1.1.0)*
 *This roadmap is a living document and will evolve based on user feedback and project priorities.*
