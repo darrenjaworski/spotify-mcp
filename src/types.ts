@@ -132,6 +132,16 @@ export interface TransferPlaybackArgs {
   play?: boolean;
 }
 
+export interface ShuffleArgs {
+  state: boolean;
+  device_id?: string;
+}
+
+export interface RepeatArgs {
+  state: "track" | "context" | "off";
+  device_id?: string;
+}
+
 /**
  * Typed interface for the Spotify Web API client methods used in this project.
  * Response bodies are typed as `any` — this is intentional per the project's
@@ -148,6 +158,8 @@ export interface SpotifyClient {
   getMyCurrentPlaybackState(): Promise<any>;
   getMyDevices(): Promise<any>;
   transferMyPlayback(deviceIds: string[], options?: any): Promise<any>;
+  setShuffle(state: boolean, options?: any): Promise<any>;
+  setRepeat(state: string, options?: any): Promise<any>;
 
   // Search
   search(query: string, types: string[], options?: any): Promise<any>;

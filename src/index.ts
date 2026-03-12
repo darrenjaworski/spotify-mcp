@@ -124,6 +124,33 @@ server.registerTool(
   async () => playbackTools.getDevices() as any,
 );
 
+server.registerTool(
+  "spotify_shuffle",
+  {
+    description: "Enable or disable shuffle mode",
+    inputSchema: {
+      state: z.boolean().describe("true to enable shuffle, false to disable"),
+      device_id: z.string().optional().describe("Optional: Device ID"),
+    },
+  },
+  async ({ state, device_id }: any) => playbackTools.setShuffle({ state, device_id } as any) as any,
+);
+
+server.registerTool(
+  "spotify_repeat",
+  {
+    description:
+      "Set repeat mode: 'track' repeats current track, 'context' repeats album/playlist, 'off' disables repeat",
+    inputSchema: {
+      state: z
+        .enum(["track", "context", "off"])
+        .describe("Repeat mode: 'track', 'context' (album/playlist), or 'off'"),
+      device_id: z.string().optional().describe("Optional: Device ID"),
+    },
+  },
+  async ({ state, device_id }: any) => playbackTools.setRepeat({ state, device_id } as any) as any,
+);
+
 // Register search tool
 server.registerTool(
   "spotify_search",

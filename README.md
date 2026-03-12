@@ -21,7 +21,7 @@ A Model Context Protocol (MCP) server that provides seamless integration with Sp
   - [Environment Variables](#environment-variables)
   - [MCP Configuration](#mcp-configuration)
 - [Usage](#usage)
-- [Available Tools (30 total)](#available-tools-30-total)
+- [Available Tools (32 total)](#available-tools-32-total)
   - [Playback & Device Control](#playback--device-control)
   - [Search & Discovery](#search--discovery)
   - [Playlist Management](#playlist-management)
@@ -334,22 +334,26 @@ Once configured, you can interact with Spotify through natural language:
 - "What song is currently playing?"
 - "Create a playlist called 'Workout Mix' with these songs..."
 - "Skip to the next track"
+- "Turn on shuffle"
+- "Set repeat to track"
 - "Show me my top artists from the last month"
 - "Search for songs by The Beatles"
 - "Add this song to my liked songs"
 
-## Available Tools (30 total)
+## Available Tools (32 total)
 
-### Playback & Device Control (8 tools)
+### Playback & Device Control (10 tools)
 
 - `spotify_play` - Start or resume playback of tracks, albums, playlists, or artists
 - `spotify_pause` - Pause playback
 - `spotify_next` - Skip to next track
 - `spotify_previous` - Skip to previous track
 - `spotify_set_volume` - Adjust volume level (0-100)
-- `spotify_get_playback_state` - Get current playback information
+- `spotify_get_playback_state` - Get current playback information (includes shuffle/repeat status)
 - `spotify_get_devices` - List available Spotify Connect devices
 - `spotify_transfer_playback` - Transfer playback to a different device
+- `spotify_shuffle` - Enable or disable shuffle mode
+- `spotify_repeat` - Set repeat mode (track, context, or off)
 
 ### Search & Discovery (1 tool)
 
@@ -474,7 +478,7 @@ DEBUG=true npx @modelcontextprotocol/inspector node build/bin.js
 
 **Benefits:**
 
-- ✅ Interactive UI to test all 30 tools
+- ✅ Interactive UI to test all 32 tools
 - ✅ See JSON-RPC messages in real-time
 - ✅ No need to configure Claude Desktop during development
 - ✅ Quickly iterate on tool implementations
@@ -568,12 +572,15 @@ npm run test:watch    # Run tests in watch mode
 
 **Test Coverage:**
 
-- ✅ 213 tests across 11 test files
+- ✅ 310 tests across 16 test files
 - ✅ Tool-level unit tests for playback, search, playlists, library, user, and system
-- ✅ Auth tests (credentials, token management, file permissions, refresh)
+- ✅ Auth tests (credentials, token management, file permissions, refresh, OAuth callback)
 - ✅ Logger tests (sensitive data redaction, log levels)
 - ✅ Error handling tests (all HTTP status codes, security)
 - ✅ Server registration and integration tests
+- ✅ Client tests (token orchestration, retry logic, rate limiting)
+- ✅ Validation tests (URI format, array size, numeric range)
+- ✅ Setup wizard and CLI argument tests
 
 ### Linting and Code Quality
 

@@ -129,8 +129,8 @@ Everything in Phases 3-5 (recommendations, audio features, queue management, pod
 
 - [ ] **Advanced Playback**
   - [ ] Single track play behavior: play album from track position instead of stopping after one song
-  - [ ] Shuffle control
-  - [ ] Repeat mode control
+  - [x] Shuffle control
+  - [x] Repeat mode control
   - [ ] Seek position
   - [ ] Crossfade settings
 

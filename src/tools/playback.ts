@@ -11,6 +11,8 @@ import type {
   PlaybackArgs,
   VolumeArgs,
   TransferPlaybackArgs,
+  ShuffleArgs,
+  RepeatArgs,
   SpotifyClient,
 } from "../types.js";
 
@@ -280,12 +282,18 @@ export async function getPlaybackState(): Promise<ToolResponse> {
           : `Volume: ${device.volume_percent}%`
         : "";
 
+    const shuffleState = state.body.shuffle_state ? "On" : "Off";
+    const repeatState = state.body.repeat_state ?? "off";
+    const repeatLabel =
+      repeatState === "track" ? "Track" : repeatState === "context" ? "Context" : "Off";
+
     const text = `${isPlaying ? "▶️ Playing" : "⏸️ Paused"}: ${track.name}
 Artist: ${artists}
 Album: ${album}
 Progress: ${formatTime(progress)} / ${formatTime(duration)}
 Device: ${deviceName} (${deviceType})
-${volumeLine}`;
+${volumeLine}
+Shuffle: ${shuffleState} | Repeat: ${repeatLabel}`;
 
     return {
       content: [
@@ -357,6 +365,66 @@ export async function transferPlayback(args: TransferPlaybackArgs): Promise<Tool
     };
   } catch (error) {
     return handleToolError(error, "spotify_transfer_playback");
+  }
+}
+
+export async function setShuffle(args: ShuffleArgs): Promise<ToolResponse> {
+  try {
+    const client = await getAuthenticatedClient();
+
+    const deviceError = await ensureDevice(client, args.device_id);
+    if (deviceError) return deviceError;
+
+    const options: any = {};
+    if (args.device_id) {
+      options.device_id = args.device_id;
+    }
+
+    await client.setShuffle(args.state, options);
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Shuffle ${args.state ? "enabled" : "disabled"}`,
+        },
+      ],
+    };
+  } catch (error) {
+    return handleToolError(error, "spotify_shuffle");
+  }
+}
+
+export async function setRepeat(args: RepeatArgs): Promise<ToolResponse> {
+  try {
+    const client = await getAuthenticatedClient();
+
+    const deviceError = await ensureDevice(client, args.device_id);
+    if (deviceError) return deviceError;
+
+    const options: any = {};
+    if (args.device_id) {
+      options.device_id = args.device_id;
+    }
+
+    await client.setRepeat(args.state, options);
+
+    const modeLabels: Record<string, string> = {
+      track: "repeat current track",
+      context: "repeat current album/playlist",
+      off: "off",
+    };
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Repeat mode set to: ${modeLabels[args.state] ?? args.state}`,
+        },
+      ],
+    };
+  } catch (error) {
+    return handleToolError(error, "spotify_repeat");
   }
 }
 

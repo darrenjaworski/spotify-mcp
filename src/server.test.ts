@@ -37,7 +37,7 @@ describe("MCP Server Tool Registration", () => {
 
   describe("Tool Registration", () => {
     const expectedTools = [
-      // Playback tools (8)
+      // Playback tools (10)
       { name: "spotify_play", category: "playback" },
       { name: "spotify_pause", category: "playback" },
       { name: "spotify_next", category: "playback" },
@@ -46,6 +46,8 @@ describe("MCP Server Tool Registration", () => {
       { name: "spotify_get_playback_state", category: "playback" },
       { name: "spotify_get_devices", category: "playback" },
       { name: "spotify_transfer_playback", category: "playback" },
+      { name: "spotify_shuffle", category: "playback" },
+      { name: "spotify_repeat", category: "playback" },
 
       // Search tools (1)
       { name: "spotify_search", category: "search" },
@@ -80,8 +82,8 @@ describe("MCP Server Tool Registration", () => {
       { name: "spotify_open", category: "system" },
     ];
 
-    it("should register exactly 30 tools", () => {
-      expect(expectedTools).toHaveLength(30);
+    it("should register exactly 32 tools", () => {
+      expect(expectedTools).toHaveLength(32);
     });
 
     it('should have all tool names prefixed with "spotify_"', () => {
@@ -101,9 +103,9 @@ describe("MCP Server Tool Registration", () => {
       expect(categories).toContain("system");
     });
 
-    it("should have 8 playback tools", () => {
+    it("should have 10 playback tools", () => {
       const playbackTools = expectedTools.filter((t) => t.category === "playback");
-      expect(playbackTools).toHaveLength(8);
+      expect(playbackTools).toHaveLength(10);
     });
 
     it("should have 1 search tool", () => {
@@ -137,6 +139,8 @@ describe("MCP Server Tool Registration", () => {
       "spotify_get_playback_state",
       "spotify_get_devices",
       "spotify_transfer_playback",
+      "spotify_shuffle",
+      "spotify_repeat",
       "spotify_search",
       "spotify_get_playlists",
       "spotify_get_playlist",
@@ -190,6 +194,8 @@ describe("MCP Server Tool Registration", () => {
         "follow",
         "unfollow",
         "transfer",
+        "shuffle",
+        "repeat",
       ];
 
       allToolNames.forEach((name) => {
@@ -210,6 +216,8 @@ describe("MCP Server Tool Registration", () => {
         "Get current playback state including track, artist, album, and playback status",
       spotify_get_devices: "List available Spotify Connect devices",
       spotify_transfer_playback: "Transfer playback to a different device",
+      spotify_shuffle: "Enable or disable shuffle mode",
+      spotify_repeat: "Set repeat mode for playback",
       spotify_search:
         "Search for tracks, albums, artists, or playlists with optional field filters",
       spotify_get_playlists: "Get current user's playlists",
@@ -331,12 +339,14 @@ describe("MCP Server Tool Registration", () => {
         "spotify_get_playback_state",
         "spotify_get_devices",
         "spotify_transfer_playback",
+        "spotify_shuffle",
+        "spotify_repeat",
       ];
 
-      expect(playbackTools).toHaveLength(8);
+      expect(playbackTools).toHaveLength(10);
       playbackTools.forEach((tool) => {
         expect(tool).toMatch(
-          /^spotify_(play|pause|next|previous|set_volume|get_playback_state|get_devices|transfer_playback)$/,
+          /^spotify_(play|pause|next|previous|set_volume|get_playback_state|get_devices|transfer_playback|shuffle|repeat)$/,
         );
       });
     });

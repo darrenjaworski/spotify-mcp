@@ -18,6 +18,7 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "inspect": "npm run build && npx @modelcontextprotocol/inspector node build/bin.js",
     "static-checks": "npm run lint && npm run format:check && npm run build && npm test"
   },
   "keywords": [

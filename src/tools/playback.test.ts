@@ -25,6 +25,8 @@ import {
   getPlaybackState,
   getDevices,
   transferPlayback,
+  setShuffle,
+  setRepeat,
 } from "./playback.js";
 
 describe("playback tools", () => {
@@ -42,6 +44,8 @@ describe("playback tools", () => {
         body: { devices: [{ name: "My Speaker", type: "Speaker", is_active: true }] },
       }),
       transferMyPlayback: vi.fn(),
+      setShuffle: vi.fn(),
+      setRepeat: vi.fn(),
     };
     vi.mocked(getAuthenticatedClient).mockResolvedValue(mockClient);
     vi.clearAllMocks();
@@ -525,6 +529,87 @@ describe("playback tools", () => {
       mockClient.transferMyPlayback.mockRejectedValue(error);
       const result = await transferPlayback({ device_id: "dev-1" });
       expect(handleToolError).toHaveBeenCalledWith(error, "spotify_transfer_playback");
+      expect(result.isError).toBe(true);
+    });
+  });
+
+  describe("setShuffle", () => {
+    it("enables shuffle", async () => {
+      mockClient.setShuffle.mockResolvedValue({});
+      const result = await setShuffle({ state: true });
+      expect(mockClient.setShuffle).toHaveBeenCalledWith(true, {});
+      expect(result.content[0].text).toBe("Shuffle enabled");
+    });
+
+    it("disables shuffle", async () => {
+      mockClient.setShuffle.mockResolvedValue({});
+      const result = await setShuffle({ state: false });
+      expect(mockClient.setShuffle).toHaveBeenCalledWith(false, {});
+      expect(result.content[0].text).toBe("Shuffle disabled");
+    });
+
+    it("passes device_id when provided", async () => {
+      mockClient.setShuffle.mockResolvedValue({});
+      await setShuffle({ state: true, device_id: "dev-1" });
+      expect(mockClient.setShuffle).toHaveBeenCalledWith(true, { device_id: "dev-1" });
+    });
+
+    it("returns device error when no active device", async () => {
+      mockClient.getMyDevices.mockResolvedValue({ body: { devices: [] } });
+      const result = await setShuffle({ state: true });
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain("No Spotify devices found");
+    });
+
+    it("calls handleToolError on API failure", async () => {
+      const error = new Error("API fail");
+      mockClient.setShuffle.mockRejectedValue(error);
+      const result = await setShuffle({ state: true });
+      expect(handleToolError).toHaveBeenCalledWith(error, "spotify_shuffle");
+      expect(result.isError).toBe(true);
+    });
+  });
+
+  describe("setRepeat", () => {
+    it("sets repeat to track mode", async () => {
+      mockClient.setRepeat.mockResolvedValue({});
+      const result = await setRepeat({ state: "track" });
+      expect(mockClient.setRepeat).toHaveBeenCalledWith("track", {});
+      expect(result.content[0].text).toBe("Repeat mode set to: repeat current track");
+    });
+
+    it("sets repeat to context mode", async () => {
+      mockClient.setRepeat.mockResolvedValue({});
+      const result = await setRepeat({ state: "context" });
+      expect(mockClient.setRepeat).toHaveBeenCalledWith("context", {});
+      expect(result.content[0].text).toBe("Repeat mode set to: repeat current album/playlist");
+    });
+
+    it("sets repeat to off", async () => {
+      mockClient.setRepeat.mockResolvedValue({});
+      const result = await setRepeat({ state: "off" });
+      expect(mockClient.setRepeat).toHaveBeenCalledWith("off", {});
+      expect(result.content[0].text).toBe("Repeat mode set to: off");
+    });
+
+    it("passes device_id when provided", async () => {
+      mockClient.setRepeat.mockResolvedValue({});
+      await setRepeat({ state: "track", device_id: "dev-1" });
+      expect(mockClient.setRepeat).toHaveBeenCalledWith("track", { device_id: "dev-1" });
+    });
+
+    it("returns device error when no active device", async () => {
+      mockClient.getMyDevices.mockResolvedValue({ body: { devices: [] } });
+      const result = await setRepeat({ state: "track" });
+      expect(result.isError).toBe(true);
+      expect(result.content[0].text).toContain("No Spotify devices found");
+    });
+
+    it("calls handleToolError on API failure", async () => {
+      const error = new Error("API fail");
+      mockClient.setRepeat.mockRejectedValue(error);
+      const result = await setRepeat({ state: "track" });
+      expect(handleToolError).toHaveBeenCalledWith(error, "spotify_repeat");
       expect(result.isError).toBe(true);
     });
   });

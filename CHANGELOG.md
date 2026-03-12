@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Features
+- **Playback**: Add shuffle and repeat mode controls
+  - `spotify_shuffle` — enable or disable shuffle mode
+  - `spotify_repeat` — set repeat mode to track, context (album/playlist), or off
+  - `spotify_get_playback_state` now displays current shuffle and repeat status
+
+### Changed
+- **Tooling**: Add `npm run inspect` helper script to launch MCP Inspector
+
+### Tests
+- Add 11 tests for shuffle and repeat controls (enable/disable, all modes, device passthrough, error handling)
+- Update server registration tests for new tool count (30 → 32)
+- Test suite expanded from 299 to 310 tests across 16 files
+
 ## [1.1.0] - 2026-03-11
 
 ### Features
