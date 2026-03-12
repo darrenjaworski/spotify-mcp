@@ -290,12 +290,19 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 - **v0.6.0** (Released 2026-02-26): `spotify_get_devices` tool, CI/workflow improvements
 - **v0.6.1** (Released 2026-02-26): Adapt to Spotify Web API February 2026 breaking changes
 - **v1.0.0** (Released 2026-03-10): MVP — Phase 2 complete (playlist CRUD, library management, search filters, device transfer, 30 tools)
+- **v1.2.0** (Released 2026-03-11): Shuffle and repeat playback controls, MCP Inspector helper script, 32 tools
 - **v1.1.0** (Released 2026-03-11): Post-1.0 hardening — runtime validation, process resilience, type safety, 86 new tests
 - **v1.0.1** (Released 2026-03-10): Dependency security updates, security audit documentation
 
 ---
 
 ## Recent Progress
+
+**March 11, 2026**
+- ✅ **v1.2.0 shipped**: Shuffle and repeat playback controls (`spotify_shuffle`, `spotify_repeat`)
+- ✅ `spotify_get_playback_state` now displays shuffle/repeat status
+- ✅ `npm run inspect` helper script for MCP Inspector
+- ✅ Test suite expanded to 310 tests across 16 files, total tool count: 32
 
 **March 11, 2026**
 - ✅ **Post-1.0 Hardening COMPLETED / v1.1.0 shipped**: All 14 hardening items implemented
@@ -345,5 +352,5 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 
 ---
 
-*Last updated: March 11, 2026 (v1.1.0)*
+*Last updated: March 11, 2026 (v1.2.0)*
 *This roadmap is a living document and will evolve based on user feedback and project priorities.*
