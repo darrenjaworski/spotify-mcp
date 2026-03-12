@@ -131,3 +131,64 @@ export interface TransferPlaybackArgs {
   device_id: string;
   play?: boolean;
 }
+
+/**
+ * Typed interface for the Spotify Web API client methods used in this project.
+ * Response bodies are typed as `any` — this is intentional per the project's
+ * pragmatic TypeScript philosophy. The value is in typing the method signatures
+ * so IDE autocomplete works and obvious call-site mistakes are caught.
+ */
+export interface SpotifyClient {
+  // Playback
+  play(options?: any): Promise<any>;
+  pause(options?: any): Promise<any>;
+  skipToNext(options?: any): Promise<any>;
+  skipToPrevious(options?: any): Promise<any>;
+  setVolume(volumePercent: number, options?: any): Promise<any>;
+  getMyCurrentPlaybackState(): Promise<any>;
+  getMyDevices(): Promise<any>;
+  transferMyPlayback(deviceIds: string[], options?: any): Promise<any>;
+
+  // Search
+  search(query: string, types: string[], options?: any): Promise<any>;
+
+  // Playlists
+  getUserPlaylists(options?: any): Promise<any>;
+  getPlaylist(playlistId: string): Promise<any>;
+  createPlaylist(name: string, options?: any): Promise<any>;
+  addTracksToPlaylist(playlistId: string, uris: string[], options?: any): Promise<any>;
+  removeTracksFromPlaylist(
+    playlistId: string,
+    tracks: Array<{ uri: string }>,
+    options?: any,
+  ): Promise<any>;
+  reorderTracksInPlaylist(
+    playlistId: string,
+    rangeStart: number,
+    insertBefore: number,
+    options?: any,
+  ): Promise<any>;
+  unfollowPlaylist(playlistId: string): Promise<any>;
+  changePlaylistDetails(playlistId: string, options?: any): Promise<any>;
+
+  // Library
+  getMySavedTracks(options?: any): Promise<any>;
+  getMySavedAlbums(options?: any): Promise<any>;
+  getFollowedArtists(options?: any): Promise<any>;
+  addToMySavedTracks(trackIds: string[]): Promise<any>;
+  removeFromMySavedTracks(trackIds: string[]): Promise<any>;
+  addToMySavedAlbums(albumIds: string[]): Promise<any>;
+  removeFromMySavedAlbums(albumIds: string[]): Promise<any>;
+  followArtists(artistIds: string[]): Promise<any>;
+  unfollowArtists(artistIds: string[]): Promise<any>;
+
+  // User
+  getMe(): Promise<any>;
+  getMyTopArtists(options?: any): Promise<any>;
+  getMyTopTracks(options?: any): Promise<any>;
+  getMyRecentlyPlayedTracks(options?: any): Promise<any>;
+
+  // Auth (used internally by client.ts and auth.ts)
+  setAccessToken(token: string): void;
+  setRefreshToken(token: string): void;
+}

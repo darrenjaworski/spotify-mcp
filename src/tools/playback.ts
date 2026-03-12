@@ -5,9 +5,19 @@
 import { spawnSync } from "child_process";
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
-import type { ToolResponse, PlaybackArgs, VolumeArgs, TransferPlaybackArgs } from "../types.js";
+import { validateSpotifyUri } from "../utils/validation.js";
+import type {
+  ToolResponse,
+  PlaybackArgs,
+  VolumeArgs,
+  TransferPlaybackArgs,
+  SpotifyClient,
+} from "../types.js";
 
-async function ensureDevice(client: any, deviceId?: string): Promise<ToolResponse | null> {
+async function ensureDevice(
+  client: SpotifyClient,
+  deviceId?: string,
+): Promise<ToolResponse | null> {
   // If caller specified a device_id, trust it
   if (deviceId) return null;
 
@@ -50,6 +60,16 @@ export async function play(args: PlaybackArgs): Promise<ToolResponse> {
     if (deviceError) return deviceError;
 
     const options: any = {};
+
+    // Validate URIs before making API calls
+    if (args.uri) {
+      validateSpotifyUri(args.uri);
+    }
+    if (args.uris) {
+      for (const uri of args.uris) {
+        validateSpotifyUri(uri, ["track"]);
+      }
+    }
 
     if (args.uri) {
       // Determine if URI is a context (album, playlist, artist) or a track
@@ -245,22 +265,26 @@ export async function getPlaybackState(): Promise<ToolResponse> {
       };
     }
 
-    const artists = track.artists.map((a) => a.name).join(", ");
-    const album = track.album.name;
+    const artists = track.artists?.map((a: any) => a.name).join(", ") ?? "Unknown artist";
+    const album = track.album?.name ?? "Unknown album";
     const progress = Math.floor((state.body.progress_ms || 0) / 1000);
     const duration = Math.floor(track.duration_ms / 1000);
 
+    const deviceName = device?.name ?? "Unknown device";
+    const deviceType = device?.type ?? "Unknown";
     const systemVol = getSystemVolume();
     const volumeLine =
-      systemVol !== null
-        ? `Volume: ${device.volume_percent}% (Spotify) / ${systemVol}% (System)`
-        : `Volume: ${device.volume_percent}%`;
+      device?.volume_percent != null
+        ? systemVol !== null
+          ? `Volume: ${device.volume_percent}% (Spotify) / ${systemVol}% (System)`
+          : `Volume: ${device.volume_percent}%`
+        : "";
 
     const text = `${isPlaying ? "▶️ Playing" : "⏸️ Paused"}: ${track.name}
 Artist: ${artists}
 Album: ${album}
 Progress: ${formatTime(progress)} / ${formatTime(duration)}
-Device: ${device.name} (${device.type})
+Device: ${deviceName} (${deviceType})
 ${volumeLine}`;
 
     return {

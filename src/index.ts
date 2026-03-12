@@ -22,6 +22,13 @@ for (const varName of requiredEnvVars) {
   }
 }
 
+// The MCP SDK validates tool inputs against Zod schemas at runtime before
+// calling handlers (see McpServer.validateToolInput which calls safeParseAsync).
+// Tool handlers receive pre-validated args, so we do not need explicit .parse()
+// calls for schema-level validation. However, tool handlers still perform
+// domain-specific validation (e.g., Spotify URI format, array size limits)
+// using utilities from src/utils/validation.ts.
+
 // Create MCP server instance
 const server = new McpServer(
   {
@@ -517,6 +524,15 @@ const cleanup = async () => {
 
 process.on("SIGINT", cleanup);
 process.on("SIGTERM", cleanup);
+
+// Keep the MCP server alive on unexpected errors
+process.on("uncaughtException", (error) => {
+  logger.error("Uncaught exception:", error);
+});
+
+process.on("unhandledRejection", (reason) => {
+  logger.error("Unhandled rejection:", reason);
+});
 
 // Start the server
 async function main() {

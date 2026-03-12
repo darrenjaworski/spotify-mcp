@@ -152,6 +152,32 @@ Everything in Phases 3-5 (recommendations, audio features, queue management, pod
 
 **Deliverable**: Professional-grade Spotify integration
 
+### Post-1.0 Hardening
+
+**Goal**: Enforce runtime safety, improve resilience, and close test coverage gaps
+
+- [ ] **Runtime Input Validation**
+  - [ ] Verify Zod schemas are enforced at runtime by the MCP SDK (or add explicit `.parse()` calls)
+  - [ ] Add `src/utils/validation.ts` with shared URI validation, array size checks, and numeric range helpers
+  - [ ] Validate Spotify URI format (`spotify:(track|album|artist|playlist):[\w]+`) before API calls
+  - [ ] Enforce array size limits (Spotify's 50-item cap) at the tool layer
+
+- [ ] **Process Resilience**
+  - [ ] Add `process.on('unhandledRejection')` and `process.on('uncaughtException')` handlers
+  - [ ] Implement exponential backoff with `Retry-After` header support for 429 responses
+  - [ ] Graceful recovery from corrupted `tokens.json` (fallback to re-auth instead of crash)
+  - [ ] Add try-catch around token refresh in `client.ts` with retry before re-triggering OAuth
+
+- [ ] **Test Coverage Gaps**
+  - [ ] Add unit tests for `src/spotify/client.ts` (token orchestration, refresh flow, error recovery)
+  - [ ] Add tests for `src/setup.ts` (setup wizard with mocked readline/file I/O)
+  - [ ] Add direct tests for OAuth callback server (timeout, rate limiting, CSRF state validation)
+  - [ ] Add tests for `src/bin.ts` (CLI argument parsing and dispatch)
+
+- [ ] **Type Safety**
+  - [ ] Add type guards for Spotify API responses in tool handlers (replace bare `any` casts)
+  - [ ] Type the return value of `getAuthenticatedClient()` instead of relying on `any`
+
 ### Phase 5: Polish & Optimization (Q1 2027) — Post-1.0
 
 **Goal**: Performance, reliability, and user experience refinement
@@ -227,7 +253,7 @@ Everything in Phases 3-5 (recommendations, audio features, queue management, pod
 - [x] Token files stored with `0600` permissions, directory with `0700`
 - [x] OAuth callback server: localhost-only, rate-limited (5 req), 5-minute timeout
 - [x] Error responses never expose raw API errors or internal paths
-- [x] All tool inputs validated with Zod schemas
+- [x] All tool inputs have Zod schemas defined (runtime enforcement tracked below)
 - [x] No `exec()` or `eval()` usage in codebase
 - [x] Logger auto-redacts sensitive field names (token, secret, password, etc.)
 - [x] `.env` excluded from git and npm package

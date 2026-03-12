@@ -15,6 +15,7 @@ import {
   getCredentials,
   loadTokens,
   saveTokens,
+  deleteTokens,
   areTokensExpired,
   createSpotifyClient,
   refreshAccessToken,
@@ -110,6 +111,42 @@ describe("loadTokens", () => {
     vi.mocked(fs.readFile).mockRejectedValue(error);
 
     await expect(loadTokens()).rejects.toThrow("Permission denied");
+  });
+
+  it("returns null and deletes file when token file contains corrupted JSON", async () => {
+    vi.mocked(fs.readFile).mockResolvedValue("not valid json {{{");
+    vi.mocked(fs.unlink).mockResolvedValue(undefined);
+
+    const tokens = await loadTokens();
+    expect(tokens).toBeNull();
+    expect(fs.unlink).toHaveBeenCalledWith(expect.stringContaining("tokens.json"));
+  });
+
+  it("returns null even if deleting corrupted file fails", async () => {
+    vi.mocked(fs.readFile).mockResolvedValue("{corrupt");
+    vi.mocked(fs.unlink).mockRejectedValue(new Error("unlink failed"));
+
+    const tokens = await loadTokens();
+    expect(tokens).toBeNull();
+  });
+});
+
+describe("deleteTokens", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("deletes the token file", async () => {
+    vi.mocked(fs.unlink).mockResolvedValue(undefined);
+
+    await deleteTokens();
+    expect(fs.unlink).toHaveBeenCalledWith(expect.stringContaining("tokens.json"));
+  });
+
+  it("does not throw when file does not exist", async () => {
+    vi.mocked(fs.unlink).mockRejectedValue(new Error("ENOENT"));
+
+    await expect(deleteTokens()).resolves.toBeUndefined();
   });
 });
 

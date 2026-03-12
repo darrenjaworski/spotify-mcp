@@ -54,17 +54,23 @@ export async function search(args: SearchArgs): Promise<ToolResponse> {
       };
     }
 
-    const formatted = items.map((item, index) => {
+    const formatted = items.map((item: any, index: number) => {
       switch (args.type) {
-        case "track":
-          return `${index + 1}. ${item.name} - ${item.artists.map((a: any) => a.name).join(", ")} (${item.uri})`;
-        case "album":
-          return `${index + 1}. ${item.name} - ${item.artists.map((a: any) => a.name).join(", ")} (${item.uri})`;
+        case "track": {
+          const artists = item.artists?.map((a: any) => a.name).join(", ") ?? "Unknown artist";
+          return `${index + 1}. ${item.name} - ${artists} (${item.uri})`;
+        }
+        case "album": {
+          const artists = item.artists?.map((a: any) => a.name).join(", ") ?? "Unknown artist";
+          return `${index + 1}. ${item.name} - ${artists} (${item.uri})`;
+        }
         case "artist":
           return `${index + 1}. ${item.name} (${item.uri})`;
         case "playlist": {
           const trackInfo = item.items ?? item.tracks;
-          return `${index + 1}. ${item.name} - ${item.owner.display_name} (${trackInfo.total} tracks) (${item.uri})`;
+          const ownerName = item.owner?.display_name ?? "Unknown";
+          const total = trackInfo?.total ?? 0;
+          return `${index + 1}. ${item.name} - ${ownerName} (${total} tracks) (${item.uri})`;
         }
         default:
           return `${index + 1}. ${item.name}`;

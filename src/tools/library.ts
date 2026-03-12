@@ -4,6 +4,7 @@
 
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
+import { validateArraySize } from "../utils/validation.js";
 import type {
   ToolResponse,
   GetSavedTracksArgs,
@@ -21,7 +22,7 @@ export async function getSavedTracks(args: GetSavedTracksArgs): Promise<ToolResp
     const offset = args.offset || 0;
 
     const result: any = await client.getMySavedTracks({ limit, offset });
-    const items = result.body.items;
+    const items = result.body?.items ?? [];
 
     if (items.length === 0) {
       return {
@@ -30,8 +31,9 @@ export async function getSavedTracks(args: GetSavedTracksArgs): Promise<ToolResp
     }
 
     const formatted = items.map((item: any, index: number) => {
-      const track = item.track;
-      const artists = track.artists.map((a: any) => a.name).join(", ");
+      const track = item?.track;
+      if (!track) return `${offset + index + 1}. [Unknown track]`;
+      const artists = track.artists?.map((a: any) => a.name).join(", ") ?? "Unknown artist";
       return `${offset + index + 1}. ${track.name} - ${artists} (${track.uri})`;
     });
 
@@ -55,7 +57,7 @@ export async function getSavedAlbums(args: GetSavedAlbumsArgs): Promise<ToolResp
     const offset = args.offset || 0;
 
     const result: any = await client.getMySavedAlbums({ limit, offset });
-    const items = result.body.items;
+    const items = result.body?.items ?? [];
 
     if (items.length === 0) {
       return {
@@ -64,8 +66,9 @@ export async function getSavedAlbums(args: GetSavedAlbumsArgs): Promise<ToolResp
     }
 
     const formatted = items.map((item: any, index: number) => {
-      const album = item.album;
-      const artists = album.artists.map((a: any) => a.name).join(", ");
+      const album = item?.album;
+      if (!album) return `${offset + index + 1}. [Unknown album]`;
+      const artists = album.artists?.map((a: any) => a.name).join(", ") ?? "Unknown artist";
       return `${offset + index + 1}. ${album.name} - ${artists} (${album.uri})`;
     });
 
@@ -93,8 +96,8 @@ export async function getFollowedArtists(args: GetFollowedArtistsArgs): Promise<
     }
 
     const result: any = await client.getFollowedArtists(options);
-    const artists = result.body.artists;
-    const items = artists.items;
+    const artists = result.body?.artists;
+    const items = artists?.items ?? [];
 
     if (items.length === 0) {
       return {
@@ -103,11 +106,12 @@ export async function getFollowedArtists(args: GetFollowedArtistsArgs): Promise<
     }
 
     const formatted = items.map((artist: any, index: number) => {
-      const genres = artist.genres.length > 0 ? ` (${artist.genres.slice(0, 2).join(", ")})` : "";
+      const genreList = artist.genres ?? [];
+      const genres = genreList.length > 0 ? ` (${genreList.slice(0, 2).join(", ")})` : "";
       return `${index + 1}. ${artist.name}${genres} (${artist.uri})`;
     });
 
-    const nextCursor = artists.cursors?.after;
+    const nextCursor = artists?.cursors?.after;
     const cursorNote = nextCursor
       ? `\n\nMore artists available. Use after: "${nextCursor}" to see the next page.`
       : "";
@@ -127,6 +131,8 @@ export async function getFollowedArtists(args: GetFollowedArtistsArgs): Promise<
 
 export async function saveTracks(args: SaveTracksArgs): Promise<ToolResponse> {
   try {
+    validateArraySize(args.track_ids, 50, "track_ids");
+
     const client = await getAuthenticatedClient();
     await client.addToMySavedTracks(args.track_ids);
 
@@ -145,6 +151,8 @@ export async function saveTracks(args: SaveTracksArgs): Promise<ToolResponse> {
 
 export async function removeSavedTracks(args: SaveTracksArgs): Promise<ToolResponse> {
   try {
+    validateArraySize(args.track_ids, 50, "track_ids");
+
     const client = await getAuthenticatedClient();
     await client.removeFromMySavedTracks(args.track_ids);
 
@@ -163,6 +171,8 @@ export async function removeSavedTracks(args: SaveTracksArgs): Promise<ToolRespo
 
 export async function saveAlbums(args: SaveAlbumsArgs): Promise<ToolResponse> {
   try {
+    validateArraySize(args.album_ids, 50, "album_ids");
+
     const client = await getAuthenticatedClient();
     await client.addToMySavedAlbums(args.album_ids);
 
@@ -181,6 +191,8 @@ export async function saveAlbums(args: SaveAlbumsArgs): Promise<ToolResponse> {
 
 export async function removeSavedAlbums(args: SaveAlbumsArgs): Promise<ToolResponse> {
   try {
+    validateArraySize(args.album_ids, 50, "album_ids");
+
     const client = await getAuthenticatedClient();
     await client.removeFromMySavedAlbums(args.album_ids);
 
@@ -199,6 +211,8 @@ export async function removeSavedAlbums(args: SaveAlbumsArgs): Promise<ToolRespo
 
 export async function followArtists(args: FollowArtistsArgs): Promise<ToolResponse> {
   try {
+    validateArraySize(args.artist_ids, 50, "artist_ids");
+
     const client = await getAuthenticatedClient();
     await client.followArtists(args.artist_ids);
 
@@ -217,6 +231,8 @@ export async function followArtists(args: FollowArtistsArgs): Promise<ToolRespon
 
 export async function unfollowArtists(args: FollowArtistsArgs): Promise<ToolResponse> {
   try {
+    validateArraySize(args.artist_ids, 50, "artist_ids");
+
     const client = await getAuthenticatedClient();
     await client.unfollowArtists(args.artist_ids);
 

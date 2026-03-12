@@ -42,11 +42,11 @@ export async function getTopItems(args: TopItemsArgs): Promise<ToolResponse> {
 
     if (args.type === "artists") {
       result = await client.getMyTopArtists({ limit, time_range: timeRange });
-      items = result.body.items;
+      items = result.body?.items ?? [];
       itemType = "artists";
     } else {
       result = await client.getMyTopTracks({ limit, time_range: timeRange });
-      items = result.body.items;
+      items = result.body?.items ?? [];
       itemType = "tracks";
     }
 
@@ -67,11 +67,13 @@ export async function getTopItems(args: TopItemsArgs): Promise<ToolResponse> {
       long_term: "all time",
     }[timeRange];
 
-    const formatted = items.map((item, index) => {
+    const formatted = items.map((item: any, index: number) => {
       if (args.type === "artists") {
-        return `${index + 1}. ${item.name} (${item.genres.slice(0, 2).join(", ")})`;
+        const genres = (item.genres ?? []).slice(0, 2).join(", ");
+        return `${index + 1}. ${item.name} (${genres})`;
       } else {
-        return `${index + 1}. ${item.name} - ${item.artists.map((a: any) => a.name).join(", ")}`;
+        const artists = item.artists?.map((a: any) => a.name).join(", ") ?? "Unknown artist";
+        return `${index + 1}. ${item.name} - ${artists}`;
       }
     });
 
@@ -94,7 +96,7 @@ export async function getRecentlyPlayed(args: RecentlyPlayedArgs): Promise<ToolR
     const limit = args.limit || 20;
 
     const result = await client.getMyRecentlyPlayedTracks({ limit });
-    const items = result.body.items;
+    const items = result.body?.items ?? [];
 
     if (items.length === 0) {
       return {
@@ -107,10 +109,12 @@ export async function getRecentlyPlayed(args: RecentlyPlayedArgs): Promise<ToolR
       };
     }
 
-    const formatted = items.map((item, index) => {
+    const formatted = items.map((item: any, index: number) => {
       const track = item.track;
+      if (!track) return `${index + 1}. [Unknown track]`;
+      const artists = track.artists?.map((a: any) => a.name).join(", ") ?? "Unknown artist";
       const playedAt = new Date(item.played_at).toLocaleString();
-      return `${index + 1}. ${track.name} - ${track.artists.map((a) => a.name).join(", ")} (${playedAt})`;
+      return `${index + 1}. ${track.name} - ${artists} (${playedAt})`;
     });
 
     return {

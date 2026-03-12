@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Features
+- **Validation**: Add `src/utils/validation.ts` with URI format, array size, and numeric range validators
+  - Validate Spotify URIs (`spotify:(track|album|artist|playlist):<id>`) before API calls in playback, playlist, and library tools
+  - Enforce Spotify's 50-item batch limit on library mutation tools
+- **Resilience**: Add exponential backoff retry for 429 rate-limited responses via `withRetry()` proxy (1s/2s/4s, respects `Retry-After` header)
+- **Resilience**: Add `process.on('unhandledRejection')` and `process.on('uncaughtException')` handlers to prevent silent crashes
+- **Resilience**: Graceful recovery from corrupted `tokens.json` — deletes bad file and re-triggers OAuth instead of crashing
+- **Resilience**: Token refresh failures now delete stale tokens and throw a user-friendly "Session expired" message
+- **Types**: Add `SpotifyClient` interface covering all 30+ API methods used across the codebase
+- **Types**: Type `getAuthenticatedClient()` return as `Promise<SpotifyClient>` instead of implicit `any`
+- **Types**: Add defensive null/type guards across all tool handlers for API response fields
+
+### Tests
+- Add unit tests for `src/spotify/client.ts` — token orchestration, refresh flow, retry logic (20 tests)
+- Add tests for `src/setup.ts` — setup wizard validation, config generation, interactive flow (23 tests)
+- Add tests for `src/bin.ts` — CLI argument routing (5 tests)
+- Add tests for OAuth callback server — full flow integration, HTML escaping (2 tests)
+- Add tests for `src/utils/validation.ts` — URI, array size, range validation (32 tests)
+- Add tests for corrupted token recovery and `deleteTokens()` (4 tests)
+- Test suite expanded from 213 to 299 tests across 16 files
+
 ### Changed
 - **Tooling**: Add prettier for code formatting with eslint-config-prettier integration, `format`/`format:check` npm scripts, and CI formatting check
 

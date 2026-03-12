@@ -4,6 +4,7 @@
 
 import { getAuthenticatedClient } from "../spotify/client.js";
 import { handleToolError } from "../spotify/errors.js";
+import { validateSpotifyUri } from "../utils/validation.js";
 import type {
   ToolResponse,
   CreatePlaylistArgs,
@@ -21,7 +22,7 @@ export async function getPlaylists(args: { limit?: number }): Promise<ToolRespon
     const limit = args.limit || 20;
 
     const result = await client.getUserPlaylists({ limit });
-    const playlists = result.body.items;
+    const playlists = result.body?.items ?? [];
 
     if (playlists.length === 0) {
       return {
@@ -34,9 +35,9 @@ export async function getPlaylists(args: { limit?: number }): Promise<ToolRespon
       };
     }
 
-    const formatted = playlists.map((playlist: any, index) => {
+    const formatted = playlists.map((playlist: any, index: number) => {
       const trackInfo = playlist.items ?? playlist.tracks;
-      return `${index + 1}. ${playlist.name} (${trackInfo.total} tracks) - ${playlist.id}`;
+      return `${index + 1}. ${playlist.name} (${trackInfo?.total ?? 0} tracks) - ${playlist.id}`;
     });
 
     return {
@@ -60,16 +61,19 @@ export async function getPlaylist(args: GetPlaylistArgs): Promise<ToolResponse> 
     const playlist: any = result.body;
 
     const trackInfo = playlist.items ?? playlist.tracks;
-    const tracks = trackInfo.items.slice(0, 10).map((item: any, index: number) => {
-      const track = item.track;
+    const trackItems = trackInfo?.items ?? [];
+    const tracks = trackItems.slice(0, 10).map((item: any, index: number) => {
+      const track = item?.track;
       if (!track) return `${index + 1}. [Unknown track]`;
-      return `${index + 1}. ${track.name} - ${track.artists.map((a: any) => a.name).join(", ")}`;
+      const artists = track.artists?.map((a: any) => a.name).join(", ") ?? "Unknown artist";
+      return `${index + 1}. ${track.name} - ${artists}`;
     });
 
+    const ownerName = playlist.owner?.display_name ?? "Unknown";
     const text = `Playlist: ${playlist.name}
 Description: ${playlist.description || "No description"}
-Owner: ${playlist.owner.display_name}
-Tracks: ${trackInfo.total}
+Owner: ${ownerName}
+Tracks: ${trackInfo?.total ?? 0}
 Public: ${playlist.public ? "Yes" : "No"}
 
 First 10 tracks:
@@ -119,6 +123,11 @@ export async function createPlaylist(args: CreatePlaylistArgs): Promise<ToolResp
 
 export async function addToPlaylist(args: AddToPlaylistArgs): Promise<ToolResponse> {
   try {
+    // Validate all track URIs before making API calls
+    for (const uri of args.uris) {
+      validateSpotifyUri(uri, ["track"]);
+    }
+
     const client = await getAuthenticatedClient();
 
     const options: any = {};
@@ -143,6 +152,11 @@ export async function addToPlaylist(args: AddToPlaylistArgs): Promise<ToolRespon
 
 export async function removeFromPlaylist(args: RemoveFromPlaylistArgs): Promise<ToolResponse> {
   try {
+    // Validate all track URIs before making API calls
+    for (const uri of args.uris) {
+      validateSpotifyUri(uri, ["track"]);
+    }
+
     const client = await getAuthenticatedClient();
 
     const tracks = args.uris.map((uri) => ({ uri }));

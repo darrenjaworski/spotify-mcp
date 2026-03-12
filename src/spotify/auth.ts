@@ -65,6 +65,16 @@ export async function loadTokens(): Promise<StoredTokens | null> {
       logger.debug("No stored tokens found");
       return null;
     }
+    // Handle corrupted token file (e.g., invalid JSON)
+    if (error instanceof SyntaxError) {
+      logger.warn("Corrupted tokens file detected, deleting and re-authenticating");
+      try {
+        await fs.unlink(TOKEN_FILE);
+      } catch {
+        // Ignore unlink errors — file may already be gone
+      }
+      return null;
+    }
     logger.error("Error loading tokens:", error);
     throw error;
   }
@@ -81,6 +91,18 @@ export async function saveTokens(tokens: StoredTokens): Promise<void> {
   } catch (error) {
     logger.error("Error saving tokens:", error);
     throw error;
+  }
+}
+
+/**
+ * Delete stored tokens file (used when tokens are invalid and re-auth is needed)
+ */
+export async function deleteTokens(): Promise<void> {
+  try {
+    await fs.unlink(TOKEN_FILE);
+    logger.debug("Deleted tokens file");
+  } catch {
+    // Ignore errors — file may not exist
   }
 }
 
