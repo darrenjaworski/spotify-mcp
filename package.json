@@ -27,7 +27,13 @@
     "spotify",
     "music",
     "ai",
-    "claude"
+    "claude",
+    "claude-desktop",
+    "cursor",
+    "windsurf",
+    "vscode",
+    "github-copilot",
+    "opencode"
   ],
   "author": "Darren Jaworski <darrenjaworski@gmail.com>",
   "license": "MIT",

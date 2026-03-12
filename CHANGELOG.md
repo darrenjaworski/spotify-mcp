@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Package**: Add client integration keywords (claude-desktop, cursor, windsurf, vscode, github-copilot, opencode) to package.json for npm discoverability
+
 ### Documentation
 - **Roadmap**: Move podcast support from Phase 4 to Phase 3
 
