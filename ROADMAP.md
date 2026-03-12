@@ -115,6 +115,12 @@ Everything in Phases 3-5 (recommendations, audio features, queue management, pod
   - [ ] Audio analysis for tracks
   - [ ] Playlist audio profile
 
+- [ ] **Podcast Support**
+  - [ ] Search podcasts
+  - [ ] Play episodes
+  - [ ] Save/unsave episodes
+  - [ ] Get saved shows
+
 **Deliverable**: Intelligent music discovery and analytics
 
 ### Phase 4: Advanced Features (Q4 2026) — Post-1.0
@@ -138,12 +144,6 @@ Everything in Phases 3-5 (recommendations, audio features, queue management, pod
   - [ ] Share tracks/playlists
   - [ ] View friends' activity (if available)
   - [ ] Collaborative playlist management
-
-- [ ] **Podcast Support**
-  - [ ] Search podcasts
-  - [ ] Play episodes
-  - [ ] Save/unsave episodes
-  - [ ] Get saved shows
 
 - [ ] **Offline Mode**
   - [ ] Cache frequently used data

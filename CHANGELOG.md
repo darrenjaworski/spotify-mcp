@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+- **Roadmap**: Move podcast support from Phase 4 to Phase 3
+
 ## [1.2.1] - 2026-03-11
 
 ### Fixed
