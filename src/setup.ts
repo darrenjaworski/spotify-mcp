@@ -133,8 +133,8 @@ SPOTIFY_CLIENT_SECRET=${clientSecret}
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback
 `;
 
-  await writeFile(".env", envContent);
-  success("Created .env file in current directory");
+  await writeFile(".env", envContent, { mode: 0o600 });
+  success("Created .env file with secure permissions (owner-only read/write)");
 }
 
 function generateMcpConfig(clientId: string, clientSecret: string, useNpx: boolean = true): string {

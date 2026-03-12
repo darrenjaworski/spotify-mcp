@@ -105,6 +105,30 @@ describe("logger", () => {
       expect(output).not.toContain(tokenLike);
     });
 
+    it("redacts JWT-format tokens containing dots", () => {
+      const jwt = "eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.Tz1jHzG4Ow";
+      logger.error("value:", { data: jwt });
+      const output = consoleErrorSpy.mock.calls[0][0];
+      expect(output).toContain("[REDACTED]");
+      expect(output).not.toContain(jwt);
+    });
+
+    it("redacts Base64-encoded tokens containing +, /, and =", () => {
+      const base64Token = "dGhpcyBpcyBhIHNlY3JldCB0b2tlbg==";
+      logger.error("value:", { data: base64Token });
+      const output = consoleErrorSpy.mock.calls[0][0];
+      expect(output).toContain("[REDACTED]");
+      expect(output).not.toContain(base64Token);
+    });
+
+    it("redacts Base64url tokens with + and / characters", () => {
+      const base64UrlToken = "abc+def/ghi+jkl/mno+pqr/stu";
+      logger.error("value:", { data: base64UrlToken });
+      const output = consoleErrorSpy.mock.calls[0][0];
+      expect(output).toContain("[REDACTED]");
+      expect(output).not.toContain(base64UrlToken);
+    });
+
     it("does not redact short strings", () => {
       logger.error("value:", { name: "hello" });
       const output = consoleErrorSpy.mock.calls[0][0];

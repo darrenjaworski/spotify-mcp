@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Security**: Set `.env` file permissions to `0600` (owner-only read/write) in setup wizard, preventing other local users from reading `SPOTIFY_CLIENT_SECRET`
+- **Security**: Broaden `redactSensitiveData()` string heuristic regex to match JWT and Base64 token formats (tokens containing `.`, `+`, `/`, `=`)
+
+### Tests
+- Add 3 tests for JWT and Base64 token redaction in logger (JWT dots, Base64 `=` padding, Base64url `+`/`/` characters)
+
 ## [1.2.0] - 2026-03-11
 
 ### Features

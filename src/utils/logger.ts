@@ -42,8 +42,8 @@ function redactSensitiveData(obj: any): any {
   }
 
   if (typeof obj === "string") {
-    // Redact if string looks like a token (long alphanumeric strings)
-    if (obj.length > 20 && /^[A-Za-z0-9_-]+$/.test(obj)) {
+    // Redact if string looks like a token (long alphanumeric/Base64/JWT strings)
+    if (obj.length > 20 && /^[A-Za-z0-9_.+/=-]+$/.test(obj)) {
       return "[REDACTED]";
     }
     return obj;

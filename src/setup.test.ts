@@ -294,15 +294,36 @@ describe("runSetup", () => {
     expect(writeFile).toHaveBeenCalledWith(
       ".env",
       expect.stringContaining("SPOTIFY_CLIENT_ID=a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4"),
+      { mode: 0o600 },
     );
     expect(writeFile).toHaveBeenCalledWith(
       ".env",
       expect.stringContaining("SPOTIFY_CLIENT_SECRET=f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3"),
+      { mode: 0o600 },
     );
     expect(writeFile).toHaveBeenCalledWith(
       ".env",
       expect.stringContaining("SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/callback"),
+      { mode: 0o600 },
     );
+  });
+
+  it("creates .env file with secure permissions (mode 0600)", async () => {
+    promptResponses = [
+      "n", // skip browser open
+      "", // press ENTER
+      "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4", // client ID
+      "f6e5d4c3b2a1f6e5d4c3b2a1f6e5d4c3", // client secret
+      "7", // development from source
+    ];
+
+    const { runSetup } = await import("./setup.js");
+    await runSetup();
+
+    // Verify writeFile was called with mode 0o600 to prevent other users from reading secrets
+    const writeFileCall = vi.mocked(writeFile).mock.calls.find((call) => call[0] === ".env");
+    expect(writeFileCall).toBeDefined();
+    expect(writeFileCall![2]).toEqual({ mode: 0o600 });
   });
 
   it("retries on invalid client ID", async () => {
