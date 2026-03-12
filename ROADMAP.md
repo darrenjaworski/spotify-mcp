@@ -242,10 +242,12 @@ Everything in Phases 3-5 (recommendations, audio features, queue management, pod
 
 ### Open
 
-- [ ] **`.env` file permissions**: `setup.ts` creates `.env` with default permissions (`0644`), making `SPOTIFY_CLIENT_SECRET` readable by any local user. Should use `{ mode: 0o600 }` consistent with token storage in `auth.ts`.
-- [ ] **Logger redaction gap**: String heuristic in `redactSensitiveData()` only matches `[A-Za-z0-9_-]+`, missing tokens containing `.`, `=`, or `/` (JWT/Base64 formats). Broadening the regex or relying solely on field-name redaction would close this defense-in-depth gap.
+None — all known security issues resolved.
 
 ### Completed
+
+- [x] `.env` file permissions set to `0600` in setup wizard (v1.2.1)
+- [x] Logger `redactSensitiveData()` regex broadened to catch JWT/Base64 tokens (v1.2.1)
 
 - [x] OAuth state parameter uses `crypto.randomBytes(32)` for CSRF protection
 - [x] Browser launch uses `spawn()` with `shell: false` (no command injection)
@@ -290,6 +292,7 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 - **v0.6.0** (Released 2026-02-26): `spotify_get_devices` tool, CI/workflow improvements
 - **v0.6.1** (Released 2026-02-26): Adapt to Spotify Web API February 2026 breaking changes
 - **v1.0.0** (Released 2026-03-10): MVP — Phase 2 complete (playlist CRUD, library management, search filters, device transfer, 30 tools)
+- **v1.2.1** (Released 2026-03-11): Security hardening — `.env` file permissions, logger JWT/Base64 redaction
 - **v1.2.0** (Released 2026-03-11): Shuffle and repeat playback controls, MCP Inspector helper script, 32 tools
 - **v1.1.0** (Released 2026-03-11): Post-1.0 hardening — runtime validation, process resilience, type safety, 86 new tests
 - **v1.0.1** (Released 2026-03-10): Dependency security updates, security audit documentation

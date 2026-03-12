@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-03-11
+
 ### Fixed
 - **Security**: Set `.env` file permissions to `0600` (owner-only read/write) in setup wizard, preventing other local users from reading `SPOTIFY_CLIENT_SECRET`
 - **Security**: Broaden `redactSensitiveData()` string heuristic regex to match JWT and Base64 token formats (tokens containing `.`, `+`, `/`, `=`)
 
 ### Tests
+- Add test for `.env` secure file permissions in setup wizard
 - Add 3 tests for JWT and Base64 token redaction in logger (JWT dots, Base64 `=` padding, Base64url `+`/`/` characters)
 
 ## [1.2.0] - 2026-03-11
@@ -297,7 +300,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.2.1...HEAD
+[1.2.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.0...v1.0.1
