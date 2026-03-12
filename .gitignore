@@ -40,3 +40,6 @@ tokens.json
 # Temporary files
 *.tmp
 .cache/
+
+# Claude Code worktrees
+.claude/worktrees/
