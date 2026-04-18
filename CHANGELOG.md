@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-04-18
+
+### Fixed
+- **CI/CD**: Fix npm publishing workflow to correctly authenticate with npm registry
+
 ## [1.2.2] - 2026-04-18
 
 ### Fixed
@@ -311,7 +316,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User data tools (profile, top items, recently played)
 - Project documentation (README, CLAUDE.md, LICENSE)
 
-[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.2.1...HEAD
+[Unreleased]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.2.3...HEAD
+[1.2.3]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.2.2...v1.2.3
 [1.2.1]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/darrenjaworski/spotify-mcp/compare/v1.0.1...v1.1.0
