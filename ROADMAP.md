@@ -292,10 +292,11 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 - **v0.6.0** (Released 2026-02-26): `spotify_get_devices` tool, CI/workflow improvements
 - **v0.6.1** (Released 2026-02-26): Adapt to Spotify Web API February 2026 breaking changes
 - **v1.0.0** (Released 2026-03-10): MVP — Phase 2 complete (playlist CRUD, library management, search filters, device transfer, 30 tools)
-- **v1.2.1** (Released 2026-03-11): Security hardening — `.env` file permissions, logger JWT/Base64 redaction
-- **v1.2.0** (Released 2026-03-11): Shuffle and repeat playback controls, MCP Inspector helper script, 32 tools
-- **v1.1.0** (Released 2026-03-11): Post-1.0 hardening — runtime validation, process resilience, type safety, 86 new tests
 - **v1.0.1** (Released 2026-03-10): Dependency security updates, security audit documentation
+- **v1.1.0** (Released 2026-03-11): Post-1.0 hardening — runtime validation, process resilience, type safety, 86 new tests
+- **v1.2.0** (Released 2026-03-11): Shuffle and repeat playback controls, MCP Inspector helper script, 32 tools
+- **v1.2.1** (Released 2026-03-11): Security hardening — `.env` file permissions, logger JWT/Base64 redaction
+- **v1.2.2** (Released 2026-04-18): Dependency security updates, client integration keywords for npm discoverability
 
 ---
 
@@ -355,5 +356,5 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 
 ---
 
-*Last updated: March 11, 2026 (v1.2.0)*
+*Last updated: April 18, 2026 (v1.2.2)*
 *This roadmap is a living document and will evolve based on user feedback and project priorities.*
