@@ -297,6 +297,7 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 - **v1.2.0** (Released 2026-03-11): Shuffle and repeat playback controls, MCP Inspector helper script, 32 tools
 - **v1.2.1** (Released 2026-03-11): Security hardening — `.env` file permissions, logger JWT/Base64 redaction
 - **v1.2.2** (Released 2026-04-18): Dependency security updates, client integration keywords for npm discoverability
+- **v1.2.4** (Released 2026-04-18): Bump Node.js to version 24
 
 ---
 
@@ -356,5 +357,5 @@ We welcome contributions at any phase! Check our [CONTRIBUTING.md](CONTRIBUTING.
 
 ---
 
-*Last updated: April 18, 2026 (v1.2.2)*
+*Last updated: April 18, 2026 (v1.2.4)*
 *This roadmap is a living document and will evolve based on user feedback and project priorities.*
