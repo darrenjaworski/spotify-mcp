@@ -1,6 +1,6 @@
 {
   "name": "@darrenjaws/spotify-mcp",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Model Context Protocol server for Spotify integration",
   "type": "module",
   "bin": {
