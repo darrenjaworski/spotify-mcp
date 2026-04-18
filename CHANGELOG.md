@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Security**: Update dependencies to address known vulnerabilities in transitive dependencies
+
 ### Changed
 - **Package**: Add client integration keywords (claude-desktop, cursor, windsurf, vscode, github-copilot, opencode) to package.json for npm discoverability
 
