@@ -39,10 +39,9 @@ jobs:
 
       - run: npm run build
 
-      - name: Configure npm authentication
-        run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }}
-
       - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   github-release:
     needs: publish
